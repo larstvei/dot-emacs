@@ -617,31 +617,25 @@
 
 ** LaTeX
 
-   I want =.tex=-files to be associated with =latex-mode= instead of
+   =.tex=-files should be associated with =latex-mode= instead of
    =tex-mode=.
    
    #+BEGIN_SRC emacs-lisp :tangle yes
      (add-to-list 'auto-mode-alist '("\\.tex\\'" . latex-mode))
    #+END_SRC
 
-   When compiling LaTeX using =C-c C-c= a latex compile command is run. When
-   using the =Minted=-package for LaTeX, one must compile with the flag
-   =shell-escape=. Here is a not-quite-so-elegant fix.
-   
+   I like using the [[https://code.google.com/p/minted/][Minted]] package for source blocks in LaTeX. To make org
+   use this we add the following snippet.
+
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (setcar (cdr (cddaar tex-compile-commands)) " -shell-escape ")
+     (add-to-list 'org-latex-packages-alist '("" "minted"))
+     (setq org-latex-listings 'minted)
    #+END_SRC
 
+   Because [[https://code.google.com/p/minted/][Minted]] uses [[http://pygments.org][Pygments]] (an external process), we must add the
+   =-shell-escape= option to the =org-latex-pdf-process= commands.
 
-   #+BEGIN_SRC emacs-lisp :tangle yes
-     ;; Add minted to the defaults packages to include when exporting.
-     (add-to-list 'org-latex-packages-alist '("" "minted"))
-     ;; Tell the latex export to use the minted package for source
-     ;; code coloration.
-     (setq org-latex-listings 'minted)
-     ;; Let the exporter use the -shell-escape option to let latex
-     ;; execute external programs.
-     ;; This obviously and can be dangerous to activate!
+   #+BEGIN_SRC emacs-lisp :tangle yes     
      (setq org-latex-pdf-process
            (mapcar
             (lambda (str)

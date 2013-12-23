@@ -292,16 +292,9 @@ tangled, and the tangled file is compiled."
 
 (add-to-list 'auto-mode-alist '("\\.tex\\'" . latex-mode))
 
-(setcar (cdr (cddaar tex-compile-commands)) " -shell-escape ")
-
-;; Add minted to the defaults packages to include when exporting.
 (add-to-list 'org-latex-packages-alist '("" "minted"))
-;; Tell the latex export to use the minted package for source
-;; code coloration.
 (setq org-latex-listings 'minted)
-;; Let the exporter use the -shell-escape option to let latex
-;; execute external programs.
-;; This obviously and can be dangerous to activate!
+
 (setq org-latex-pdf-process
       (mapcar
        (lambda (str)
