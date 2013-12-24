@@ -29,7 +29,7 @@
                     (expand-file-name (concat user-emacs-directory "init.org")))
          (org-babel-tangle)
          (byte-compile-file (concat user-emacs-directory "init.el"))))
-     
+
      (add-hook 'after-save-hook 'init-hook)
    #+END_SRC
 
@@ -70,51 +70,53 @@
    upgrades it if a new version has been released. Here our predicate comes
    in handy.
 
-   #+BEGIN_SRC emacs-lisp :tangle yes     
+   #+BEGIN_SRC emacs-lisp :tangle yes
      (defun upgrade-or-install-package (package)
        "Unless the newest available version of PACKAGE is installed
      PACKAGE is installed and the current version is deleted."
        (unless (newest-package-installed-p package)
          (let ((pkg-desc (assq package package-alist)))
            (when pkg-desc
-             (package-delete package (package-desc-vers (cdr pkg-desc))))
+             (package-delete (symbol-name package)
+                             (package-version-join
+                              (package-desc-vers (cdr pkg-desc)))))
            (package-install package))))
    #+END_SRC
-   
+
    Now we can use the function above to make sure packages are installed and
    up to date. Here are some packages I find useful (some of these
    configurations are also dependent on them).
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (let ((packages
-            '(ac-geiser         ; Auto-complete backend for geiser
-              ac-slime          ; An auto-complete source using slime completions
-              ace-jump-mode     ; quick cursor location minor mode
-              auto-compile      ; automatically compile Emacs Lisp libraries
-              auto-complete     ; auto completion
-              elscreen          ; window session manager
-              expand-region     ; Increase selected region by semantic units
-              flx-ido           ; flx integration for ido
-              ido-vertical-mode ; Makes ido-mode display vertically.
-              geiser            ; GNU Emacs and Scheme talk to each other
-              haskell-mode      ; A Haskell editing mode
-              jedi              ; Python auto-completion for Emacs
-              magit             ; control Git from Emacs
-              markdown-mode     ; Emacs Major mode for Markdown-formatted files.
-              monokai-theme     ; A fruity color theme for Emacs.
-              move-text         ; Move current line or region with M-up or M-down
-              multiple-cursors  ; Multiple cursors for Emacs.
-              org               ; Outline-based notes management and organizer
-              paredit           ; minor mode for editing parentheses
-              pretty-lambdada   ; the word `lambda' as the Greek letter.
-              ;; slime          ; Superior Lisp Interaction Mode for Emacs
-              smex              ; M-x interface with Ido-style fuzzy matching.
-              )))
-       ;; 'remove-if' is a part of the cl-library, so we require this feature.
-       (require 'cl)
-       (package-refresh-contents)
-       ;; Filter out installed packages and install the remaining.
-       (mapc 'upgrade-or-install-package packages))
+          (let ((packages
+                 '(ac-geiser         ; Auto-complete backend for geiser
+                   ac-slime          ; An auto-complete source using slime completions
+                   ace-jump-mode     ; quick cursor location minor mode
+                   auto-compile      ; automatically compile Emacs Lisp libraries
+                   auto-complete     ; auto completion
+                   elscreen          ; window session manager
+                   expand-region     ; Increase selected region by semantic units
+                   flx-ido           ; flx integration for ido
+                   ido-vertical-mode ; Makes ido-mode display vertically.
+                   geiser            ; GNU Emacs and Scheme talk to each other
+                   haskell-mode      ; A Haskell editing mode
+                   jedi              ; Python auto-completion for Emacs
+                   magit             ; control Git from Emacs
+                   markdown-mode     ; Emacs Major mode for Markdown-formatted files.
+                   monokai-theme     ; A fruity color theme for Emacs.
+                   move-text         ; Move current line or region with M-up or M-down
+                   multiple-cursors  ; Multiple cursors for Emacs.
+                   org               ; Outline-based notes management and organizer
+                   paredit           ; minor mode for editing parentheses
+                   pretty-lambdada   ; the word `lambda' as the Greek letter.
+                   ;; slime          ; Superior Lisp Interaction Mode for Emacs
+                   smex              ; M-x interface with Ido-style fuzzy matching.
+                   )))
+            ;; 'remove-if' is a part of the cl-library, so we require this feature.
+            (require 'cl)
+            (package-refresh-contents)
+            ;; Filter out installed packages and install the remaining.
+            (mapc 'upgrade-or-install-package packages))
    #+END_SRC
 
 ** Require
@@ -393,7 +395,7 @@
 
 ** Interactive functions
    <<sec:defuns>>
-   
+
    To search recent files useing =ido-mode= we add this snippet from
    [[http://www.emacswiki.org/emacs/CalendarWeekNumbers][EmacsWiki]].
 
@@ -491,7 +493,7 @@
 
    Bind the functions defined [[sec:defuns][above]].
 
-   #+BEGIN_SRC emacs-lisp :tangle yes     
+   #+BEGIN_SRC emacs-lisp :tangle yes
      (global-set-key (kbd "C-c j")    'remove-whitespace-inbetween)
      (global-set-key (kbd "C-x t")    'switch-to-shell)
      (global-set-key (kbd "C-c d")    'duplicate-thing)
@@ -499,8 +501,8 @@
    #+END_SRC
 
    Bindings for =move-text=.
-   
-   #+BEGIN_SRC emacs-lisp :tangle yes     
+
+   #+BEGIN_SRC emacs-lisp :tangle yes
      (global-set-key (kbd "<M-S-up>")    'move-text-up)
      (global-set-key (kbd "<M-S-down>")  'move-text-down)
    #+END_SRC
@@ -510,7 +512,7 @@
    An advice can be given to a function to make it behave differently. This
    advice makes =eval-last-sexp= (bound to =C-x C-e=) replace the sexp with
    the value.
-   
+
    #+BEGIN_SRC emacs-lisp :tangle yes
      (defadvice eval-last-sexp (around replace-sexp (arg) activate)
        "Replace sexp when called with a prefix argument."
@@ -534,7 +536,7 @@
    #+BEGIN_SRC emacs-lisp :tangle yes
      (dolist (mode '(slime-repl-mode inferior-lisp-mode inferior-scheme-mode))
        (add-to-list 'pretty-lambda-auto-modes mode))
-     
+
      (pretty-lambda-for-modes)
    #+END_SRC
 
@@ -588,7 +590,7 @@
     #+END_SRC
 
 *** Scheme
-    
+
     [[http://www.nongnu.org/geiser/][Geiser]] provides features similar to Slime for Scheme editing. Everything
     works pretty much out of the box, the only thing we need to add is the
     auto completion.
@@ -624,13 +626,13 @@
    #+END_SRC
 
    To be able to use the abbrev table defined above, =abbrev-mode= must be
-   activated. 
+   activated.
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (defun java-setup ()
        (abbrev-mode t)
        (setq-local compile-command (concat "javac " (buffer-name))))
-     
+
      (add-hook 'java-mode-hook 'java-setup)
    #+END_SRC
 
@@ -652,7 +654,7 @@
 
    =.tex=-files should be associated with =latex-mode= instead of
    =tex-mode=.
-   
+
    #+BEGIN_SRC emacs-lisp :tangle yes
      (add-to-list 'auto-mode-alist '("\\.tex\\'" . latex-mode))
    #+END_SRC
@@ -668,7 +670,7 @@
    Because [[https://code.google.com/p/minted/][Minted]] uses [[http://pygments.org][Pygments]] (an external process), we must add the
    =-shell-escape= option to the =org-latex-pdf-process= commands.
 
-   #+BEGIN_SRC emacs-lisp :tangle yes     
+   #+BEGIN_SRC emacs-lisp :tangle yes
      (setq org-latex-pdf-process
            (mapcar
             (lambda (str)

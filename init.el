@@ -30,7 +30,9 @@ PACKAGE is installed and the current version is deleted."
   (unless (newest-package-installed-p package)
     (let ((pkg-desc (assq package package-alist)))
       (when pkg-desc
-        (package-delete package (package-desc-vers (cdr pkg-desc))))
+        (package-delete (symbol-name package)
+                        (package-version-join
+                         (package-desc-vers (cdr pkg-desc)))))
       (package-install package))))
 
 (let ((packages
