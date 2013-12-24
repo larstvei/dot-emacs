@@ -3,16 +3,35 @@
   "If the current buffer is 'init.org' the code-blocks are
 tangled, and the tangled file is compiled."
   (when (equal (buffer-file-name)
-               (concat user-emacs-directory "init.org"))
+               (expand-file-name (concat user-emacs-directory "init.org")))
     (org-babel-tangle)
     (byte-compile-file (concat user-emacs-directory "init.el"))))
 
 (add-hook 'after-save-hook 'init-hook)
 
+(require 'package)
 (package-initialize)
 
 (add-to-list 'package-archives
              '("MELPA" . "http://melpa.milkbox.net/packages/") t)
+
+(defun newest-package-installed-p (package)
+  "Return true if the newest available PACKAGE is installed."
+  (when (package-installed-p package)
+    (let* ((local-pkg-desc (or (assq package package-alist)
+                               (assq package package--builtins)))
+           (newest-pkg-desc (assq package package-archive-contents)))
+      (version-list-= (package-desc-vers (cdr local-pkg-desc))
+                      (package-desc-vers (cdr newest-pkg-desc))))))
+
+(defun upgrade-or-install-package (package)
+  "Unless the newest available version of PACKAGE is installed
+PACKAGE is installed and the current version is deleted."
+  (unless (newest-package-installed-p package)
+    (let ((pkg-desc (assq package package-alist)))
+      (when pkg-desc
+        (package-delete package (package-desc-vers (cdr pkg-desc))))
+      (package-install package))))
 
 (let ((packages
        '(ac-geiser         ; Auto-complete backend for geiser
@@ -40,8 +59,9 @@ tangled, and the tangled file is compiled."
          )))
   ;; 'remove-if' is a part of the cl-library, so we require this feature.
   (require 'cl)
+  (package-refresh-contents)
   ;; Filter out installed packages and install the remaining.
-  (mapc 'package-install (remove-if 'package-installed-p packages)))
+  (mapc 'upgrade-or-install-package packages))
 
 (dolist (feature
          '(auto-compile             ; auto-compile .el files
