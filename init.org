@@ -26,7 +26,7 @@
        "If the current buffer is 'init.org' the code-blocks are
      tangled, and the tangled file is compiled."
        (when (equal (buffer-file-name)
-                    (concat user-emacs-directory "init.org"))
+                    (expand-file-name (concat user-emacs-directory "init.org")))
          (org-babel-tangle)
          (byte-compile-file (concat user-emacs-directory "init.el"))))
      
@@ -35,11 +35,12 @@
 
 ** Package
 
-   Managing extensions for Emacs is simplified using =package= which is
-   built in to Emacs 24 and newer. To load downloaded packages we need to
-   initialize =package=.
+   Managing extensions for Emacs is simplified using =package= which
+   is built in to Emacs 24 and newer. To load downloaded packages we
+   need to initialize =package=.
 
    #+BEGIN_SRC emacs-lisp :tangle yes
+     (require 'package)
      (package-initialize)
    #+END_SRC
 
@@ -51,7 +52,38 @@
                   '("MELPA" . "http://melpa.milkbox.net/packages/") t)
    #+END_SRC
 
-   Some packages I find useful are installed if missing.
+   We can define a predicate that tells us wither or not the newest version
+   of a package is installed.
+
+   #+BEGIN_SRC emacs-lisp :tangle yes
+     (defun newest-package-installed-p (package)
+       "Return true if the newest available PACKAGE is installed."
+       (when (package-installed-p package)
+         (let* ((local-pkg-desc (or (assq package package-alist)
+                                    (assq package package--builtins)))
+                (newest-pkg-desc (assq package package-archive-contents)))
+           (version-list-= (package-desc-vers (cdr local-pkg-desc))
+                           (package-desc-vers (cdr newest-pkg-desc))))))
+   #+END_SRC
+
+   Let's write a function to install the package if it is not installed or
+   upgrades it if a new version has been released. Here our predicate comes
+   in handy.
+
+   #+BEGIN_SRC emacs-lisp :tangle yes     
+     (defun upgrade-or-install-package (package)
+       "Unless the newest available version of PACKAGE is installed
+     PACKAGE is installed and the current version is deleted."
+       (unless (newest-package-installed-p package)
+         (let ((pkg-desc (assq package package-alist)))
+           (when pkg-desc
+             (package-delete package (package-desc-vers (cdr pkg-desc))))
+           (package-install package))))
+   #+END_SRC
+   
+   Now we can use the function above to make sure packages are installed and
+   up to date. Here are some packages I find useful (some of these
+   configurations are also dependent on them).
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (let ((packages
@@ -80,8 +112,9 @@
               )))
        ;; 'remove-if' is a part of the cl-library, so we require this feature.
        (require 'cl)
+       (package-refresh-contents)
        ;; Filter out installed packages and install the remaining.
-       (mapc 'package-install (remove-if 'package-installed-p packages)))
+       (mapc 'upgrade-or-install-package packages))
    #+END_SRC
 
 ** Require
