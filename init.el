@@ -35,35 +35,31 @@ PACKAGE is installed and the current version is deleted."
                          (package-desc-vers (cdr pkg-desc)))))
       (package-install package))))
 
-(let ((packages
-       '(ac-geiser         ; Auto-complete backend for geiser
-         ac-slime          ; An auto-complete source using slime completions
-         ace-jump-mode     ; quick cursor location minor mode
-         auto-compile      ; automatically compile Emacs Lisp libraries
-         auto-complete     ; auto completion
-         elscreen          ; window session manager
-         expand-region     ; Increase selected region by semantic units
-         flx-ido           ; flx integration for ido
-         ido-vertical-mode ; Makes ido-mode display vertically.
-         geiser            ; GNU Emacs and Scheme talk to each other
-         haskell-mode      ; A Haskell editing mode
-         jedi              ; Python auto-completion for Emacs
-         magit             ; control Git from Emacs
-         markdown-mode     ; Emacs Major mode for Markdown-formatted files.
-         monokai-theme     ; A fruity color theme for Emacs.
-         move-text         ; Move current line or region with M-up or M-down
-         multiple-cursors  ; Multiple cursors for Emacs.
-         org               ; Outline-based notes management and organizer
-         paredit           ; minor mode for editing parentheses
-         pretty-lambdada   ; the word `lambda' as the Greek letter.
-         ;; slime          ; Superior Lisp Interaction Mode for Emacs
-         smex              ; M-x interface with Ido-style fuzzy matching.
-         )))
-  ;; 'remove-if' is a part of the cl-library, so we require this feature.
-  (require 'cl)
-  (package-refresh-contents)
-  ;; Filter out installed packages and install the remaining.
-  (mapc 'upgrade-or-install-package packages))
+(package-refresh-contents)
+(dolist (package
+         '(ac-geiser         ; Auto-complete backend for geiser
+           ac-slime          ; An auto-complete source using slime completions
+           ace-jump-mode     ; quick cursor location minor mode
+           auto-compile      ; automatically compile Emacs Lisp libraries
+           auto-complete     ; auto completion
+           elscreen          ; window session manager
+           expand-region     ; Increase selected region by semantic units
+           flx-ido           ; flx integration for ido
+           ido-vertical-mode ; Makes ido-mode display vertically.
+           geiser            ; GNU Emacs and Scheme talk to each other
+           haskell-mode      ; A Haskell editing mode
+           jedi              ; Python auto-completion for Emacs
+           magit             ; control Git from Emacs
+           markdown-mode     ; Emacs Major mode for Markdown-formatted files.
+           monokai-theme     ; A fruity color theme for Emacs.
+           move-text         ; Move current line or region with M-up or M-down
+           multiple-cursors  ; Multiple cursors for Emacs.
+           org               ; Outline-based notes management and organizer
+           paredit           ; minor mode for editing parentheses
+           pretty-lambdada   ; the word `lambda' as the Greek letter.
+           smex              ; M-x interface with Ido-style fuzzy matching.
+           ))
+  (upgrade-or-install-package package))
 
 (dolist (feature
          '(auto-compile             ; auto-compile .el files
@@ -88,6 +84,10 @@ PACKAGE is installed and the current version is deleted."
               split-width-threshold 100        ; Split verticly by default.
               auto-fill-function 'do-auto-fill ; Auto-fill-mode everywhere.
               )
+
+(let ((default-directory (concat user-emacs-directory "site-lisp/")))
+  (normal-top-level-add-to-load-path '("."))
+  (normal-top-level-add-subdirs-to-load-path))
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
@@ -151,11 +151,6 @@ PACKAGE is installed and the current version is deleted."
 
 (smex-initialize)
 (global-set-key (kbd "M-x") 'smex)
-
-(setq user-full-name         "Lars Tveito"
-      user-mail-address      "larstvei@ifi.uio.no"
-      smtpmail-smtp-server   "smtp.uio.no"
-      smtpmail-smtp-service   587)
 
 (defun calendar-show-week (arg)
   "Displaying week number in calendar-mode."
@@ -237,6 +232,8 @@ PACKAGE is installed and the current version is deleted."
 (global-set-key (kbd "C-c e")  'mc/edit-lines)
 (global-set-key (kbd "C-c a")  'mc/mark-all-like-this)
 (global-set-key (kbd "C-c n")  'mc/mark-next-like-this)
+
+(global-set-key (kbd "C-c m") 'magit-status)
 
 (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
 
