@@ -75,6 +75,7 @@ PACKAGE is installed and the current version is deleted."
 (setq initial-scratch-message nil     ; Clean scratch buffer.
       inhibit-startup-message t       ; No splash screen please.
       default-input-method "TeX"      ; Use TeX when toggeling input method.
+      ring-bell-function 'ignore      ; Quite as a mouse.
       doc-view-continuous t           ; At page edge goto next/previous.
       echo-keystrokes 0.1             ; Show keystrokes asap.
       )
@@ -258,6 +259,16 @@ PACKAGE is installed and the current version is deleted."
         (goto-char pos)
         (backward-kill-sexp)
         (forward-sexp))
+    ad-do-it))
+
+(defadvice turn-on-flyspell (around check nil activate)
+  "Turns on flyspell only if a spell-checking tool is installed."
+  (when (executable-find ispell-program-name)
+    ad-do-it))
+
+(defadvice flyspell-prog-mode (around check nil activate)
+  "Turns on flyspell only if a spell-checking tool is installed."
+  (when (executable-find ispell-program-name)
     ad-do-it))
 
 (dolist (mode '(slime-repl-mode inferior-lisp-mode inferior-scheme-mode))

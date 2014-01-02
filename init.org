@@ -143,6 +143,7 @@
      (setq initial-scratch-message nil     ; Clean scratch buffer.
            inhibit-startup-message t       ; No splash screen please.
            default-input-method "TeX"      ; Use TeX when toggeling input method.
+           ring-bell-function 'ignore      ; Quite as a mouse.
            doc-view-continuous t           ; At page edge goto next/previous.
            echo-keystrokes 0.1             ; Show keystrokes asap.
            )
@@ -170,7 +171,7 @@
        (when (file-exists-p default-directory)
          (normal-top-level-add-to-load-path '("."))
          (normal-top-level-add-subdirs-to-load-path)))
-   #+END_SRC 
+   #+END_SRC
 
    Answering /yes/ and /no/ to each question from Emacs can be tedious, a
    single /y/ or /n/ will suffice.
@@ -482,7 +483,7 @@
    #+BEGIN_SRC emacs-lisp :tangle yes
      (global-set-key (kbd "C-c m") 'magit-status)
    #+END_SRC
-   
+
    Bindings for [[https://github.com/winterTTr/ace-jump-mode][ace-jump-mode]].
 
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -528,6 +529,24 @@
              (goto-char pos)
              (backward-kill-sexp)
              (forward-sexp))
+         ad-do-it))
+   #+END_SRC
+
+   =Flyspell= signals an error if there is no spell-checking tool is
+   installed. We can advice =turn-on=flyspell= and =flyspell-prog-mode= to
+   only try to enable =flyspell= if a spell-checking tool is avalible.
+
+   #+BEGIN_SRC emacs-lisp :tangle yes
+     (defadvice turn-on-flyspell (around check nil activate)
+       "Turns on flyspell only if a spell-checking tool is installed."
+       (when (executable-find ispell-program-name)
+         ad-do-it))
+   #+END_SRC
+
+   #+BEGIN_SRC emacs-lisp :tangle yes
+     (defadvice flyspell-prog-mode (around check nil activate)
+       "Turns on flyspell only if a spell-checking tool is installed."
+       (when (executable-find ispell-program-name)
          ad-do-it))
    #+END_SRC
 
