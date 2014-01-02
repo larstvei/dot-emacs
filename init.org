@@ -167,8 +167,9 @@
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (let ((default-directory (concat user-emacs-directory "site-lisp/")))
-       (normal-top-level-add-to-load-path '("."))
-       (normal-top-level-add-subdirs-to-load-path))
+       (when (file-exists-p default-directory)
+         (normal-top-level-add-to-load-path '("."))
+         (normal-top-level-add-subdirs-to-load-path)))
    #+END_SRC 
 
    Answering /yes/ and /no/ to each question from Emacs can be tedious, a

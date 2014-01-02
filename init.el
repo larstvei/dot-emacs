@@ -86,8 +86,9 @@ PACKAGE is installed and the current version is deleted."
               )
 
 (let ((default-directory (concat user-emacs-directory "site-lisp/")))
-  (normal-top-level-add-to-load-path '("."))
-  (normal-top-level-add-subdirs-to-load-path))
+  (when (file-exists-p default-directory)
+    (normal-top-level-add-to-load-path '("."))
+    (normal-top-level-add-subdirs-to-load-path)))
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
