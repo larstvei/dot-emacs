@@ -80,6 +80,10 @@ PACKAGE is installed and the current version is deleted."
       echo-keystrokes 0.1             ; Show keystrokes asap.
       )
 
+;; Some mac-bindings interfere with Emacs bindings.
+(when (boundp 'mac-pass-command-to-system)
+  (setq mac-pass-command-to-system nil))
+
 (setq-default fill-column 76                   ; Maximum line width.
               indent-tabs-mode nil             ; Use spaces instead of tabs.
               split-width-threshold 100        ; Split verticly by default.
@@ -176,6 +180,41 @@ PACKAGE is installed and the current version is deleted."
       calendar-latitude 60.0
       calendar-longitude 10.7
       calendar-location-name "Oslo, Norway")
+
+(let ((load-mail-setup nil))
+  (when load-mail-setup
+    ;; Dependent on both mu4e and smtpmail (for sending only).
+    (require 'mu4e)
+    (require 'smtpmail)
+
+    ;; Some basic mu4e settings.
+    (setq mu4e-maildir          "~/.ifimail"     ; top-level Maildir
+          mu4e-sent-folder      "/INBOX.Sent"    ; folder for sent messages
+          mu4e-drafts-folder    "/INBOX.Drafts"  ; unfinished messages
+          mu4e-trash-folder     "/INBOX.Trash"   ; trashed messages
+          mu4e-refile-folder    "/INBOX.Archive" ; saved messages
+          mu4e-get-mail-command "offlineimap"    ; use offlineimap to fetch mail
+          mu4e-view-show-images t                ; view images
+          mu4e-html2text-command
+          "html2text -utf8"                      ; use utf-8
+          )
+
+    ;; Setup for sending mail.
+    (setq user-full-name
+          "Lars Tveito"                        ; Your full name
+          user-mail-address
+          "larstvei@ifi.uio.no"                ; And email-address
+          smtpmail-smtp-server
+          "smtp.uio.no"                        ; Host to mail-server
+          smtpmail-smtp-service 465            ; Port to mail-server
+          smtpmail-stream-type 'ssl            ; Protocol used for sending
+          send-mail-function 'smtpmail-send-it ; Use smpt to send
+          mail-user-agent 'mu4e-user-agent     ; Use mu4e!
+          )
+
+    ;; Register file types that can be handled by ImageMagick.
+    (when (fboundp 'imagemagick-register-types)
+      (imagemagick-register-types))))
 
 (add-hook 'text-mode-hook 'turn-on-flyspell)
 
@@ -342,3 +381,5 @@ PACKAGE is installed and the current version is deleted."
 
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+
+(add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))
