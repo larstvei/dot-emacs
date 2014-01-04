@@ -56,16 +56,10 @@ PACKAGE is installed and the current version is deleted."
               (<= days-between-updates
                   (days-between
                    (current-time-string)
-<<<<<<< HEAD
                    (buffer-substring-no-properties start end))))
         ;; Remember to update the time-stamp.
         (when do-package-update-on-init
           (time-stamp))))))
-=======
-                   (buffer-substring-no-properties start end)))))))
-  ;; Remember to update the time-stamp.
-  (time-stamp))
->>>>>>> 4bf07b95098fd9e26f03b2217dc256200c136488
 
 (when do-package-update-on-init
   (package-refresh-contents))

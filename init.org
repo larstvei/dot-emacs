@@ -94,20 +94,12 @@
      (defvar do-package-update-on-init t)
    #+END_SRC
 
-<<<<<<< HEAD
    The tricky part is figuring out when the last time the Emacs was updated!
    Here is a hacky way of doing it, using [[http://www.gnu.org/software/emacs/manual/html_node/emacs/Time-Stamps.html][time-stamps]]. By adding a
    time-stamp to the init file, we can search for it and determine wither or
    not to do an update. After that we must run the =time-stamp=-function to
    update the time-stamp. Note that if there is no time-stamp in the
    init-file then packages will be updated every time you start Emacs.
-=======
-   The tricky part is figuring out when the last time the Emacs was opened!
-   Here is a hacky way of doing it, using [[http://www.gnu.org/software/emacs/manual/html_node/emacs/Time-Stamps.html][time-stamps]]. By adding a
-   time-stamp to the init file, we can search for it and determine wither or
-   not to do an update. After that we must run the =time-stamp=-function to
-   update the time-stamp.
->>>>>>> 4bf07b95098fd9e26f03b2217dc256200c136488
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (require 'time-stamp)
@@ -128,16 +120,10 @@
                    (<= days-between-updates
                        (days-between
                         (current-time-string)
-<<<<<<< HEAD
                         (buffer-substring-no-properties start end))))
              ;; Remember to update the time-stamp.
              (when do-package-update-on-init
                (time-stamp))))))
-=======
-                        (buffer-substring-no-properties start end)))))))
-       ;; Remember to update the time-stamp.
-       (time-stamp))
->>>>>>> 4bf07b95098fd9e26f03b2217dc256200c136488
    #+END_SRC
 
    Now we can use the function above to make sure packages are installed and
