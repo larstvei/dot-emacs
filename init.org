@@ -96,34 +96,34 @@
 
    The tricky part is figuring out when the last time the Emacs was updated!
    Here is a hacky way of doing it, using [[http://www.gnu.org/software/emacs/manual/html_node/emacs/Time-Stamps.html][time-stamps]]. By adding a
-   time-stamp to the init file, we can search for it and determine wither or
-   not to do an update. After that we must run the =time-stamp=-function to
-   update the time-stamp. Note that if there is no time-stamp in the
-   init-file then packages will be updated every time you start Emacs.
+   time-stamp to the a file, we can determine wither or not to do an
+   update. After that we must run the =time-stamp=-function to update the
+   time-stamp.
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (require 'time-stamp)
-     ;; Open the 'user-init-file' and write any changes.
-     (with-temp-file user-init-file
-       ;; Insert it's original content's.
-       (insert-file-contents user-init-file)
-       (forward-line time-stamp-line-limit)
-       (let ((bound (point)))
-         (goto-char (point-min))
-         ;; We search for the time-stamp.
-         (let ((start (re-search-forward time-stamp-start bound t))
-               (end (re-search-forward time-stamp-end bound t)))
-           (when (and start end)
-             ;; Assuming we have found a time-stamp, we check determine if it's
-             ;; time to update.
-             (setq do-package-update-on-init
-                   (<= days-between-updates
-                       (days-between
-                        (current-time-string)
-                        (buffer-substring-no-properties start end))))
-             ;; Remember to update the time-stamp.
-             (when do-package-update-on-init
-               (time-stamp))))))
+     ;; Open the package-last-update-file
+     (with-temp-file package-last-update-file
+       (if (file-exists-p package-last-update-file)
+           (progn
+             ;; Insert it's original content's.
+             (insert-file-contents package-last-update-file)
+             (let ((start (re-search-forward time-stamp-start nil t))
+                   (end (re-search-forward time-stamp-end nil t)))
+               (when (and start end)
+                 ;; Assuming we have found a time-stamp, we check determine if it's
+                 ;; time to update.
+                 (setq do-package-update-on-init
+                       (<= days-between-updates
+                           (days-between
+                            (current-time-string)
+                            (buffer-substring-no-properties start end))))
+                 ;; Remember to update the time-stamp.
+                 (when do-package-update-on-init
+                   (time-stamp)))))
+         ;; If no such file exists it is created with a time-stamp.
+         (insert "Time-stamp: <>")
+         (time-stamp)))
    #+END_SRC
 
    Now we can use the function above to make sure packages are installed and

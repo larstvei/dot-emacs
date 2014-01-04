@@ -39,27 +39,28 @@ PACKAGE is installed and the current version is deleted."
 (defvar do-package-update-on-init t)
 
 (require 'time-stamp)
-;; Open the 'user-init-file' and write any changes.
-(with-temp-file user-init-file
-  ;; Insert it's original content's.
-  (insert-file-contents user-init-file)
-  (forward-line time-stamp-line-limit)
-  (let ((bound (point)))
-    (goto-char (point-min))
-    ;; We search for the time-stamp.
-    (let ((start (re-search-forward time-stamp-start bound t))
-          (end (re-search-forward time-stamp-end bound t)))
-      (when (and start end)
-        ;; Assuming we have found a time-stamp, we check determine if it's
-        ;; time to update.
-        (setq do-package-update-on-init
-              (<= days-between-updates
-                  (days-between
-                   (current-time-string)
-                   (buffer-substring-no-properties start end))))
-        ;; Remember to update the time-stamp.
-        (when do-package-update-on-init
-          (time-stamp))))))
+;; Open the package-last-update-file
+(with-temp-file package-last-update-file
+  (if (file-exists-p package-last-update-file)
+      (progn
+        ;; Insert it's original content's.
+        (insert-file-contents package-last-update-file)
+        (let ((start (re-search-forward time-stamp-start nil t))
+              (end (re-search-forward time-stamp-end nil t)))
+          (when (and start end)
+            ;; Assuming we have found a time-stamp, we check determine if it's
+            ;; time to update.
+            (setq do-package-update-on-init
+                  (<= days-between-updates
+                      (days-between
+                       (current-time-string)
+                       (buffer-substring-no-properties start end))))
+            ;; Remember to update the time-stamp.
+            (when do-package-update-on-init
+              (time-stamp)))))
+    ;; If no such file exists it is created with a time-stamp.
+    (insert "Time-stamp: <>")
+    (time-stamp)))
 
 (when do-package-update-on-init
   (package-refresh-contents))
