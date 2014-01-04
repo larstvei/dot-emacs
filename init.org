@@ -370,7 +370,7 @@
    a =non-nil= value mail is setup.
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (let ((load-mail-setup nil))
+     (let ((load-mail-setup t))
        (when load-mail-setup
          ;; Dependent on both mu4e and smtpmail (for sending only).
          (require 'mu4e)

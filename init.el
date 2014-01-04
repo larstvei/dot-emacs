@@ -181,7 +181,7 @@ PACKAGE is installed and the current version is deleted."
       calendar-longitude 10.7
       calendar-location-name "Oslo, Norway")
 
-(let ((load-mail-setup nil))
+(let ((load-mail-setup t))
   (when load-mail-setup
     ;; Dependent on both mu4e and smtpmail (for sending only).
     (require 'mu4e)
