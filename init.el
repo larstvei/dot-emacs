@@ -181,50 +181,51 @@ PACKAGE is installed and the current version is deleted."
       calendar-longitude 10.7
       calendar-location-name "Oslo, Norway")
 
-(let ((load-mail-setup nil))
-  (when load-mail-setup
-    ;; Dependent on both mu4e and smtpmail (for sending only).
-    (require 'mu4e)
-    (require 'smtpmail)
+(defvar load-mail-setup nil)
 
-    ;; Some basic mu4e settings.
-    (setq mu4e-maildir          "~/.ifimail"     ; top-level Maildir
-          mu4e-sent-folder      "/INBOX.Sent"    ; folder for sent messages
-          mu4e-drafts-folder    "/INBOX.Drafts"  ; unfinished messages
-          mu4e-trash-folder     "/INBOX.Trash"   ; trashed messages
-          mu4e-refile-folder    "/INBOX.Archive" ; saved messages
-          mu4e-get-mail-command "offlineimap"    ; use offlineimap to fetch mail
-          mu4e-view-show-images t                ; view images
-          mu4e-html2text-command
-          "html2text -utf8"                      ; use utf-8
-          mu4e-compose-signature "- Lars"        ; Sign my name
-          )
+(when load-mail-setup
+  ;; Dependent on both mu4e and smtpmail (for sending only).
+  (require 'mu4e)
+  (require 'smtpmail)
 
-    ;; Setup for sending mail.
-    (setq user-full-name
-          "Lars Tveito"                        ; Your full name
-          user-mail-address
-          "larstvei@ifi.uio.no"                ; And email-address
-          smtpmail-smtp-server
-          "smtp.uio.no"                        ; Host to mail-server
-          smtpmail-smtp-service 465            ; Port to mail-server
-          smtpmail-stream-type 'ssl            ; Protocol used for sending
-          send-mail-function 'smtpmail-send-it ; Use smpt to send
-          mail-user-agent 'mu4e-user-agent     ; Use mu4e!
-          )
+  ;; Some basic mu4e settings.
+  (setq mu4e-maildir          "~/.ifimail"     ; top-level Maildir
+        mu4e-sent-folder      "/INBOX.Sent"    ; folder for sent messages
+        mu4e-drafts-folder    "/INBOX.Drafts"  ; unfinished messages
+        mu4e-trash-folder     "/INBOX.Trash"   ; trashed messages
+        mu4e-refile-folder    "/INBOX.Archive" ; saved messages
+        mu4e-get-mail-command "offlineimap"    ; use offlineimap to fetch mail
+        mu4e-view-show-images t                ; view images
+        mu4e-html2text-command
+        "html2text -utf8"                      ; use utf-8
+        mu4e-compose-signature "- Lars"        ; Sign my name
+        )
 
-    ;; Register file types that can be handled by ImageMagick.
-    (when (fboundp 'imagemagick-register-types)
-      (imagemagick-register-types))
+  ;; Setup for sending mail.
+  (setq user-full-name
+        "Lars Tveito"                        ; Your full name
+        user-mail-address
+        "larstvei@ifi.uio.no"                ; And email-address
+        smtpmail-smtp-server
+        "smtp.uio.no"                        ; Host to mail-server
+        smtpmail-smtp-service 465            ; Port to mail-server
+        smtpmail-stream-type 'ssl            ; Protocol used for sending
+        send-mail-function 'smtpmail-send-it ; Use smpt to send
+        mail-user-agent 'mu4e-user-agent     ; Use mu4e!
+        )
 
-    ;; A function to show mu4e and nothing else!
-    (defun show-mu4e ()
-      (interactive)
-      (mu4e)
-      (delete-other-windows))
+  ;; Register file types that can be handled by ImageMagick.
+  (when (fboundp 'imagemagick-register-types)
+    (imagemagick-register-types))
 
-    ;; Overwrite the native 'compose-mail' binding to 'show-mu4e'.
-    (global-set-key (kbd "C-x m") 'show-mu4e)))
+  ;; A function to show mu4e and nothing else!
+  (defun show-mu4e ()
+    (interactive)
+    (mu4e)
+    (delete-other-windows))
+
+  ;; Overwrite the native 'compose-mail' binding to 'show-mu4e'.
+  (global-set-key (kbd "C-x m") 'show-mu4e))
 
 (add-hook 'text-mode-hook 'turn-on-flyspell)
 
