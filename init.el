@@ -181,7 +181,7 @@ PACKAGE is installed and the current version is deleted."
       calendar-longitude 10.7
       calendar-location-name "Oslo, Norway")
 
-(let ((load-mail-setup t))
+(let ((load-mail-setup nil))
   (when load-mail-setup
     ;; Dependent on both mu4e and smtpmail (for sending only).
     (require 'mu4e)
@@ -197,6 +197,7 @@ PACKAGE is installed and the current version is deleted."
           mu4e-view-show-images t                ; view images
           mu4e-html2text-command
           "html2text -utf8"                      ; use utf-8
+          mu4e-compose-signature "- Lars"        ; Sign my name
           )
 
     ;; Setup for sending mail.
@@ -216,9 +217,14 @@ PACKAGE is installed and the current version is deleted."
     (when (fboundp 'imagemagick-register-types)
       (imagemagick-register-types))
 
-    ;; Overwrite the native 'compose-mail' binding to 'mu4e'.
-    (global-set-key (kbd "C-x m") 'mu4e)
-    ))
+    ;; A function to show mu4e and nothing else!
+    (defun show-mu4e ()
+      (interactive)
+      (mu4e)
+      (delete-other-windows))
+
+    ;; Overwrite the native 'compose-mail' binding to 'show-mu4e'.
+    (global-set-key (kbd "C-x m") 'show-mu4e)))
 
 (add-hook 'text-mode-hook 'turn-on-flyspell)
 
@@ -270,13 +276,6 @@ PACKAGE is installed and the current version is deleted."
     (indent-region beg end)
     (whitespace-cleanup)
     (untabify beg (if (< end (point-max)) end (point-max)))))
-
-(defadvice mu4e (after show-only-mu4e (background) activate)
-  "When evoking the mu4e command, delete all other windows. If
-  BACKGROUND is non-nil we don't want to change the functions
-  behaviour."
-  (unless background
-    (delete-other-windows)))
 
 (global-set-key (kbd "C-'")  'er/expand-region)
 (global-set-key (kbd "C-;")  'er/contract-region)
