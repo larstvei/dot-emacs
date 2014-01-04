@@ -35,7 +35,34 @@ PACKAGE is installed and the current version is deleted."
                          (package-desc-vers (cdr pkg-desc)))))
       (package-install package))))
 
-(package-refresh-contents)
+(defvar days-between-updates 1)
+(defvar do-package-update-on-init t)
+
+(require 'time-stamp)
+;; Open the 'user-init-file' and write any changes.
+(with-temp-file user-init-file
+  ;; Insert it's original content's.
+  (insert-file-contents user-init-file)
+  (forward-line time-stamp-line-limit)
+  (let ((bound (point)))
+    (goto-char (point-min))
+    ;; We search for the time-stamp.
+    (let ((start (re-search-forward time-stamp-start bound t))
+          (end (re-search-forward time-stamp-end bound t)))
+      (when (and start end)
+        ;; Assuming we have found a time-stamp, we check determine if it's
+        ;; time to update.
+        (setq do-package-update-on-init
+              (<= days-between-updates
+                  (days-between
+                   (current-time-string)
+                   (buffer-substring-no-properties start end)))))))
+  ;; Remember to update the time-stamp.
+  (time-stamp))
+
+(when do-package-update-on-init
+  (package-refresh-contents))
+
 (dolist (package
          '(ac-geiser         ; Auto-complete backend for geiser
            ac-slime          ; An auto-complete source using slime completions
@@ -59,7 +86,8 @@ PACKAGE is installed and the current version is deleted."
            pretty-lambdada   ; the word `lambda' as the Greek letter.
            smex              ; M-x interface with Ido-style fuzzy matching.
            ))
-  (upgrade-or-install-package package))
+  (when do-package-update-on-init
+    (upgrade-or-install-package package)))
 
 (dolist (feature
          '(auto-compile             ; auto-compile .el files

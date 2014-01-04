@@ -83,12 +83,55 @@
            (package-install package))))
    #+END_SRC
 
+   The =package-refresh-contents= function downloads archive descriptions,
+   this is a major bottleneck in this configuration. To avoid this we can
+   try to only check for updates once every day or so. Here are to
+   variables. The first specifies how often we should check for updates. The
+   second specifies wither one should update during the initialization.
+
+   #+BEGIN_SRC emacs-lisp :tangle yes
+     (defvar days-between-updates 1)
+     (defvar do-package-update-on-init t)
+   #+END_SRC
+
+   The tricky part is figuring out when the last time the Emacs was opened!
+   Here is a hacky way of doing it, using [[http://www.gnu.org/software/emacs/manual/html_node/emacs/Time-Stamps.html][time-stamps]]. By adding a
+   time-stamp to the init file, we can search for it and determine wither or
+   not to do an update. After that we must run the =time-stamp=-function to
+   update the time-stamp.
+
+   #+BEGIN_SRC emacs-lisp :tangle yes
+     (require 'time-stamp)
+     ;; Open the 'user-init-file' and write any changes.
+     (with-temp-file user-init-file
+       ;; Insert it's original content's.
+       (insert-file-contents user-init-file)
+       (forward-line time-stamp-line-limit)
+       (let ((bound (point)))
+         (goto-char (point-min))
+         ;; We search for the time-stamp.
+         (let ((start (re-search-forward time-stamp-start bound t))
+               (end (re-search-forward time-stamp-end bound t)))
+           (when (and start end)
+             ;; Assuming we have found a time-stamp, we check determine if it's
+             ;; time to update.
+             (setq do-package-update-on-init
+                   (<= days-between-updates
+                       (days-between
+                        (current-time-string)
+                        (buffer-substring-no-properties start end)))))))
+       ;; Remember to update the time-stamp.
+       (time-stamp))
+   #+END_SRC
+
    Now we can use the function above to make sure packages are installed and
    up to date. Here are some packages I find useful (some of these
    configurations are also dependent on them).
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (package-refresh-contents)
+     (when do-package-update-on-init
+       (package-refresh-contents))
+
      (dolist (package
               '(ac-geiser         ; Auto-complete backend for geiser
                 ac-slime          ; An auto-complete source using slime completions
@@ -112,7 +155,8 @@
                 pretty-lambdada   ; the word `lambda' as the Greek letter.
                 smex              ; M-x interface with Ido-style fuzzy matching.
                 ))
-       (upgrade-or-install-package package))
+       (when do-package-update-on-init
+         (upgrade-or-install-package package)))
    #+END_SRC
 
 ** Require
@@ -371,11 +415,11 @@
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (defvar load-mail-setup nil)
-     
+
      (when load-mail-setup
        ;; We need mu4e
        (require 'mu4e)
-     
+
        ;; Some basic mu4e settings.
        (setq mu4e-maildir           "~/.ifimail"     ; top-level Maildir
              mu4e-sent-folder       "/INBOX.Sent"    ; folder for sent messages
@@ -390,7 +434,7 @@
              mu4e-html2text-command
              "html2text -utf8"                       ; use utf-8
              )
-     
+
        ;; Setup for sending mail.
        (setq user-full-name
              "Lars Tveito"                        ; Your full name
@@ -403,11 +447,11 @@
              send-mail-function 'smtpmail-send-it ; Use smpt to send
              mail-user-agent 'mu4e-user-agent     ; Use mu4e!
              )
-     
+
        ;; Register file types that can be handled by ImageMagick.
        (when (fboundp 'imagemagick-register-types)
          (imagemagick-register-types))
-     
+
        ;; A wrapper function to start (if necessary), fetch mail and delete other
        ;; windows.
        (defun show-mu4e ()
@@ -415,7 +459,7 @@
          (mu4e)
          (mu4e-update-mail-and-index t)
          (delete-other-windows))
-     
+
        ;; Overwrite the native 'compose-mail' binding to 'show-mu4e'.
        (global-set-key (kbd "C-x m") 'show-mu4e))
    #+END_SRC
