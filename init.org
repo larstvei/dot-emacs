@@ -373,21 +373,22 @@
      (defvar load-mail-setup nil)
      
      (when load-mail-setup
-       ;; Dependent on both mu4e and smtpmail (for sending only).
+       ;; We need mu4e
        (require 'mu4e)
-       (require 'smtpmail)
      
        ;; Some basic mu4e settings.
-       (setq mu4e-maildir          "~/.ifimail"     ; top-level Maildir
-             mu4e-sent-folder      "/INBOX.Sent"    ; folder for sent messages
-             mu4e-drafts-folder    "/INBOX.Drafts"  ; unfinished messages
-             mu4e-trash-folder     "/INBOX.Trash"   ; trashed messages
-             mu4e-refile-folder    "/INBOX.Archive" ; saved messages
-             mu4e-get-mail-command "offlineimap"    ; use offlineimap to fetch mail
-             mu4e-view-show-images t                ; view images
+       (setq mu4e-maildir           "~/.ifimail"     ; top-level Maildir
+             mu4e-sent-folder       "/INBOX.Sent"    ; folder for sent messages
+             mu4e-drafts-folder     "/INBOX.Drafts"  ; unfinished messages
+             mu4e-trash-folder      "/INBOX.Trash"   ; trashed messages
+             mu4e-refile-folder     "/INBOX.Archive" ; saved messages
+             mu4e-get-mail-command  "offlineimap"    ; offlineimap to fetch mail
+             mu4e-compose-signature "- Lars"         ; Sign my name
+             mu4e-update-interval   (* 5 60)         ; update every 5 min
+             mu4e-confirm-quit      nil              ; just quit
+             mu4e-view-show-images  t                ; view images
              mu4e-html2text-command
-             "html2text -utf8"                      ; use utf-8
-             mu4e-compose-signature "- Lars"        ; Sign my name
+             "html2text -utf8"                       ; use utf-8
              )
      
        ;; Setup for sending mail.
@@ -407,10 +408,12 @@
        (when (fboundp 'imagemagick-register-types)
          (imagemagick-register-types))
      
-       ;; A function to show mu4e and nothing else!
+       ;; A wrapper function to start (if necessary), fetch mail and delete other
+       ;; windows.
        (defun show-mu4e ()
          (interactive)
          (mu4e)
+         (mu4e-update-mail-and-index t)
          (delete-other-windows))
      
        ;; Overwrite the native 'compose-mail' binding to 'show-mu4e'.
