@@ -375,7 +375,7 @@
          ;; Dependent on both mu4e and smtpmail (for sending only).
          (require 'mu4e)
          (require 'smtpmail)
-     
+
          ;; Some basic mu4e settings.
          (setq mu4e-maildir          "~/.ifimail"     ; top-level Maildir
                mu4e-sent-folder      "/INBOX.Sent"    ; folder for sent messages
@@ -387,7 +387,7 @@
                mu4e-html2text-command
                "html2text -utf8"                      ; use utf-8
                )
-     
+
          ;; Setup for sending mail.
          (setq user-full-name
                "Lars Tveito"                        ; Your full name
@@ -400,10 +400,14 @@
                send-mail-function 'smtpmail-send-it ; Use smpt to send
                mail-user-agent 'mu4e-user-agent     ; Use mu4e!
                )
-     
+
          ;; Register file types that can be handled by ImageMagick.
          (when (fboundp 'imagemagick-register-types)
-           (imagemagick-register-types))))
+           (imagemagick-register-types))
+
+         ;; Overwrite the native 'compose-mail' binding to 'mu4e'.
+         (global-set-key (kbd "C-x m") 'mu4e)
+         ))
    #+END_SRC
 
 ** Flyspell
@@ -510,6 +514,18 @@
          (untabify beg (if (< end (point-max)) end (point-max)))))
    #+END_SRC
 
+   When browsing mail with =mu4e= I find it best not to have other windows
+   visible.
+
+   #+BEGIN_SRC emacs-lisp :tangle yes
+     (defadvice mu4e (after show-only-mu4e (background) activate)
+       "When evoking the mu4e command, delete all other windows. If
+       BACKGROUND is non-nil we don't want to change the functions
+       behaviour."
+       (unless background
+         (delete-other-windows)))
+   #+END_SRC
+
 ** Key bindings
 
    Bindings for [[https://github.com/magnars/expand-region.el][expand-region]].
@@ -539,9 +555,17 @@
      (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
    #+END_SRC
 
+   Bindings for =move-text=.
+
+   #+BEGIN_SRC emacs-lisp :tangle yes
+     (global-set-key (kbd "<M-S-up>")    'move-text-up)
+     (global-set-key (kbd "<M-S-down>")  'move-text-down)
+   #+END_SRC
+
    Bind some native Emacs functions.
 
    #+BEGIN_SRC emacs-lisp :tangle yes
+     (global-set-key (kbd "C-c s")    'ispell-word)
      (global-set-key (kbd "C-c t")    'org-agenda-list)
      (global-set-key (kbd "C-x k")    'kill-this-buffer)
      (global-set-key (kbd "C-x C-r")  'recentf-ido-find-file)
@@ -554,13 +578,6 @@
      (global-set-key (kbd "C-x t")    'switch-to-shell)
      (global-set-key (kbd "C-c d")    'duplicate-thing)
      (global-set-key (kbd "<C-tab>")  'tidy)
-   #+END_SRC
-
-   Bindings for =move-text=.
-
-   #+BEGIN_SRC emacs-lisp :tangle yes
-     (global-set-key (kbd "<M-S-up>")    'move-text-up)
-     (global-set-key (kbd "<M-S-down>")  'move-text-down)
    #+END_SRC
 
 ** Advice
@@ -787,4 +804,3 @@
    #+BEGIN_SRC emacs-lisp :tangle yes
      (add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))
    #+END_SRC
-

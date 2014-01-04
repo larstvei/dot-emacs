@@ -214,7 +214,11 @@ PACKAGE is installed and the current version is deleted."
 
     ;; Register file types that can be handled by ImageMagick.
     (when (fboundp 'imagemagick-register-types)
-      (imagemagick-register-types))))
+      (imagemagick-register-types))
+
+    ;; Overwrite the native 'compose-mail' binding to 'mu4e'.
+    (global-set-key (kbd "C-x m") 'mu4e)
+    ))
 
 (add-hook 'text-mode-hook 'turn-on-flyspell)
 
@@ -267,6 +271,13 @@ PACKAGE is installed and the current version is deleted."
     (whitespace-cleanup)
     (untabify beg (if (< end (point-max)) end (point-max)))))
 
+(defadvice mu4e (after show-only-mu4e (background) activate)
+  "When evoking the mu4e command, delete all other windows. If
+  BACKGROUND is non-nil we don't want to change the functions
+  behaviour."
+  (unless background
+    (delete-other-windows)))
+
 (global-set-key (kbd "C-'")  'er/expand-region)
 (global-set-key (kbd "C-;")  'er/contract-region)
 
@@ -278,6 +289,10 @@ PACKAGE is installed and the current version is deleted."
 
 (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
 
+(global-set-key (kbd "<M-S-up>")    'move-text-up)
+(global-set-key (kbd "<M-S-down>")  'move-text-down)
+
+(global-set-key (kbd "C-c s")    'ispell-word)
 (global-set-key (kbd "C-c t")    'org-agenda-list)
 (global-set-key (kbd "C-x k")    'kill-this-buffer)
 (global-set-key (kbd "C-x C-r")  'recentf-ido-find-file)
@@ -286,9 +301,6 @@ PACKAGE is installed and the current version is deleted."
 (global-set-key (kbd "C-x t")    'switch-to-shell)
 (global-set-key (kbd "C-c d")    'duplicate-thing)
 (global-set-key (kbd "<C-tab>")  'tidy)
-
-(global-set-key (kbd "<M-S-up>")    'move-text-up)
-(global-set-key (kbd "<M-S-down>")  'move-text-down)
 
 (defadvice eval-last-sexp (around replace-sexp (arg) activate)
   "Replace sexp when called with a prefix argument."
