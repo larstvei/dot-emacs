@@ -65,32 +65,31 @@ PACKAGE is installed and the current version is deleted."
     (time-stamp)))
 
 (when do-package-update-on-init
-  (package-refresh-contents))
+  (package-refresh-contents)
 
-(dolist (package
-         '(ac-geiser         ; Auto-complete backend for geiser
-           ac-slime          ; An auto-complete source using slime completions
-           ace-jump-mode     ; quick cursor location minor mode
-           auto-compile      ; automatically compile Emacs Lisp libraries
-           auto-complete     ; auto completion
-           elscreen          ; window session manager
-           expand-region     ; Increase selected region by semantic units
-           flx-ido           ; flx integration for ido
-           ido-vertical-mode ; Makes ido-mode display vertically.
-           geiser            ; GNU Emacs and Scheme talk to each other
-           haskell-mode      ; A Haskell editing mode
-           jedi              ; Python auto-completion for Emacs
-           magit             ; control Git from Emacs
-           markdown-mode     ; Emacs Major mode for Markdown-formatted files.
-           monokai-theme     ; A fruity color theme for Emacs.
-           move-text         ; Move current line or region with M-up or M-down
-           multiple-cursors  ; Multiple cursors for Emacs.
-           org               ; Outline-based notes management and organizer
-           paredit           ; minor mode for editing parentheses
-           pretty-lambdada   ; the word `lambda' as the Greek letter.
-           smex              ; M-x interface with Ido-style fuzzy matching.
-           ))
-  (when do-package-update-on-init
+  (dolist (package
+           '(ac-geiser         ; Auto-complete backend for geiser
+             ac-slime          ; An auto-complete source using slime completions
+             ace-jump-mode     ; quick cursor location minor mode
+             auto-compile      ; automatically compile Emacs Lisp libraries
+             auto-complete     ; auto completion
+             elscreen          ; window session manager
+             expand-region     ; Increase selected region by semantic units
+             flx-ido           ; flx integration for ido
+             ido-vertical-mode ; Makes ido-mode display vertically.
+             geiser            ; GNU Emacs and Scheme talk to each other
+             haskell-mode      ; A Haskell editing mode
+             jedi              ; Python auto-completion for Emacs
+             magit             ; control Git from Emacs
+             markdown-mode     ; Emacs Major mode for Markdown-formatted files.
+             monokai-theme     ; A fruity color theme for Emacs.
+             move-text         ; Move current line or region with M-up or M-down
+             multiple-cursors  ; Multiple cursors for Emacs.
+             org               ; Outline-based notes management and organizer
+             paredit           ; minor mode for editing parentheses
+             pretty-lambdada   ; the word `lambda' as the Greek letter.
+             smex              ; M-x interface with Ido-style fuzzy matching.
+             ))
     (upgrade-or-install-package package)))
 
 (dolist (feature
