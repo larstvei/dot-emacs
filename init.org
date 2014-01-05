@@ -137,7 +137,7 @@
    #+BEGIN_SRC emacs-lisp :tangle yes
      (when do-package-update-on-init
        (package-refresh-contents)
-     
+
        (dolist (package
                 '(ac-geiser         ; Auto-complete backend for geiser
                   ac-slime          ; An auto-complete source using slime completions
@@ -159,8 +159,7 @@
                   org               ; Outline-based notes management and organizer
                   paredit           ; minor mode for editing parentheses
                   pretty-lambdada   ; the word `lambda' as the Greek letter.
-                  smex              ; M-x interface with Ido-style fuzzy matching.
-                  ))
+                  smex))            ; M-x interface with Ido-style fuzzy matching.
          (upgrade-or-install-package package)))
    #+END_SRC
 
@@ -177,8 +176,7 @@
                 pretty-lambdada          ; show 'lambda' as the greek letter.
                 ox-latex                 ; the latex-exporter (from org)
                 recentf                  ; recently opened files
-                tex-mode                 ; TeX, LaTeX, and SliTeX mode commands
-                ))
+                tex-mode))               ; TeX, LaTeX, and SliTeX mode commands
        (require feature))
    #+END_SRC
 
@@ -194,8 +192,7 @@
            default-input-method "TeX"      ; Use TeX when toggeling input method.
            ring-bell-function 'ignore      ; Quite as a mouse.
            doc-view-continuous t           ; At page edge goto next/previous.
-           echo-keystrokes 0.1             ; Show keystrokes asap.
-           )
+           echo-keystrokes 0.1)            ; Show keystrokes asap.
 
      ;; Some mac-bindings interfere with Emacs bindings.
      (when (boundp 'mac-pass-command-to-system)
@@ -208,11 +205,10 @@
    buffer-local variable's default value.
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (setq-default fill-column 76                   ; Maximum line width.
-                   indent-tabs-mode nil             ; Use spaces instead of tabs.
-                   split-width-threshold 100        ; Split verticly by default.
-                   auto-fill-function 'do-auto-fill ; Auto-fill-mode everywhere.
-                   )
+     (setq-default fill-column 76                    ; Maximum line width.
+                   indent-tabs-mode nil              ; Use spaces instead of tabs.
+                   split-width-threshold 100         ; Split verticly by default.
+                   auto-fill-function 'do-auto-fill) ; Auto-fill-mode everywhere.
    #+END_SRC
 
    The =load-path= specifies where Emacs should look for =.el=-files (or
@@ -288,8 +284,7 @@
      (dolist (mode
               '(tool-bar-mode                ; No toolbars, more room for text.
                 scroll-bar-mode              ; No scroll bars either.
-                blink-cursor-mode            ; The blinking cursor gets old.
-                ))
+                blink-cursor-mode))          ; The blinking cursor gets old.
        (funcall mode 0))
    #+END_SRC
 
@@ -304,8 +299,7 @@
                 column-number-mode         ; Show column number in mode line.
                 delete-selection-mode      ; Replace selected text.
                 recentf-mode               ; Recently opened files.
-                show-paren-mode            ; Highlight matching parentheses.
-                ))
+                show-paren-mode))          ; Highlight matching parentheses.
        (funcall mode 1))
    #+END_SRC
 
@@ -343,8 +337,7 @@
               '(ido-mode                   ; Interactivly do.
                 ido-everywhere             ; Use Ido for all buffer/file reading.
                 ido-vertical-mode          ; Makes ido-mode display vertically.
-                flx-ido-mode               ; Toggle flx ido mode.
-                ))
+                flx-ido-mode))             ; Toggle flx ido mode.
        (funcall mode 1))
    #+END_SRC
 
@@ -437,8 +430,7 @@
              mu4e-confirm-quit      nil              ; just quit
              mu4e-view-show-images  t                ; view images
              mu4e-html2text-command
-             "html2text -utf8"                       ; use utf-8
-             )
+             "html2text -utf8")                      ; use utf-8
 
        ;; Setup for sending mail.
        (setq user-full-name
@@ -450,8 +442,7 @@
              smtpmail-smtp-service 465            ; Port to mail-server
              smtpmail-stream-type 'ssl            ; Protocol used for sending
              send-mail-function 'smtpmail-send-it ; Use smpt to send
-             mail-user-agent 'mu4e-user-agent     ; Use mu4e!
-             )
+             mail-user-agent 'mu4e-user-agent)    ; Use mu4e!
 
        ;; Register file types that can be handled by ImageMagick.
        (when (fboundp 'imagemagick-register-types)
@@ -512,10 +503,9 @@
    I use =org-agenda= for appointments and such.
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (setq org-agenda-start-on-weekday nil             ; Show agenda from today.
-           org-agenda-files '("~/Dropbox/life.org")    ; A list of agenda files.
-           org-agenda-default-appointment-duration 120 ; 2 hours appointments.
-           )
+     (setq org-agenda-start-on-weekday nil              ; Show agenda from today.
+           org-agenda-files '("~/Dropbox/life.org")     ; A list of agenda files.
+           org-agenda-default-appointment-duration 120) ; 2 hours appointments.
    #+END_SRC
 
    When editing org-files with source-blocks, we want the source blocks to

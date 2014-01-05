@@ -88,8 +88,7 @@ PACKAGE is installed and the current version is deleted."
              org               ; Outline-based notes management and organizer
              paredit           ; minor mode for editing parentheses
              pretty-lambdada   ; the word `lambda' as the Greek letter.
-             smex              ; M-x interface with Ido-style fuzzy matching.
-             ))
+             smex))            ; M-x interface with Ido-style fuzzy matching.
     (upgrade-or-install-package package)))
 
 (dolist (feature
@@ -99,8 +98,7 @@ PACKAGE is installed and the current version is deleted."
            pretty-lambdada          ; show 'lambda' as the greek letter.
            ox-latex                 ; the latex-exporter (from org)
            recentf                  ; recently opened files
-           tex-mode                 ; TeX, LaTeX, and SliTeX mode commands
-           ))
+           tex-mode))               ; TeX, LaTeX, and SliTeX mode commands
   (require feature))
 
 (setq initial-scratch-message nil     ; Clean scratch buffer.
@@ -108,18 +106,16 @@ PACKAGE is installed and the current version is deleted."
       default-input-method "TeX"      ; Use TeX when toggeling input method.
       ring-bell-function 'ignore      ; Quite as a mouse.
       doc-view-continuous t           ; At page edge goto next/previous.
-      echo-keystrokes 0.1             ; Show keystrokes asap.
-      )
+      echo-keystrokes 0.1)            ; Show keystrokes asap.
 
 ;; Some mac-bindings interfere with Emacs bindings.
 (when (boundp 'mac-pass-command-to-system)
   (setq mac-pass-command-to-system nil))
 
-(setq-default fill-column 76                   ; Maximum line width.
-              indent-tabs-mode nil             ; Use spaces instead of tabs.
-              split-width-threshold 100        ; Split verticly by default.
-              auto-fill-function 'do-auto-fill ; Auto-fill-mode everywhere.
-              )
+(setq-default fill-column 76                    ; Maximum line width.
+              indent-tabs-mode nil              ; Use spaces instead of tabs.
+              split-width-threshold 100         ; Split verticly by default.
+              auto-fill-function 'do-auto-fill) ; Auto-fill-mode everywhere.
 
 (let ((default-directory (concat user-emacs-directory "site-lisp/")))
   (when (file-exists-p default-directory)
@@ -151,8 +147,7 @@ PACKAGE is installed and the current version is deleted."
 (dolist (mode
          '(tool-bar-mode                ; No toolbars, more room for text.
            scroll-bar-mode              ; No scroll bars either.
-           blink-cursor-mode            ; The blinking cursor gets old.
-           ))
+           blink-cursor-mode))          ; The blinking cursor gets old.
   (funcall mode 0))
 
 (dolist (mode
@@ -162,8 +157,7 @@ PACKAGE is installed and the current version is deleted."
            column-number-mode         ; Show column number in mode line.
            delete-selection-mode      ; Replace selected text.
            recentf-mode               ; Recently opened files.
-           show-paren-mode            ; Highlight matching parentheses.
-           ))
+           show-paren-mode))          ; Highlight matching parentheses.
   (funcall mode 1))
 
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
@@ -177,8 +171,7 @@ PACKAGE is installed and the current version is deleted."
          '(ido-mode                   ; Interactivly do.
            ido-everywhere             ; Use Ido for all buffer/file reading.
            ido-vertical-mode          ; Makes ido-mode display vertically.
-           flx-ido-mode               ; Toggle flx ido mode.
-           ))
+           flx-ido-mode))             ; Toggle flx ido mode.
   (funcall mode 1))
 
 (setq ido-file-extensions-order
@@ -230,8 +223,7 @@ PACKAGE is installed and the current version is deleted."
         mu4e-confirm-quit      nil              ; just quit
         mu4e-view-show-images  t                ; view images
         mu4e-html2text-command
-        "html2text -utf8"                       ; use utf-8
-        )
+        "html2text -utf8")                      ; use utf-8
 
   ;; Setup for sending mail.
   (setq user-full-name
@@ -243,8 +235,7 @@ PACKAGE is installed and the current version is deleted."
         smtpmail-smtp-service 465            ; Port to mail-server
         smtpmail-stream-type 'ssl            ; Protocol used for sending
         send-mail-function 'smtpmail-send-it ; Use smpt to send
-        mail-user-agent 'mu4e-user-agent     ; Use mu4e!
-        )
+        mail-user-agent 'mu4e-user-agent)    ; Use mu4e!
 
   ;; Register file types that can be handled by ImageMagick.
   (when (fboundp 'imagemagick-register-types)
@@ -275,10 +266,9 @@ LANGUAGES (cyclic) list."
   (ispell-change-dictionary
    (car (setq ispell-languages (cdr ispell-languages)))))
 
-(setq org-agenda-start-on-weekday nil             ; Show agenda from today.
-      org-agenda-files '("~/Dropbox/life.org")    ; A list of agenda files.
-      org-agenda-default-appointment-duration 120 ; 2 hours appointments.
-      )
+(setq org-agenda-start-on-weekday nil              ; Show agenda from today.
+      org-agenda-files '("~/Dropbox/life.org")     ; A list of agenda files.
+      org-agenda-default-appointment-duration 120) ; 2 hours appointments.
 
 (setq org-src-fontify-natively t)
 
