@@ -489,6 +489,26 @@
      (ac-flyspell-workaround)
    #+END_SRC
 
+   To cycle through dictionary's we can define a variable containing a
+   cyclic list of installed language packs.
+
+   #+BEGIN_SRC emacs-lisp :tangle yes
+     (defvar ispell-languages '#1=("english" "norsk" . #1#))
+   #+END_SRC
+
+   Now we only need a small function to change set the language and shift
+   the list.
+
+   #+BEGIN_SRC emacs-lisp :tangle yes
+     (defun cycle-languages ()
+       "Changes the ispell-dictionary to whatever is the next (or cdr) in the
+     LANGUAGES (cyclic) list."
+       (interactive)
+       (ispell-change-dictionary
+        (car (setq ispell-languages (cdr ispell-languages)))))
+   #+END_SRC
+
+
 ** Org
 
    I use =org-agenda= for appointments and such.
@@ -622,6 +642,7 @@
    Bind the functions defined [[sec:defuns][above]].
 
    #+BEGIN_SRC emacs-lisp :tangle yes
+     (global-set-key (kbd "C-c l")    'cycle-languages)
      (global-set-key (kbd "C-c j")    'remove-whitespace-inbetween)
      (global-set-key (kbd "C-x t")    'switch-to-shell)
      (global-set-key (kbd "C-c d")    'duplicate-thing)

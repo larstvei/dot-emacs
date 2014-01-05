@@ -267,6 +267,15 @@ PACKAGE is installed and the current version is deleted."
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 (ac-flyspell-workaround)
 
+(defvar ispell-languages '#1=("english" "norsk" . #1#))
+
+(defun cycle-languages ()
+  "Changes the ispell-dictionary to whatever is the next (or cdr) in the
+LANGUAGES (cyclic) list."
+  (interactive)
+  (ispell-change-dictionary
+   (car (setq ispell-languages (cdr ispell-languages)))))
+
 (setq org-agenda-start-on-weekday nil             ; Show agenda from today.
       org-agenda-files '("~/Dropbox/life.org")    ; A list of agenda files.
       org-agenda-default-appointment-duration 120 ; 2 hours appointments.
@@ -332,6 +341,7 @@ PACKAGE is installed and the current version is deleted."
 (global-set-key (kbd "C-x k")    'kill-this-buffer)
 (global-set-key (kbd "C-x C-r")  'recentf-ido-find-file)
 
+(global-set-key (kbd "C-c l")    'cycle-languages)
 (global-set-key (kbd "C-c j")    'remove-whitespace-inbetween)
 (global-set-key (kbd "C-x t")    'switch-to-shell)
 (global-set-key (kbd "C-c d")    'duplicate-thing)
