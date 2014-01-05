@@ -396,7 +396,7 @@
                     'font-lock-face 'calendar-iso-week-face))))
    #+END_SRC
 
-   Evaluate the =toggle-calendar-show-week= function.
+   Evaluate the =calendar-show-week= function.
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (calendar-show-week t)
