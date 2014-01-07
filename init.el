@@ -418,6 +418,8 @@ LANGUAGES (cyclic) list."
                  (substring str (string-match "-" str))))
        org-latex-pdf-process))
 
+(setcar (cdr (cddaar tex-compile-commands)) " -shell-escape ")
+
 (setq jedi:server-command
       (cons "python3" (cdr jedi:server-command))
       python-shell-interpreter "python3")

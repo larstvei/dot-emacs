@@ -816,7 +816,10 @@
    #+END_SRC
 
    Because [[https://code.google.com/p/minted/][Minted]] uses [[http://pygments.org][Pygments]] (an external process), we must add the
-   =-shell-escape= option to the =org-latex-pdf-process= commands.
+   =-shell-escape= option to the =org-latex-pdf-process= commands. The
+   =tex-compile-commands= variable controls the default compile command for
+   Tex- and LaTeX-mode, we can add the flag with a rather dirty statement
+   (if anyone finds a nicer way to do this, please let me know).
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (setq org-latex-pdf-process
@@ -825,6 +828,8 @@
               (concat "pdflatex -shell-escape "
                       (substring str (string-match "-" str))))
             org-latex-pdf-process))
+     
+     (setcar (cdr (cddaar tex-compile-commands)) " -shell-escape ")
    #+END_SRC
 
 ** Python
