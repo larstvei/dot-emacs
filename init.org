@@ -62,8 +62,9 @@
          (let* ((local-pkg-desc (or (assq package package-alist)
                                     (assq package package--builtins)))
                 (newest-pkg-desc (assq package package-archive-contents)))
-           (version-list-= (package-desc-vers (cdr local-pkg-desc))
-                           (package-desc-vers (cdr newest-pkg-desc))))))
+           (and local-pkg-desc newest-pkg-desc
+                (version-list-= (package-desc-vers (cdr local-pkg-desc))
+                                (package-desc-vers (cdr newest-pkg-desc)))))))
    #+END_SRC
 
    Let's write a function to install a package if it is not installed or
@@ -682,7 +683,7 @@
    function to activate =pretty-lambda-mode= in lisp modes.
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (dolist (mode '(slime-repl-mode inferior-lisp-mode inferior-scheme-mode))
+     (dolist (mode '(slime-repl-mode geiser-repl-mode))
        (add-to-list 'pretty-lambda-auto-modes mode))
 
      (pretty-lambda-for-modes)
@@ -740,14 +741,15 @@
 *** Scheme
 
     [[http://www.nongnu.org/geiser/][Geiser]] provides features similar to Slime for Scheme editing. Everything
-    works pretty much out of the box, the only thing we need to add is the
-    auto completion.
+    works pretty much out of the box, we only need to add auto completion,
+    and specify which scheme-interpreter we prefer.
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (add-hook 'geiser-mode-hook 'ac-geiser-setup)
      (add-hook 'geiser-repl-mode-hook 'ac-geiser-setup)
      (eval-after-load "auto-complete"
        '(add-to-list 'ac-modes 'geiser-repl-mode))
+     (setq geiser-active-implementations '(racket))
    #+END_SRC
 
 ** Java and C

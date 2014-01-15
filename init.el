@@ -21,8 +21,9 @@ tangled, and the tangled file is compiled."
     (let* ((local-pkg-desc (or (assq package package-alist)
                                (assq package package--builtins)))
            (newest-pkg-desc (assq package package-archive-contents)))
-      (version-list-= (package-desc-vers (cdr local-pkg-desc))
-                      (package-desc-vers (cdr newest-pkg-desc))))))
+      (and local-pkg-desc newest-pkg-desc
+           (version-list-= (package-desc-vers (cdr local-pkg-desc))
+                           (package-desc-vers (cdr newest-pkg-desc)))))))
 
 (defun upgrade-or-install-package (package)
   "Unless the newest available version of PACKAGE is installed
@@ -356,7 +357,7 @@ LANGUAGES (cyclic) list."
   (when (executable-find ispell-program-name)
     ad-do-it))
 
-(dolist (mode '(slime-repl-mode inferior-lisp-mode inferior-scheme-mode))
+(dolist (mode '(slime-repl-mode geiser-repl-mode))
   (add-to-list 'pretty-lambda-auto-modes mode))
 
 (pretty-lambda-for-modes)
@@ -383,6 +384,7 @@ LANGUAGES (cyclic) list."
 (add-hook 'geiser-repl-mode-hook 'ac-geiser-setup)
 (eval-after-load "auto-complete"
   '(add-to-list 'ac-modes 'geiser-repl-mode))
+(setq geiser-active-implementations '(racket))
 
 (defun c-setup ()
   (local-set-key (kbd "C-c C-c") 'compile))
