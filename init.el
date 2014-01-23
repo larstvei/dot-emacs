@@ -242,16 +242,20 @@ PACKAGE is installed and the current version is deleted."
   (when (fboundp 'imagemagick-register-types)
     (imagemagick-register-types))
 
-  ;; A wrapper function to start (if necessary), fetch mail and delete other
-  ;; windows.
-  (defun show-mu4e ()
-    (interactive)
-    (mu4e)
-    (mu4e-update-mail-and-index t)
-    (delete-other-windows))
+  (defadvice mu4e (before show-mu4e (arg) activate)
+    "Always show mu4e in fullscreen and remember window
+configuration."
+    (unless arg
+      (window-configuration-to-register :mu4e-fullscreen)
+      (mu4e-update-mail-and-index t)
+      (delete-other-windows)))
+
+  (defadvice mu4e-quit (after restore-windows nil activate)
+    "Restore window configuration."
+    (jump-to-register :mu4e-fullscreen))
 
   ;; Overwrite the native 'compose-mail' binding to 'show-mu4e'.
-  (global-set-key (kbd "C-x m") 'show-mu4e))
+  (global-set-key (kbd "C-x m") 'mu4e))
 
 (add-hook 'text-mode-hook 'turn-on-flyspell)
 

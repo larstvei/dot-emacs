@@ -414,11 +414,11 @@
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (defvar load-mail-setup nil)
-
+     
      (when load-mail-setup
        ;; We need mu4e
        (require 'mu4e)
-
+     
        ;; Some basic mu4e settings.
        (setq mu4e-maildir           "~/.ifimail"     ; top-level Maildir
              mu4e-sent-folder       "/INBOX.Sent"    ; folder for sent messages
@@ -432,7 +432,7 @@
              mu4e-view-show-images  t                ; view images
              mu4e-html2text-command
              "html2text -utf8")                      ; use utf-8
-
+     
        ;; Setup for sending mail.
        (setq user-full-name
              "Lars Tveito"                        ; Your full name
@@ -444,21 +444,25 @@
              smtpmail-stream-type 'ssl            ; Protocol used for sending
              send-mail-function 'smtpmail-send-it ; Use smpt to send
              mail-user-agent 'mu4e-user-agent)    ; Use mu4e!
-
+     
        ;; Register file types that can be handled by ImageMagick.
        (when (fboundp 'imagemagick-register-types)
          (imagemagick-register-types))
-
-       ;; A wrapper function to start (if necessary), fetch mail and delete other
-       ;; windows.
-       (defun show-mu4e ()
-         (interactive)
-         (mu4e)
-         (mu4e-update-mail-and-index t)
-         (delete-other-windows))
-
+     
+       (defadvice mu4e (before show-mu4e (arg) activate)
+         "Always show mu4e in fullscreen and remember window
+     configuration."
+         (unless arg
+           (window-configuration-to-register :mu4e-fullscreen)
+           (mu4e-update-mail-and-index t)
+           (delete-other-windows)))
+     
+       (defadvice mu4e-quit (after restore-windows nil activate)
+         "Restore window configuration."
+         (jump-to-register :mu4e-fullscreen))
+     
        ;; Overwrite the native 'compose-mail' binding to 'show-mu4e'.
-       (global-set-key (kbd "C-x m") 'show-mu4e))
+       (global-set-key (kbd "C-x m") 'mu4e))
    #+END_SRC
 
 ** Flyspell
