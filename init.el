@@ -65,7 +65,8 @@ PACKAGE is installed and the current version is deleted."
     (insert "Time-stamp: <>")
     (time-stamp)))
 
-(when do-package-update-on-init
+(when (and do-package-update-on-init
+           (y-or-n-p "Update all packages?"))
   (package-refresh-contents)
 
   (dolist (package
@@ -83,6 +84,7 @@ PACKAGE is installed and the current version is deleted."
              jedi              ; Python auto-completion for Emacs
              magit             ; control Git from Emacs
              markdown-mode     ; Emacs Major mode for Markdown-formatted files.
+             matlab-mode       ; MATLAB integration with Emacs.
              monokai-theme     ; A fruity color theme for Emacs.
              move-text         ; Move current line or region with M-up or M-down
              multiple-cursors  ; Multiple cursors for Emacs.
@@ -96,8 +98,11 @@ PACKAGE is installed and the current version is deleted."
          '(auto-compile             ; auto-compile .el files
            auto-complete-config     ; a configuration for auto-complete-mode
            jedi                     ; auto-completion for python
-           pretty-lambdada          ; show 'lambda' as the greek letter.
+           matlab                   ; matlab-mode
+           ob-matlab                ; org-babel matlab
            ox-latex                 ; the latex-exporter (from org)
+           ox-md                    ; Markdown exporter (from org)
+           pretty-lambdada          ; show 'lambda' as the greek letter.
            recentf                  ; recently opened files
            tex-mode))               ; TeX, LaTeX, and SliTeX mode commands
   (require feature))
@@ -436,4 +441,4 @@ LANGUAGES (cyclic) list."
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
 
-(add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))
+(add-to-list 'matlab-shell-command-switches "-nosplash")

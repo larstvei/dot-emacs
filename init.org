@@ -136,9 +136,10 @@
    configurations are also dependent on them).
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (when do-package-update-on-init
+     (when (and do-package-update-on-init
+                (y-or-n-p "Update all packages?"))
        (package-refresh-contents)
-
+     
        (dolist (package
                 '(ac-geiser         ; Auto-complete backend for geiser
                   ac-slime          ; An auto-complete source using slime completions
@@ -154,6 +155,7 @@
                   jedi              ; Python auto-completion for Emacs
                   magit             ; control Git from Emacs
                   markdown-mode     ; Emacs Major mode for Markdown-formatted files.
+                  matlab-mode       ; MATLAB integration with Emacs.
                   monokai-theme     ; A fruity color theme for Emacs.
                   move-text         ; Move current line or region with M-up or M-down
                   multiple-cursors  ; Multiple cursors for Emacs.
@@ -174,8 +176,11 @@
               '(auto-compile             ; auto-compile .el files
                 auto-complete-config     ; a configuration for auto-complete-mode
                 jedi                     ; auto-completion for python
-                pretty-lambdada          ; show 'lambda' as the greek letter.
+                matlab                   ; matlab-mode
+                ob-matlab                ; org-babel matlab
                 ox-latex                 ; the latex-exporter (from org)
+                ox-md                    ; Markdown exporter (from org)
+                pretty-lambdada          ; show 'lambda' as the greek letter.
                 recentf                  ; recently opened files
                 tex-mode))               ; TeX, LaTeX, and SliTeX mode commands
        (require feature))
@@ -870,5 +875,5 @@
    need to let =.m=-files be associated with =octave-mode=.
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))
+     (add-to-list 'matlab-shell-command-switches "-nosplash")
    #+END_SRC
