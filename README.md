@@ -7,18 +7,19 @@
 <ul>
 <li><a href="#sec-2-1">2.1. Meta</a></li>
 <li><a href="#sec-2-2">2.2. Package</a></li>
-<li><a href="#sec-2-3">2.3. Require</a></li>
-<li><a href="#sec-2-4">2.4. Sane defaults</a></li>
-<li><a href="#sec-2-5">2.5. Modes</a></li>
-<li><a href="#sec-2-6">2.6. Visual</a></li>
-<li><a href="#sec-2-7">2.7. Ido</a></li>
-<li><a href="#sec-2-8">2.8. Calendar</a></li>
-<li><a href="#sec-2-9">2.9. Mail</a></li>
-<li><a href="#sec-2-10">2.10. Flyspell</a></li>
-<li><a href="#sec-2-11">2.11. Org</a></li>
-<li><a href="#sec-2-12">2.12. Interactive functions</a></li>
-<li><a href="#sec-2-13">2.13. Key bindings</a></li>
-<li><a href="#sec-2-14">2.14. Advice</a></li>
+<li><a href="#sec-2-3">2.3. Mac OS X</a></li>
+<li><a href="#sec-2-4">2.4. Require</a></li>
+<li><a href="#sec-2-5">2.5. Sane defaults</a></li>
+<li><a href="#sec-2-6">2.6. Modes</a></li>
+<li><a href="#sec-2-7">2.7. Visual</a></li>
+<li><a href="#sec-2-8">2.8. Ido</a></li>
+<li><a href="#sec-2-9">2.9. Calendar</a></li>
+<li><a href="#sec-2-10">2.10. Mail</a></li>
+<li><a href="#sec-2-11">2.11. Flyspell</a></li>
+<li><a href="#sec-2-12">2.12. Org</a></li>
+<li><a href="#sec-2-13">2.13. Interactive functions</a></li>
+<li><a href="#sec-2-14">2.14. Key bindings</a></li>
+<li><a href="#sec-2-15">2.15. Advice</a></li>
 </ul>
 </li>
 <li><a href="#sec-3">3. Language mode specific</a>
@@ -205,7 +206,27 @@ configurations are also dependent on them).
              paredit           ; minor mode for editing parentheses
              pretty-lambdada   ; the word `lambda' as the Greek letter.
              smex))            ; M-x interface with Ido-style fuzzy matching.
-    (upgrade-or-install-package package)))
+    (upgrade-or-install-package package))
+  ;; This package is only relevant for Mac OS X.
+  (when (memq window-system '(mac ns))
+    (upgrade-or-install-package 'exec-path-from-shell)))
+```
+
+## Mac OS X
+
+I run this configuration mostly on Mac OS X, so we need a couple of
+settings to make things work smoothly. In the package section
+`exec-path-from-shell` is included (only if you're running OS X), this is
+to include environment-variables from the shell. It makes useing Emacs
+along with external processes a lot simpler. I also prefer using the
+`Command`-key as the `Meta`-key.
+
+```lisp
+(when (memq window-system '(mac ns))
+  (setq mac-option-modifier nil
+        mac-command-modifier 'meta
+        x-select-enable-clipboard t)
+  (exec-path-from-shell-initialize))
 ```
 
 ## Require
@@ -894,9 +915,9 @@ dependent on some python programs as well, so make sure you follow the
 instructions from the site.
 
 ```lisp
-(setq jedi:server-command
-      (cons "python3" (cdr jedi:server-command))
-      python-shell-interpreter "python3")
+;; (setq jedi:server-command
+;;       (cons "python3" (cdr jedi:server-command))
+;;       python-shell-interpreter "python3")
 (add-hook 'python-mode-hook 'jedi:setup)
 (setq jedi:complete-on-dot t)
 (add-hook 'python-mode-hook 'jedi:ac-setup)

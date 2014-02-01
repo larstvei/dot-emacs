@@ -92,7 +92,16 @@ PACKAGE is installed and the current version is deleted."
              paredit           ; minor mode for editing parentheses
              pretty-lambdada   ; the word `lambda' as the Greek letter.
              smex))            ; M-x interface with Ido-style fuzzy matching.
-    (upgrade-or-install-package package)))
+    (upgrade-or-install-package package))
+  ;; This package is only relevant for Mac OS X.
+  (when (memq window-system '(mac ns))
+    (upgrade-or-install-package 'exec-path-from-shell)))
+
+(when (memq window-system '(mac ns))
+  (setq mac-option-modifier nil
+        mac-command-modifier 'meta
+        x-select-enable-clipboard t)
+  (exec-path-from-shell-initialize))
 
 (dolist (feature
          '(auto-compile             ; auto-compile .el files
@@ -431,9 +440,9 @@ LANGUAGES (cyclic) list."
 
 (setcar (cdr (cddaar tex-compile-commands)) " -shell-escape ")
 
-(setq jedi:server-command
-      (cons "python3" (cdr jedi:server-command))
-      python-shell-interpreter "python3")
+;; (setq jedi:server-command
+;;       (cons "python3" (cdr jedi:server-command))
+;;       python-shell-interpreter "python3")
 (add-hook 'python-mode-hook 'jedi:setup)
 (setq jedi:complete-on-dot t)
 (add-hook 'python-mode-hook 'jedi:ac-setup)
