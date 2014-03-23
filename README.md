@@ -1,48 +1,37 @@
-<div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#sec-1">1. About</a></li>
-<li><a href="#sec-2">2. Configurations</a>
-<ul>
-<li><a href="#sec-2-1">2.1. Meta</a></li>
-<li><a href="#sec-2-2">2.2. Package</a></li>
-<li><a href="#sec-2-3">2.3. Mac OS X</a></li>
-<li><a href="#sec-2-4">2.4. Require</a></li>
-<li><a href="#sec-2-5">2.5. Sane defaults</a></li>
-<li><a href="#sec-2-6">2.6. Modes</a></li>
-<li><a href="#sec-2-7">2.7. Visual</a></li>
-<li><a href="#sec-2-8">2.8. Ido</a></li>
-<li><a href="#sec-2-9">2.9. Calendar</a></li>
-<li><a href="#sec-2-10">2.10. Mail</a></li>
-<li><a href="#sec-2-11">2.11. Flyspell</a></li>
-<li><a href="#sec-2-12">2.12. Org</a></li>
-<li><a href="#sec-2-13">2.13. Interactive functions</a></li>
-<li><a href="#sec-2-14">2.14. Key bindings</a></li>
-<li><a href="#sec-2-15">2.15. Advice</a></li>
-</ul>
-</li>
-<li><a href="#sec-3">3. Language mode specific</a>
-<ul>
-<li><a href="#sec-3-1">3.1. Lisp</a>
-<ul>
-<li><a href="#sec-3-1-1">3.1.1. Emacs Lisp</a></li>
-<li><a href="#sec-3-1-2">3.1.2. Common lisp</a></li>
-<li><a href="#sec-3-1-3">3.1.3. Scheme</a></li>
-</ul>
-</li>
-<li><a href="#sec-3-2">3.2. Java and C</a></li>
-<li><a href="#sec-3-3">3.3. Assembler</a></li>
-<li><a href="#sec-3-4">3.4. LaTeX</a></li>
-<li><a href="#sec-3-5">3.5. Python</a></li>
-<li><a href="#sec-3-6">3.6. Haskell</a></li>
-<li><a href="#sec-3-7">3.7. Matlab</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
+- [About](#about)
+- [Configurations](#configurations)
+	- [Meta](#meta)
+	- [Package](#package)
+	- [Mac OS X](#mac-os-x)
+	- [Require](#require)
+	- [Sane defaults](#sane-defaults)
+	- [Modes](#modes)
+	- [Visual](#visual)
+	- [Ido](#ido)
+	- [Calendar](#calendar)
+	- [Mail](#mail)
+	- [Flyspell](#flyspell)
+	- [Org](#org)
+	- [Interactive functions](#interactive-functions)
+	- [Key bindings](#key-bindings)
+	- [Advice](#advice)
+- [Language mode specific](#language-mode-specific)
+	- [Lisp](#lisp)
+		- [Emacs Lisp](#emacs-lisp)
+		- [Common lisp](#common-lisp)
+		- [Scheme](#scheme)
+	- [Java and C](#java-and-c)
+	- [Assembler](#assembler)
+	- [LaTeX](#latex)
+	- [Python](#python)
+	- [Haskell](#haskell)
+	- [Matlab](#matlab)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # About
 
