@@ -92,7 +92,8 @@ PACKAGE is installed and the current version is deleted."
              paredit           ; minor mode for editing parentheses
              powerline         ; Rewrite of Powerline
              pretty-lambdada   ; the word `lambda' as the Greek letter.
-             smex))            ; M-x interface with Ido-style fuzzy matching.
+             smex              ; M-x interface with Ido-style fuzzy matching.
+             undo-tree))       ; Treat undo history as a tree
     (upgrade-or-install-package package))
   ;; This package is only relevant for Mac OS X.
   (when (memq window-system '(mac ns))
@@ -173,7 +174,8 @@ PACKAGE is installed and the current version is deleted."
            column-number-mode         ; Show column number in mode line.
            delete-selection-mode      ; Replace selected text.
            recentf-mode               ; Recently opened files.
-           show-paren-mode))          ; Highlight matching parentheses.
+           show-paren-mode            ; Highlight matching parentheses.
+           global-undo-tree-mode))    ; Undo as a tree.
   (funcall mode 1))
 
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))

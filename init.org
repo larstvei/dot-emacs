@@ -163,7 +163,8 @@
                   paredit           ; minor mode for editing parentheses
                   powerline         ; Rewrite of Powerline
                   pretty-lambdada   ; the word `lambda' as the Greek letter.
-                  smex))            ; M-x interface with Ido-style fuzzy matching.
+                  smex              ; M-x interface with Ido-style fuzzy matching.
+                  undo-tree))       ; Treat undo history as a tree
          (upgrade-or-install-package package))
        ;; This package is only relevant for Mac OS X.
        (when (memq window-system '(mac ns))
@@ -326,7 +327,8 @@
                 column-number-mode         ; Show column number in mode line.
                 delete-selection-mode      ; Replace selected text.
                 recentf-mode               ; Recently opened files.
-                show-paren-mode))          ; Highlight matching parentheses.
+                show-paren-mode            ; Highlight matching parentheses.
+                global-undo-tree-mode))    ; Undo as a tree.
        (funcall mode 1))
    #+END_SRC
 
@@ -352,9 +354,7 @@
    #+END_SRC
 
    [[https://github.com/milkypostman/powerline][Powerline]] is an extension to customize the mode line. This is modified
-   version =powerline-nano-theme=. This is what it looks like:
-
-   [[./powerline.png]]
+   version =powerline-nano-theme=. 
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (setq-default
@@ -381,6 +381,10 @@
                    (powerline-fill nil (powerline-width rhs))
                    (powerline-render rhs))))))
    #+END_SRC
+
+   This is what it looks like:
+   
+   [[./powerline.png]]
 
 ** Ido
 
