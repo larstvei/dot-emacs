@@ -204,6 +204,7 @@ configurations are also dependent on them).
              multiple-cursors  ; Multiple cursors for Emacs.
              org               ; Outline-based notes management and organizer
              paredit           ; minor mode for editing parentheses
+             powerline         ; Rewrite of Powerline
              pretty-lambdada   ; the word `lambda' as the Greek letter.
              smex))            ; M-x interface with Ido-style fuzzy matching.
     (upgrade-or-install-package package))
@@ -389,8 +390,39 @@ Change the color-theme to `monokai` (downloaded using `package`).
 Use the [Inconsolata](http://www.levien.com/type/myfonts/inconsolata.html) font if it's installed on the system.
 
 ```lisp
-(when (member "Inconsolata" (font-family-list))
-  (set-face-attribute 'default nil :font "Inconsolata-13"))
+(when (member "Inconsolata-g" (font-family-list))
+  (set-face-attribute 'default nil :font "Inconsolata-g-11"))
+```
+
+[Powerline](https://github.com/milkypostman/powerline) is an extension to customize the mode line. This is modified
+version `powerline-nano-theme`. This is what it looks like:
+
+![img](./powerline.png)
+
+```lisp
+(setq-default
+ mode-line-format
+ '("%e"
+   (:eval
+    (let* ((active (powerline-selected-window-active))
+           ;; left hand side displays Read only or Modified.
+           (lhs (list (powerline-raw
+                       (cond (buffer-read-only "Read only")
+                             ((buffer-modified-p) "Modified")
+                             (t "")) nil 'l)))
+           ;; right side hand displays (line,column).
+           (rhs (list
+                 (powerline-raw
+                  (concat
+                   "(" (number-to-string (line-number-at-pos))
+                   "," (number-to-string (current-column)) ")") nil 'r)))
+           ;; center displays buffer name.
+           (center (list (powerline-raw "%b" nil))))
+      (concat (powerline-render lhs)
+              (powerline-fill-center nil (/ (powerline-width center) 2.0))
+              (powerline-render center)
+              (powerline-fill nil (powerline-width rhs))
+              (powerline-render rhs))))))
 ```
 
 ## Ido
@@ -835,6 +867,9 @@ using `C-c C-c` (instead of `M-x compile`), a habit from `latex-mode`.
 ```lisp
 (defun c-setup ()
   (local-set-key (kbd "C-c C-c") 'compile))
+
+(require 'auto-complete-c-headers)
+(add-to-list 'ac-sources 'ac-source-c-headers)
 
 (add-hook 'c-mode-common-hook 'c-setup)
 ```
