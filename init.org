@@ -41,7 +41,6 @@
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (require 'package)
-     (package-initialize)
    #+END_SRC
 
    Packages can be fetched from different mirrors, [[http://melpa.milkbox.net/#/][melpa]] is the largest
@@ -82,6 +81,16 @@
                              (package-version-join
                               (package-desc-vers (cdr pkg-desc)))))
            (package-install package))))
+   #+END_SRC
+
+   Also, we will need a function to find all dependencies from a given package.
+
+   #+BEGIN_SRC emacs-lisp :tangle yes
+     (defun dependencies (package)
+       "Returns a list of dependencies from a given PACKAGE."
+       (let* ((pkg-desc (assq package package-alist))
+              (reqs (and pkg-desc (package-desc-reqs (cdr pkg-desc)))))
+         (mapcar 'car reqs)))
    #+END_SRC
 
    The =package-refresh-contents= function downloads archive descriptions,
@@ -140,35 +149,45 @@
                 (y-or-n-p "Update all packages?"))
        (package-refresh-contents)
 
-       (dolist (package
-                '(ac-geiser         ; Auto-complete backend for geiser
-                  ac-slime          ; An auto-complete source using slime completions
-                  ace-jump-mode     ; quick cursor location minor mode
-                  auto-compile      ; automatically compile Emacs Lisp libraries
-                  auto-complete     ; auto completion
-                  elscreen          ; window session manager
-                  expand-region     ; Increase selected region by semantic units
-                  flx-ido           ; flx integration for ido
-                  ido-vertical-mode ; Makes ido-mode display vertically.
-                  geiser            ; GNU Emacs and Scheme talk to each other
-                  haskell-mode      ; A Haskell editing mode
-                  jedi              ; Python auto-completion for Emacs
-                  magit             ; control Git from Emacs
-                  markdown-mode     ; Emacs Major mode for Markdown-formatted files.
-                  matlab-mode       ; MATLAB integration with Emacs.
-                  monokai-theme     ; A fruity color theme for Emacs.
-                  move-text         ; Move current line or region with M-up or M-down
-                  multiple-cursors  ; Multiple cursors for Emacs.
-                  org               ; Outline-based notes management and organizer
-                  paredit           ; minor mode for editing parentheses
-                  powerline         ; Rewrite of Powerline
-                  pretty-lambdada   ; the word `lambda' as the Greek letter.
-                  smex              ; M-x interface with Ido-style fuzzy matching.
-                  undo-tree))       ; Treat undo history as a tree
-         (upgrade-or-install-package package))
+       (let* ((packages
+               '(ac-geiser         ; Auto-complete backend for geiser
+                 ac-slime          ; An auto-complete source using slime completions
+                 ace-jump-mode     ; quick cursor location minor mode
+                 auto-compile      ; automatically compile Emacs Lisp libraries
+                 auto-complete     ; auto completion
+                 elscreen          ; window session manager
+                 expand-region     ; Increase selected region by semantic units
+                 flx-ido           ; flx integration for ido
+                 ido-vertical-mode ; Makes ido-mode display vertically.
+                 geiser            ; GNU Emacs and Scheme talk to each other
+                 haskell-mode      ; A Haskell editing mode
+                 jedi              ; Python auto-completion for Emacs
+                 magit             ; control Git from Emacs
+                 markdown-mode     ; Emacs Major mode for Markdown-formatted files.
+                 matlab-mode       ; MATLAB integration with Emacs.
+                 monokai-theme     ; A fruity color theme for Emacs.
+                 move-text         ; Move current line or region with M-up or M-down
+                 multiple-cursors  ; Multiple cursors for Emacs.
+                 org               ; Outline-based notes management and organizer
+                 paredit           ; minor mode for editing parentheses
+                 powerline         ; Rewrite of Powerline
+                 pretty-lambdada   ; the word `lambda' as the Greek letter.
+                 smex              ; M-x interface with Ido-style fuzzy matching.
+                 undo-tree))       ; Treat undo history as a tree
+              ;; Fetch dependencies from all packages.
+              (reqs (mapcar 'dependencies packages))
+              ;; Append these to the original list, and remove any duplicates.
+              (packages (delete-dups (apply 'append packages reqs))))
+
+         (dolist (package packages)
+           (upgrade-or-install-package package)))
+
        ;; This package is only relevant for Mac OS X.
        (when (memq window-system '(mac ns))
          (upgrade-or-install-package 'exec-path-from-shell)))
+
+     (setq package-enable-at-startup nil)
+     (package-initialize)
    #+END_SRC
 
 ** Mac OS X
@@ -204,6 +223,7 @@
                 ox-md                    ; Markdown exporter (from org)
                 pretty-lambdada          ; show 'lambda' as the greek letter.
                 recentf                  ; recently opened files
+                smex                     ; M-x interface Ido-style.
                 tex-mode))               ; TeX, LaTeX, and SliTeX mode commands
        (require feature))
    #+END_SRC
@@ -475,11 +495,11 @@
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (defvar load-mail-setup nil)
-     
+
      (when load-mail-setup
        ;; We need mu4e
        (require 'mu4e)
-     
+
        ;; Some basic mu4e settings.
        (setq mu4e-maildir           "~/.ifimail"     ; top-level Maildir
              mu4e-sent-folder       "/INBOX.Sent"    ; folder for sent messages
@@ -493,7 +513,7 @@
              mu4e-view-show-images  t                ; view images
              mu4e-html2text-command
              "html2text -utf8")                      ; use utf-8
-     
+
        ;; Setup for sending mail.
        (setq user-full-name
              "Lars Tveito"                        ; Your full name
@@ -505,23 +525,23 @@
              smtpmail-stream-type 'ssl            ; Protocol used for sending
              send-mail-function 'smtpmail-send-it ; Use smpt to send
              mail-user-agent 'mu4e-user-agent)    ; Use mu4e!
-     
+
        ;; Register file types that can be handled by ImageMagick.
        (when (fboundp 'imagemagick-register-types)
          (imagemagick-register-types))
-     
-       (defadvice mu4e (before show-mu4e (arg) activate)
-         "Always show mu4e in fullscreen and remember window
-     configuration."
-         (unless arg
-           (window-configuration-to-register :mu4e-fullscreen)
-           (mu4e-update-mail-and-index t)
-           (delete-other-windows)))
-     
-       (defadvice mu4e-quit (after restore-windows nil activate)
-         "Restore window configuration."
-         (jump-to-register :mu4e-fullscreen))
-     
+
+     ;;   (defadvice mu4e (before show-mu4e (arg) activate)
+     ;;     "Always show mu4e in fullscreen and remember window
+     ;; configuration."
+     ;;     (unless arg
+     ;;       (window-configuration-to-register :mu4e-fullscreen)
+     ;;       (mu4e-update-mail-and-index t)
+     ;;       (delete-other-windows)))
+
+     ;;   (defadvice mu4e-quit (after restore-windows nil activate)
+     ;;     "Restore window configuration."
+     ;;     (jump-to-register :mu4e-fullscreen))
+
        ;; Overwrite the native 'compose-mail' binding to 'show-mu4e'.
        (global-set-key (kbd "C-x m") 'mu4e))
    #+END_SRC
