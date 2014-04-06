@@ -10,6 +10,8 @@ tangled, and the tangled file is compiled."
 (add-hook 'after-save-hook 'init-hook)
 
 (require 'package)
+(setq package-enable-at-startup nil)
+(package-initialize)
 
 (add-to-list 'package-archives
              '("MELPA" . "http://melpa.milkbox.net/packages/") t)
@@ -109,10 +111,8 @@ PACKAGE is installed and the current version is deleted."
 
   ;; This package is only relevant for Mac OS X.
   (when (memq window-system '(mac ns))
-    (upgrade-or-install-package 'exec-path-from-shell)))
-
-(setq package-enable-at-startup nil)
-(package-initialize)
+    (upgrade-or-install-package 'exec-path-from-shell))
+  (package-initialize))
 
 (when (memq window-system '(mac ns))
   (setq mac-option-modifier nil
