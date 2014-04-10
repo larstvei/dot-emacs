@@ -21,7 +21,7 @@
    the =after-save-hook= ensuring to always tangle and byte-compile the
    =org=-document after changes.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defun init-hook ()
      "If the current buffer is 'init.org' the code-blocks are
    tangled, and the tangled file is compiled."
@@ -39,7 +39,7 @@
    is built in to Emacs 24 and newer. To load downloaded packages we
    need to initialize =package=.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (require 'package)
    (setq package-enable-at-startup nil)
    (package-initialize)
@@ -48,7 +48,7 @@
    Packages can be fetched from different mirrors, [[http://melpa.milkbox.net/#/][melpa]] is the largest
    archive and is well maintained.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (add-to-list 'package-archives
                 '("MELPA" . "http://melpa.milkbox.net/packages/") t)
    #+END_SRC
@@ -56,7 +56,7 @@
    We can define a predicate that tells us wither or not the newest version
    of a package is installed.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defun newest-package-installed-p (package)
      "Return true if the newest available PACKAGE is installed."
      (when (package-installed-p package)
@@ -72,7 +72,7 @@
    upgrades it if a new version has been released. Here our predicate comes
    in handy.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defun upgrade-or-install-package (package)
      "Unless the newest available version of PACKAGE is installed
    PACKAGE is installed and the current version is deleted."
@@ -87,7 +87,7 @@
 
    Also, we will need a function to find all dependencies from a given package.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defun dependencies (package)
      "Returns a list of dependencies from a given PACKAGE."
      (let* ((pkg-desc (assq package package-alist))
@@ -103,7 +103,7 @@
    third is a path to a file where a time-stamp is stored in order to check
    when packages were updated last.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defvar days-between-updates 1)
    (defvar do-package-update-on-init t)
    (defvar package-last-update-file
@@ -116,7 +116,7 @@
    update. After that we must run the =time-stamp=-function to update the
    time-stamp.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (require 'time-stamp)
    ;; Open the package-last-update-file
    (with-temp-file package-last-update-file
@@ -146,7 +146,7 @@
    up to date. Here are some packages I find useful (some of these
    configurations are also dependent on them).
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (when (and do-package-update-on-init
               (y-or-n-p "Update all packages?"))
      (package-refresh-contents)
@@ -199,7 +199,7 @@
    along with external processes a lot simpler. I also prefer using the
    =Command=-key as the =Meta=-key.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (when (memq window-system '(mac ns))
      (setq mac-option-modifier nil
            mac-command-modifier 'meta
@@ -212,7 +212,7 @@
    Some features are not loaded by default to minimize initialization time,
    so they have to be required (or loaded, if you will).
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (dolist (feature
             '(auto-compile             ; auto-compile .el files
               auto-complete-config     ; a configuration for auto-complete-mode
@@ -234,7 +234,7 @@
 
    We can set variables to whatever value we'd like using =setq=.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (setq initial-scratch-message nil     ; Clean scratch buffer.
          inhibit-startup-message t       ; No splash screen please.
          default-input-method "TeX"      ; Use TeX when toggeling input method.
@@ -252,7 +252,7 @@
    change them in a single buffer. Using =setq-default= we change the
    buffer-local variable's default value.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (setq-default fill-column 76                    ; Maximum line width.
                  indent-tabs-mode nil              ; Use spaces instead of tabs.
                  split-width-threshold 100         ; Split verticly by default.
@@ -264,7 +264,7 @@
    extensions that have been installed manually (these are mostly my own
    projects).
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (let ((default-directory (concat user-emacs-directory "site-lisp/")))
      (when (file-exists-p default-directory)
        (normal-top-level-add-to-load-path '("."))
@@ -274,14 +274,14 @@
    Answering /yes/ and /no/ to each question from Emacs can be tedious, a
    single /y/ or /n/ will suffice.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (fset 'yes-or-no-p 'y-or-n-p)
    #+END_SRC
 
    To avoid file system clutter we put all auto saved files in a single
    directory.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defvar emacs-autosave-directory
      (concat user-emacs-directory "autosaves/")
      "This variable dictates where to put auto saves. It is set to a
@@ -297,7 +297,7 @@
 
    Set =utf-8= as preferred coding system.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (set-language-environment "UTF-8")
    #+END_SRC
 
@@ -305,20 +305,20 @@
    warning, because it might confuse new users. I find it useful sometimes,
    and don't want to be warned.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (put 'narrow-to-region 'disabled nil)
    #+END_SRC
 
    Call =auto-complete= default configuration, which enables =auto-complete=
    globally.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (ac-config-default)
    #+END_SRC
 
    Automaticly revert =doc-view=-buffers when the file changes on disk.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (add-hook 'doc-view-mode-hook 'auto-revert-mode)
    #+END_SRC
 
@@ -328,7 +328,7 @@
    particularly useful. We create a list of these modes, and disable all of
    these.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (dolist (mode
             '(tool-bar-mode                ; No toolbars, more room for text.
               scroll-bar-mode              ; No scroll bars either.
@@ -339,7 +339,7 @@
    Let's apply the same technique for enabling modes that are disabled by
    default.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (dolist (mode
             '(abbrev-mode                ; E.g. sopl -> System.out.println.
               auto-compile-on-load-mode  ; Compile .el files on load ...
@@ -354,7 +354,7 @@
 
    This makes =.md=-files open in =markdown-mode=.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
    #+END_SRC
 
@@ -362,13 +362,13 @@
 
    Change the color-theme to =monokai= (downloaded using =package=).
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (load-theme 'monokai t)
    #+END_SRC
 
    Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (when (member "Inconsolata-g" (font-family-list))
      (set-face-attribute 'default nil :font "Inconsolata-g-11"))
    #+END_SRC
@@ -376,7 +376,7 @@
    [[https://github.com/milkypostman/powerline][Powerline]] is an extension to customize the mode line. This is modified
    version =powerline-nano-theme=. 
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (setq-default
     mode-line-format
     '("%e"
@@ -414,7 +414,7 @@
    possibilities. Using =ido-vertical-mode= changes the way possibilities
    are displayed, and =flx-ido-mode= enables fuzzy matching.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (dolist (mode
             '(ido-mode                   ; Interactivly do.
               ido-everywhere             ; Use Ido for all buffer/file reading.
@@ -426,7 +426,7 @@
    We can set the order of file selections in =ido=. I prioritize source
    files along with =org=- and =tex=-files.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (setq ido-file-extensions-order
          '(".el" ".scm" ".lisp" ".java" ".c" ".h" ".org" ".tex"))
    #+END_SRC
@@ -435,7 +435,7 @@
    the way, so we set it to be ignored (it can be accessed using =C-h e=, so
    there is really no need for it in the buffer list).
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (add-to-list 'ido-ignore-buffers "*Messages*")
    #+END_SRC
 
@@ -443,7 +443,7 @@
    package. It needs to be initialized, and we can replace the binding to
    the standard =execute-extended-command= with =smex=.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (smex-initialize)
    (global-set-key (kbd "M-x") 'smex)
    #+END_SRC
@@ -453,7 +453,7 @@
    Define a function to display week numbers in =calender-mode=. The snippet
    is from [[http://www.emacswiki.org/emacs/CalendarWeekNumbers][EmacsWiki]].
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defun calendar-show-week (arg)
      "Displaying week number in calendar-mode."
      (interactive "P")
@@ -473,13 +473,13 @@
 
    Evaluate the =calendar-show-week= function.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (calendar-show-week t)
    #+END_SRC
 
    Set Monday as the first day of the week, and set my location.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (setq calendar-week-start-day 1
          calendar-latitude 60.0
          calendar-longitude 10.7
@@ -493,7 +493,7 @@
    installed we bind =load-mail-setup= to =nil=. If the value is changed to
    a =non-nil= value mail is setup.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defvar load-mail-setup nil)
 
    (when load-mail-setup
@@ -551,7 +551,7 @@
    Flyspell offers on-the-fly spell checking. We can enable flyspell for all
    text-modes with this snippet.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (add-hook 'text-mode-hook 'turn-on-flyspell)
    #+END_SRC
 
@@ -560,7 +560,7 @@
    programming modes using the =prog-mode-hook=. Flyspell interferes with
    auto-complete mode, but there is a workaround provided by auto complete.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (add-hook 'prog-mode-hook 'flyspell-prog-mode)
    (ac-flyspell-workaround)
    #+END_SRC
@@ -568,14 +568,14 @@
    To cycle through dictionary's we can define a variable containing a
    cyclic list of installed language packs.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defvar ispell-languages '#1=("english" "norsk" . #1#))
    #+END_SRC
 
    Now we only need a small function to change set the language and shift
    the list.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defun cycle-languages ()
      "Changes the ispell-dictionary to whatever is the next (or cdr) in the
    LANGUAGES (cyclic) list."
@@ -588,7 +588,7 @@
 
    I use =org-agenda= for appointments and such.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (setq org-agenda-start-on-weekday nil              ; Show agenda from today.
          org-agenda-files '("~/Dropbox/life.org")     ; A list of agenda files.
          org-agenda-default-appointment-duration 120) ; 2 hours appointments.
@@ -597,7 +597,7 @@
    When editing org-files with source-blocks, we want the source blocks to
    be themed as they would in their native mode.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (setq org-src-fontify-natively t)
    #+END_SRC
 
@@ -607,7 +607,7 @@
    To search recent files useing =ido-mode= we add this snippet from
    [[http://www.emacswiki.org/emacs/CalendarWeekNumbers][EmacsWiki]].
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defun recentf-ido-find-file ()
      "Find a recent file using Ido."
      (interactive)
@@ -620,7 +620,7 @@
    negative argument it removes newlines as well. We wrap a interactive
    function around it to be able to bind it to a key.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defun remove-whitespace-inbetween ()
      "Removes whitespace before and after the point."
      (interactive)
@@ -630,7 +630,7 @@
    This interactive function switches you to a =shell=, and if triggered in
    the shell it switches back to the previous buffer.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defun switch-to-shell ()
      "Jumps to eshell or back."
      (interactive)
@@ -642,7 +642,7 @@
    To duplicate either selected text or a line we define this interactive
    function.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defun duplicate-thing ()
      "Ethier duplicates the line or the region"
      (interactive)
@@ -657,7 +657,7 @@
 
    To tidy up a buffer we define this function borrowed from [[https://github.com/simenheg][simenheg]].
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defun tidy ()
      "Ident, untabify and unwhitespacify current buffer, or region if active."
      (interactive)
@@ -672,14 +672,14 @@
 
    Bindings for [[https://github.com/magnars/expand-region.el][expand-region]].
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (global-set-key (kbd "C-'")  'er/expand-region)
    (global-set-key (kbd "C-;")  'er/contract-region)
    #+END_SRC
 
    Bindings for [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]].
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (global-set-key (kbd "C-c e")  'mc/edit-lines)
    (global-set-key (kbd "C-c a")  'mc/mark-all-like-this)
    (global-set-key (kbd "C-c n")  'mc/mark-next-like-this)
@@ -687,26 +687,26 @@
 
    Bindings for [[http://magit.github.io][Magit]].
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (global-set-key (kbd "C-c m") 'magit-status)
    #+END_SRC
 
    Bindings for [[https://github.com/winterTTr/ace-jump-mode][ace-jump-mode]].
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
    #+END_SRC
 
    Bindings for =move-text=.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (global-set-key (kbd "<M-S-up>")    'move-text-up)
    (global-set-key (kbd "<M-S-down>")  'move-text-down)
    #+END_SRC
 
    Bind some native Emacs functions.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (global-set-key (kbd "C-c s")    'ispell-word)
    (global-set-key (kbd "C-c t")    'org-agenda-list)
    (global-set-key (kbd "C-x k")    'kill-this-buffer)
@@ -715,7 +715,7 @@
 
    Bind the functions defined [[sec:defuns][above]].
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (global-set-key (kbd "C-c l")    'cycle-languages)
    (global-set-key (kbd "C-c j")    'remove-whitespace-inbetween)
    (global-set-key (kbd "C-x t")    'switch-to-shell)
@@ -729,7 +729,7 @@
    advice makes =eval-last-sexp= (bound to =C-x C-e=) replace the sexp with
    the value.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defadvice eval-last-sexp (around replace-sexp (arg) activate)
      "Replace sexp when called with a prefix argument."
      (if arg
@@ -745,14 +745,14 @@
    installed. We can advice =turn-on=flyspell= and =flyspell-prog-mode= to
    only try to enable =flyspell= if a spell-checking tool is avalible.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defadvice turn-on-flyspell (around check nil activate)
      "Turns on flyspell only if a spell-checking tool is installed."
      (when (executable-find ispell-program-name)
        ad-do-it))
    #+END_SRC
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defadvice flyspell-prog-mode (around check nil activate)
      "Turns on flyspell only if a spell-checking tool is installed."
      (when (executable-find ispell-program-name)
@@ -767,7 +767,7 @@
    can add some extra lisp-modes. We run the =pretty-lambda-for-modes=
    function to activate =pretty-lambda-mode= in lisp modes.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (dolist (mode '(slime-repl-mode geiser-repl-mode))
      (add-to-list 'pretty-lambda-auto-modes mode))
 
@@ -777,7 +777,7 @@
    I use =Paredit= when editing lisp code, we enable this for all lisp-modes
    in the =pretty-lambda-auto-modes= list.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (dolist (mode pretty-lambda-auto-modes)
      ;; add paredit-mode to all mode-hooks
      (add-hook (intern (concat (symbol-name mode) "-hook")) 'paredit-mode))
@@ -788,7 +788,7 @@
     In =emacs-lisp-mode= we can enable =eldoc-mode= to display information
     about a function or a variable in the echo area.
 
-    #+BEGIN_SRC elisp
+    #+BEGIN_SRC emacs-lisp
     (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
     (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
     #+END_SRC
@@ -801,21 +801,21 @@
     and you can install Slime following the instructions from the site along
     with this snippet.
 
-    #+BEGIN_SRC elisp
+    #+BEGIN_SRC emacs-lisp
     (when (file-exists-p "~/quicklisp/slime-helper.elc")
       (load (expand-file-name "~/quicklisp/slime-helper.elc")))
     #+END_SRC
 
     We can specify what Common Lisp program Slime should use (I use SBCL).
 
-    #+BEGIN_SRC elisp
+    #+BEGIN_SRC emacs-lisp
     (setq inferior-lisp-program "sbcl")
     #+END_SRC
 
     To improve auto completion for Common Lisp editing we can use =ac-slime=
     which uses slime completions as a source.
 
-    #+BEGIN_SRC elisp
+    #+BEGIN_SRC emacs-lisp
     (add-hook 'slime-mode-hook 'set-up-slime-ac)
     (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
 
@@ -829,7 +829,7 @@
     works pretty much out of the box, we only need to add auto completion,
     and specify which scheme-interpreter we prefer.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (add-hook 'geiser-mode-hook 'ac-geiser-setup)
    (add-hook 'geiser-repl-mode-hook 'ac-geiser-setup)
    (eval-after-load "auto-complete"
@@ -843,7 +843,7 @@
    languages (C, C++, Java, etc...). I like being able to quickly compile
    using =C-c C-c= (instead of =M-x compile=), a habit from =latex-mode=.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defun c-setup ()
      (local-set-key (kbd "C-c C-c") 'compile))
 
@@ -856,7 +856,7 @@
    Some statements in Java appear often, and become tedious to write
    out. We can use abbrevs to speed this up.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (define-abbrev-table 'java-mode-abbrev-table
      '(("psv" "public static void main(String[] args) {" nil 0)
        ("sopl" "System.out.println" nil 0)
@@ -866,7 +866,7 @@
    To be able to use the abbrev table defined above, =abbrev-mode= must be
    activated.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defun java-setup ()
      (abbrev-mode t)
      (setq-local compile-command (concat "javac " (buffer-name))))
@@ -880,7 +880,7 @@
    =comment-start= we can add comments using =M-;= like in other programming
    modes. Also in assembler should one be able to compile using =C-c C-c=.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (defun asm-setup ()
      (setq comment-start "#")
      (local-set-key (kbd "C-c C-c") 'compile))
@@ -893,14 +893,14 @@
    =.tex=-files should be associated with =latex-mode= instead of
    =tex-mode=.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (add-to-list 'auto-mode-alist '("\\.tex\\'" . latex-mode))
    #+END_SRC
 
    I like using the [[https://code.google.com/p/minted/][Minted]] package for source blocks in LaTeX. To make org
    use this we add the following snippet.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (add-to-list 'org-latex-packages-alist '("" "minted"))
    (setq org-latex-listings 'minted)
    #+END_SRC
@@ -911,7 +911,7 @@
    Tex- and LaTeX-mode, we can add the flag with a rather dirty statement
    (if anyone finds a nicer way to do this, please let me know).
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (setq org-latex-pdf-process
          (mapcar
           (lambda (str)
@@ -928,7 +928,7 @@
    dependent on some python programs as well, so make sure you follow the
    instructions from the site.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    ;; (setq jedi:server-command
    ;;       (cons "python3" (cdr jedi:server-command))
    ;;       python-shell-interpreter "python3")
@@ -943,7 +943,7 @@
    the echo area. Haskell has several indentation modes - I prefer using
    =haskell-indent=.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
    (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
    #+END_SRC
@@ -953,6 +953,6 @@
    Matlab is very similar to Octave, which is supported by Emacs. We just
    need to let =.m=-files be associated with =octave-mode=.
 
-   #+BEGIN_SRC elisp
+   #+BEGIN_SRC emacs-lisp
    (add-to-list 'matlab-shell-command-switches "-nosplash")
    #+END_SRC
