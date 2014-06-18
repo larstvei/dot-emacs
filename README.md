@@ -15,6 +15,7 @@
   - [Interactive functions](#interactive-functions)
   - [Key bindings](#key-bindings)
   - [Advice](#advice)
+  - [Presentation-mode](#presentation-mode)
 - [Language mode specific](#language-mode-specific)
   - [Lisp](#lisp)
     - [Emacs Lisp](#emacs-lisp)
@@ -28,7 +29,7 @@
   - [Matlab](#matlab)
 
 
-# About
+# About<a id="sec-1" name="sec-1"></a>
 
 This is a Emacs configuration file written in `org-mode`. There are a few
 reasons why I wanted to do this. My `.emacs.d/` was a mess, and needed a
@@ -36,9 +37,9 @@ proper clean-up. Also I like keeping all my configurations in a single
 file, using `org-mode` I can keep this file *organized*. I aim to briefly
 explain all my configurations.
 
-# Configurations
+# Configurations<a id="sec-2" name="sec-2"></a>
 
-## Meta
+## Meta<a id="sec-2-1" name="sec-2-1"></a>
 
 Emacs can only load `.el`-files. We can use `C-c C-v t` to run
 `org-babel-tangle`, which extracts the code blocks from the current file
@@ -49,7 +50,7 @@ the `after-save-hook` ensuring to always tangle and byte-compile the
 `org`-document after changes.
 
 ```lisp
-(defun init-hook ()
+(defun tangle-init ()
   "If the current buffer is 'init.org' the code-blocks are
 tangled, and the tangled file is compiled."
   (when (equal (buffer-file-name)
@@ -57,10 +58,10 @@ tangled, and the tangled file is compiled."
     (org-babel-tangle)
     (byte-compile-file (concat user-emacs-directory "init.el"))))
 
-(add-hook 'after-save-hook 'init-hook)
+(add-hook 'after-save-hook 'tangle-init)
 ```
 
-## Package
+## Package<a id="sec-2-2" name="sec-2-2"></a>
 
 Managing extensions for Emacs is simplified using `package` which
 is built in to Emacs 24 and newer. To load downloaded packages we
@@ -76,11 +77,13 @@ Packages can be fetched from different mirrors, [melpa](http://melpa.milkbox.net
 archive and is well maintained.
 
 ```lisp
-(add-to-list 'package-archives
-             '("MELPA" . "http://melpa.milkbox.net/packages/") t)
+(setq package-archives
+      '(("gnu" . "http://elpa.gnu.org/packages/")
+        ("org" . "http://orgmode.org/elpa/")
+        ("MELPA" . "http://melpa.milkbox.net/packages/")))
 ```
 
-We can define a predicate that tells us wither or not the newest version
+We can define a predicate that tells us whether or not the newest version
 of a package is installed.
 
 ```lisp
@@ -109,7 +112,8 @@ PACKAGE is installed and the current version is deleted."
         (package-delete (symbol-name package)
                         (package-version-join
                          (package-desc-vers (cdr pkg-desc)))))
-      (package-install package))))
+      (and (assq package package-archive-contents)
+           (package-install package)))))
 ```
 
 Also, we will need a function to find all dependencies from a given package.
@@ -126,22 +130,21 @@ The `package-refresh-contents` function downloads archive descriptions,
 this is a major bottleneck in this configuration. To avoid this we can
 try to only check for updates once every day or so. Here are three
 variables. The first specifies how often we should check for updates. The
-second specifies wither one should update during the initialization. The
+second specifies whether one should update during the initialization. The
 third is a path to a file where a time-stamp is stored in order to check
 when packages were updated last.
 
 ```lisp
-(defvar days-between-updates 1)
+(defvar days-between-updates 7)
 (defvar do-package-update-on-init t)
 (defvar package-last-update-file
   (expand-file-name (concat user-emacs-directory ".package-last-update")))
 ```
 
-The tricky part is figuring out when the last time the Emacs was updated!
-Here is a hacky way of doing it, using [time-stamps](http://www.gnu.org/software/emacs/manual/html_node/emacs/Time-Stamps.html). By adding a
-time-stamp to the a file, we can determine wither or not to do an
-update. After that we must run the `time-stamp`-function to update the
-time-stamp.
+The tricky part is figuring out when packages were last updated. Here is
+a hacky way of doing it, using [time-stamps](http://www.gnu.org/software/emacs/manual/html_node/emacs/Time-Stamps.html). By adding a time-stamp to the
+a file, we can determine whether or not to do an update. After that we
+must run the `time-stamp`-function to update the time-stamp.
 
 ```lisp
 (require 'time-stamp)
@@ -191,6 +194,7 @@ configurations are also dependent on them).
             geiser            ; GNU Emacs and Scheme talk to each other
             haskell-mode      ; A Haskell editing mode
             jedi              ; Python auto-completion for Emacs
+            js2-mode          ; Improved JavaScript editing mode
             magit             ; control Git from Emacs
             markdown-mode     ; Emacs Major mode for Markdown-formatted files.
             matlab-mode       ; MATLAB integration with Emacs.
@@ -217,7 +221,7 @@ configurations are also dependent on them).
   (package-initialize))
 ```
 
-## Mac OS X
+## Mac OS X<a id="sec-2-3" name="sec-2-3"></a>
 
 I run this configuration mostly on Mac OS X, so we need a couple of
 settings to make things work smoothly. In the package section
@@ -231,18 +235,24 @@ along with external processes a lot simpler. I also prefer using the
   (setq mac-option-modifier nil
         mac-command-modifier 'meta
         x-select-enable-clipboard t)
-  (exec-path-from-shell-initialize))
+  (run-with-idle-timer 5 nil 'exec-path-from-shell-initialize))
 ```
 
-## Require
+## Require<a id="sec-2-4" name="sec-2-4"></a>
 
 Some features are not loaded by default to minimize initialization time,
-so they have to be required (or loaded, if you will).
+so they have to be required (or loaded, if you will). `require`-calls
+tends to lead to the largest bottleneck's in a
+configuration. `idle-require` delays the `require`-calls to a time where
+Emacs is in idle. So this is great for stuff you eventually want to load,
+but is not a high priority.
 
 ```lisp
+(require 'idle-require)             ; Need in order to use idle-require
+(require 'auto-complete-config)     ; a configuration for auto-complete-mode
+
 (dolist (feature
          '(auto-compile             ; auto-compile .el files
-           auto-complete-config     ; a configuration for auto-complete-mode
            jedi                     ; auto-completion for python
            matlab                   ; matlab-mode
            ob-matlab                ; org-babel matlab
@@ -252,27 +262,35 @@ so they have to be required (or loaded, if you will).
            recentf                  ; recently opened files
            smex                     ; M-x interface Ido-style.
            tex-mode))               ; TeX, LaTeX, and SliTeX mode commands
-  (require feature))
+  (idle-require feature))
+
+(setq idle-require-idle-delay 5)
+(idle-require-mode 1)
 ```
 
-## Sane defaults
+## Sane defaults<a id="sec-2-5" name="sec-2-5"></a>
 
 These are what *I* consider to be saner defaults.
 
 We can set variables to whatever value we'd like using `setq`.
 
 ```lisp
-(setq initial-scratch-message nil     ; Clean scratch buffer.
-      inhibit-startup-message t       ; No splash screen please.
-      default-input-method "TeX"      ; Use TeX when toggeling input method.
-      ring-bell-function 'ignore      ; Quite as a mouse.
-      doc-view-continuous t           ; At page edge goto next/previous.
-      echo-keystrokes 0.1)            ; Show keystrokes asap.
+(setq default-input-method "TeX"    ; Use TeX when toggeling input method.
+      doc-view-continuous t         ; At page edge goto next/previous.
+      echo-keystrokes 0.1           ; Show keystrokes asap.
+      inhibit-startup-message t     ; No splash screen please.
+      initial-scratch-message nil   ; Clean scratch buffer.
+      ring-bell-function 'ignore    ; Quiet.
+      undo-tree-auto-save-history t ; Save undo history between sessions.
+      undo-tree-history-directory-alist
+      ;; Put undo-history files in a directory, if it exists.
+      (let ((undo-dir (concat user-emacs-directory "undo")))
+        (and (file-exists-p undo-dir)
+             (list (cons "." undo-dir)))))
 
 ;; Some mac-bindings interfere with Emacs bindings.
 (when (boundp 'mac-pass-command-to-system)
   (setq mac-pass-command-to-system nil))
-
 ```
 
 Some variables are buffer-local, so changing them using `setq` will only
@@ -340,7 +358,7 @@ Call `auto-complete` default configuration, which enables `auto-complete`
 globally.
 
 ```lisp
-(ac-config-default)
+(eval-after-load 'auto-complete-config `(ac-config-default))
 ```
 
 Automaticly revert `doc-view`-buffers when the file changes on disk.
@@ -349,7 +367,7 @@ Automaticly revert `doc-view`-buffers when the file changes on disk.
 (add-hook 'doc-view-mode-hook 'auto-revert-mode)
 ```
 
-## Modes
+## Modes<a id="sec-2-6" name="sec-2-6"></a>
 
 There are some modes that are enabled by default that I don't find
 particularly useful. We create a list of these modes, and disable all of
@@ -369,14 +387,15 @@ default.
 ```lisp
 (dolist (mode
          '(abbrev-mode                ; E.g. sopl -> System.out.println.
-           auto-compile-on-load-mode  ; Compile .el files on load ...
-           auto-compile-on-save-mode  ; ... and save.
            column-number-mode         ; Show column number in mode line.
            delete-selection-mode      ; Replace selected text.
            recentf-mode               ; Recently opened files.
            show-paren-mode            ; Highlight matching parentheses.
            global-undo-tree-mode))    ; Undo as a tree.
   (funcall mode 1))
+
+(eval-after-load 'auto-compile
+  '((auto-compile-on-save-mode 1)))   ; compile .el files on save.
 ```
 
 This makes `.md`-files open in `markdown-mode`.
@@ -385,7 +404,7 @@ This makes `.md`-files open in `markdown-mode`.
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 ```
 
-## Visual
+## Visual<a id="sec-2-7" name="sec-2-7"></a>
 
 Change the color-theme to `monokai` (downloaded using `package`).
 
@@ -433,7 +452,7 @@ This is what it looks like:
 
 ![img](./powerline.png)
 
-## Ido
+## Ido<a id="sec-2-8" name="sec-2-8"></a>
 
 Interactive do (or `ido-mode`) changes the way you switch buffers and
 open files/directories. Instead of writing complete file paths and buffer
@@ -475,7 +494,7 @@ the standard `execute-extended-command` with `smex`.
 (global-set-key (kbd "M-x") 'smex)
 ```
 
-## Calendar
+## Calendar<a id="sec-2-9" name="sec-2-9"></a>
 
 Define a function to display week numbers in `calender-mode`. The snippet
 is from [EmacsWiki](http://www.emacswiki.org/emacs/CalendarWeekNumbers).
@@ -513,7 +532,7 @@ Set Monday as the first day of the week, and set my location.
       calendar-location-name "Oslo, Norway")
 ```
 
-## Mail
+## Mail<a id="sec-2-10" name="sec-2-10"></a>
 
 I use [mu4e](http://www.djcbsoftware.nl/code/mu/mu4e.html) (which is a part of [mu](http://www.djcbsoftware.nl/code/mu/)) along with [offlineimap](http://docs.offlineimap.org/en/latest/) on one of my
 computers. Because the mail-setup wont work without these programs
@@ -524,56 +543,42 @@ a `non-nil` value mail is setup.
 (defvar load-mail-setup nil)
 
 (when load-mail-setup
-  ;; We need mu4e
-  (require 'mu4e)
+  (eval-after-load 'mu4e
+    '(progn
+       ;; Some basic mu4e settings.
+       (setq mu4e-maildir           "~/.ifimail"     ; top-level Maildir
+             mu4e-sent-folder       "/INBOX.Sent"    ; folder for sent messages
+             mu4e-drafts-folder     "/INBOX.Drafts"  ; unfinished messages
+             mu4e-trash-folder      "/INBOX.Trash"   ; trashed messages
+             mu4e-refile-folder     "/INBOX.Archive" ; saved messages
+             mu4e-get-mail-command  "offlineimap"    ; offlineimap to fetch mail
+             mu4e-compose-signature "- Lars"         ; Sign my name
+             mu4e-update-interval   (* 5 60)         ; update every 5 min
+             mu4e-confirm-quit      nil              ; just quit
+             mu4e-view-show-images  t                ; view images
+             mu4e-html2text-command
+             "html2text -utf8")                      ; use utf-8
 
-  ;; Some basic mu4e settings.
-  (setq mu4e-maildir           "~/.ifimail"     ; top-level Maildir
-        mu4e-sent-folder       "/INBOX.Sent"    ; folder for sent messages
-        mu4e-drafts-folder     "/INBOX.Drafts"  ; unfinished messages
-        mu4e-trash-folder      "/INBOX.Trash"   ; trashed messages
-        mu4e-refile-folder     "/INBOX.Archive" ; saved messages
-        mu4e-get-mail-command  "offlineimap"    ; offlineimap to fetch mail
-        mu4e-compose-signature "- Lars"         ; Sign my name
-        mu4e-update-interval   (* 5 60)         ; update every 5 min
-        mu4e-confirm-quit      nil              ; just quit
-        mu4e-view-show-images  t                ; view images
-        mu4e-html2text-command
-        "html2text -utf8")                      ; use utf-8
+       ;; Setup for sending mail.
+       (setq user-full-name
+             "Lars Tveito"                        ; Your full name
+             user-mail-address
+             "larstvei@ifi.uio.no"                ; And email-address
+             smtpmail-smtp-server
+             "smtp.uio.no"                        ; Host to mail-server
+             smtpmail-smtp-service 465            ; Port to mail-server
+             smtpmail-stream-type 'ssl            ; Protocol used for sending
+             send-mail-function 'smtpmail-send-it ; Use smpt to send
+             mail-user-agent 'mu4e-user-agent)    ; Use mu4e!
 
-  ;; Setup for sending mail.
-  (setq user-full-name
-        "Lars Tveito"                        ; Your full name
-        user-mail-address
-        "larstvei@ifi.uio.no"                ; And email-address
-        smtpmail-smtp-server
-        "smtp.uio.no"                        ; Host to mail-server
-        smtpmail-smtp-service 465            ; Port to mail-server
-        smtpmail-stream-type 'ssl            ; Protocol used for sending
-        send-mail-function 'smtpmail-send-it ; Use smpt to send
-        mail-user-agent 'mu4e-user-agent)    ; Use mu4e!
-
-  ;; Register file types that can be handled by ImageMagick.
-  (when (fboundp 'imagemagick-register-types)
-    (imagemagick-register-types))
-
-;;   (defadvice mu4e (before show-mu4e (arg) activate)
-;;     "Always show mu4e in fullscreen and remember window
-;; configuration."
-;;     (unless arg
-;;       (window-configuration-to-register :mu4e-fullscreen)
-;;       (mu4e-update-mail-and-index t)
-;;       (delete-other-windows)))
-
-;;   (defadvice mu4e-quit (after restore-windows nil activate)
-;;     "Restore window configuration."
-;;     (jump-to-register :mu4e-fullscreen))
-
-  ;; Overwrite the native 'compose-mail' binding to 'show-mu4e'.
+       ;; Register file types that can be handled by ImageMagick.
+       (when (fboundp 'imagemagick-register-types)
+         (imagemagick-register-types))))
+  (autoload 'mu4e "mu4e" nil t)
   (global-set-key (kbd "C-x m") 'mu4e))
 ```
 
-## Flyspell
+## Flyspell<a id="sec-2-11" name="sec-2-11"></a>
 
 Flyspell offers on-the-fly spell checking. We can enable flyspell for all
 text-modes with this snippet.
@@ -589,29 +594,53 @@ auto-complete mode, but there is a workaround provided by auto complete.
 
 ```lisp
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
-(ac-flyspell-workaround)
+(eval-after-load 'auto-complete
+  '(ac-flyspell-workaround))
 ```
 
-To cycle through dictionary's we can define a variable containing a
-cyclic list of installed language packs.
-
-```lisp
-(defvar ispell-languages '#1=("english" "norsk" . #1#))
-```
-
-Now we only need a small function to change set the language and shift
-the list.
+When working with several languages, we should be able to cycle through
+the languages we most frequently use. Every buffer should have a separate
+cycle of languages, so that cycling in one buffer does not change the
+state in a different buffer (this problem occurs if you only have one
+global cycle). We can implement this by using a [closure](http://www.gnu.org/software/emacs/manual/html_node/elisp/Closures.html).
 
 ```lisp
 (defun cycle-languages ()
-  "Changes the ispell-dictionary to whatever is the next (or cdr) in the
-LANGUAGES (cyclic) list."
-  (interactive)
-  (ispell-change-dictionary
-   (car (setq ispell-languages (cdr ispell-languages)))))
+  "Changes the ispell dictionary to the first element in
+ISPELL-LANGUAGES, and returns an interactive function that cycles
+the languages in ISPELL-LANGUAGES when invoked."
+  (lexical-let ((ispell-languages '#1=("american" "norsk" . #1#)))
+    (ispell-change-dictionary (car ispell-languages))
+    (lambda ()
+      (interactive)
+      ;; Rotates the languages cycle and changes the ispell dictionary.
+      (ispell-change-dictionary
+       (car (setq ispell-languages (cdr ispell-languages)))))))
 ```
 
-## Org
+`Flyspell` signals an error if there is no spell-checking tool is
+installed. We can advice `turn-on=flyspell` and `flyspell-prog-mode` to
+only try to enable `flyspell` if a spell-checking tool is available. Also
+we want to enable cycling the languages by typing `C-c l`, so we bind the
+function returned from `cycle-languages`.
+
+```lisp
+(defadvice turn-on-flyspell (around check nil activate)
+  "Turns on flyspell only if a spell-checking tool is installed."
+  (when (executable-find ispell-program-name)
+    (local-set-key (kbd "C-c l") (cycle-languages))
+    ad-do-it))
+```
+
+```lisp
+(defadvice flyspell-prog-mode (around check nil activate)
+  "Turns on flyspell only if a spell-checking tool is installed."
+  (when (executable-find ispell-program-name)
+    (local-set-key (kbd "C-c l") (cycle-languages))
+    ad-do-it))
+```
+
+## Org<a id="sec-2-12" name="sec-2-12"></a>
 
 I use `org-agenda` for appointments and such.
 
@@ -628,7 +657,7 @@ be themed as they would in their native mode.
 (setq org-src-fontify-natively t)
 ```
 
-## Interactive functions
+## Interactive functions<a id="sec-2-13" name="sec-2-13"></a>
 
 <a id="sec:defuns" name="sec:defuns"></a>
 
@@ -696,7 +725,12 @@ To tidy up a buffer we define this function borrowed from [simenheg](https://git
     (untabify beg (if (< end (point-max)) end (point-max)))))
 ```
 
-## Key bindings
+Presentation mode.
+
+```lisp
+```
+
+## Key bindings<a id="sec-2-14" name="sec-2-14"></a>
 
 Bindings for [expand-region](https://github.com/magnars/expand-region.el).
 
@@ -744,14 +778,13 @@ Bind some native Emacs functions.
 Bind the functions defined above.
 
 ```lisp
-(global-set-key (kbd "C-c l")    'cycle-languages)
 (global-set-key (kbd "C-c j")    'remove-whitespace-inbetween)
 (global-set-key (kbd "C-x t")    'switch-to-shell)
 (global-set-key (kbd "C-c d")    'duplicate-thing)
 (global-set-key (kbd "<C-tab>")  'tidy)
 ```
 
-## Advice
+## Advice<a id="sec-2-15" name="sec-2-15"></a>
 
 An advice can be given to a function to make it behave differently. This
 advice makes `eval-last-sexp` (bound to `C-x C-e`) replace the sexp with
@@ -769,27 +802,48 @@ the value.
     ad-do-it))
 ```
 
-`Flyspell` signals an error if there is no spell-checking tool is
-installed. We can advice `turn-on=flyspell` and `flyspell-prog-mode` to
-only try to enable `flyspell` if a spell-checking tool is avalible.
+When interactively changing the theme (using `M-x load-theme`), the
+current custom theme is not disabled. This often gives weird-looking
+results; we can advice `load-theme` to always disable themes currently
+enabled themes. 
 
 ```lisp
-(defadvice turn-on-flyspell (around check nil activate)
-  "Turns on flyspell only if a spell-checking tool is installed."
-  (when (executable-find ispell-program-name)
-    ad-do-it))
+(defadvice load-theme
+  (before disable-before-load (theme &optional no-confirm no-enable) activate) 
+  (mapc 'disable-theme custom-enabled-themes))
 ```
+
+## Presentation-mode<a id="sec-2-16" name="sec-2-16"></a>
+
+When giving talks it's nice to be able to scale the text
+globally. `text-scale-mode` works great for a single buffer, this advice
+makes this work globally.
 
 ```lisp
-(defadvice flyspell-prog-mode (around check nil activate)
-  "Turns on flyspell only if a spell-checking tool is installed."
-  (when (executable-find ispell-program-name)
-    ad-do-it))
+(defadvice text-scale-mode (around all-buffers (arg) activate)
+  (if (not global-text-scale-mode)
+      ad-do-it
+    (setq-default text-scale-mode-amount text-scale-mode-amount)
+    (dolist (buffer (buffer-list))
+      (with-current-buffer buffer
+        ad-do-it))))
 ```
 
-# Language mode specific
+We don't want this to be default behavior, so we can make a global mode
+from the `text-scale-mode`, using `define-globalized-minor-mode`.
 
-## Lisp
+```lisp
+(require 'face-remap)
+
+(define-globalized-minor-mode
+  global-text-scale-mode
+  text-scale-mode
+  (lambda () (text-scale-mode 1)))
+```
+
+# Language mode specific<a id="sec-3" name="sec-3"></a>
+
+## Lisp<a id="sec-3-1" name="sec-3-1"></a>
 
 `Pretty-lambda` provides a customizable variable
 `pretty-lambda-auto-modes` that is a list of common lisp modes. Here we
@@ -812,7 +866,7 @@ in the `pretty-lambda-auto-modes` list.
   (add-hook (intern (concat (symbol-name mode) "-hook")) 'paredit-mode))
 ```
 
-### Emacs Lisp
+### Emacs Lisp<a id="sec-3-1-1" name="sec-3-1-1"></a>
 
 In `emacs-lisp-mode` we can enable `eldoc-mode` to display information
 about a function or a variable in the echo area.
@@ -822,7 +876,7 @@ about a function or a variable in the echo area.
 (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
 ```
 
-### Common lisp
+### Common lisp<a id="sec-3-1-2" name="sec-3-1-2"></a>
 
 I use [Slime](http://www.common-lisp.net/project/slime/) along with `lisp-mode` to edit Common Lisp code. Slime
 provides code evaluation and other great features, a must have for a
@@ -831,8 +885,8 @@ and you can install Slime following the instructions from the site along
 with this snippet.
 
 ```lisp
-(when (file-exists-p "~/quicklisp/slime-helper.elc")
-  (load (expand-file-name "~/quicklisp/slime-helper.elc")))
+(when (file-exists-p "~/.quicklisp/slime-helper.el")
+  (load (expand-file-name "~/.quicklisp/slime-helper.el")))
 ```
 
 We can specify what Common Lisp program Slime should use (I use SBCL).
@@ -852,7 +906,7 @@ which uses slime completions as a source.
   '(add-to-list 'ac-modes 'slime-repl-mode))
 ```
 
-### Scheme
+### Scheme<a id="sec-3-1-3" name="sec-3-1-3"></a>
 
 [Geiser](http://www.nongnu.org/geiser/) provides features similar to Slime for Scheme editing. Everything
 works pretty much out of the box, we only need to add auto completion,
@@ -863,10 +917,11 @@ and specify which scheme-interpreter we prefer.
 (add-hook 'geiser-repl-mode-hook 'ac-geiser-setup)
 (eval-after-load "auto-complete"
   '(add-to-list 'ac-modes 'geiser-repl-mode))
-(setq geiser-active-implementations '(racket))
+(eval-after-load "geiser"
+  '(add-to-list 'geiser-active-implementations 'plt-r5rs)) ;'(racket))
 ```
 
-## Java and C
+## Java and C<a id="sec-3-2" name="sec-3-2"></a>
 
 The `c-mode-common-hook` is a general hook that work on all C-like
 languages (C, C++, Java, etc&#x2026;). I like being able to quickly compile
@@ -903,7 +958,7 @@ activated.
 (add-hook 'java-mode-hook 'java-setup)
 ```
 
-## Assembler
+## Assembler<a id="sec-3-3" name="sec-3-3"></a>
 
 When writing assembler code I use `#` for comments. By defining
 `comment-start` we can add comments using `M-;` like in other programming
@@ -917,7 +972,7 @@ modes. Also in assembler should one be able to compile using `C-c C-c`.
 (add-hook 'asm-mode-hook 'asm-setup)
 ```
 
-## LaTeX
+## LaTeX<a id="sec-3-4" name="sec-3-4"></a>
 
 `.tex`-files should be associated with `latex-mode` instead of
 `tex-mode`.
@@ -930,7 +985,8 @@ I like using the [Minted](https://code.google.com/p/minted/) package for source 
 use this we add the following snippet.
 
 ```lisp
-(add-to-list 'org-latex-packages-alist '("" "minted"))
+(eval-after-load 'org
+  '(add-to-list 'org-latex-packages-alist '("" "minted")))
 (setq org-latex-listings 'minted)
 ```
 
@@ -941,17 +997,19 @@ Tex- and LaTeX-mode, we can add the flag with a rather dirty statement
 (if anyone finds a nicer way to do this, please let me know).
 
 ```lisp
-(setq org-latex-pdf-process
-      (mapcar
-       (lambda (str)
-         (concat "pdflatex -shell-escape "
-                 (substring str (string-match "-" str))))
-       org-latex-pdf-process))
+(eval-after-load 'ox-latex
+  '(setq org-latex-pdf-process
+         (mapcar
+          (lambda (str)
+            (concat "pdflatex -shell-escape "
+                    (substring str (string-match "-" str))))
+          org-latex-pdf-process)))
 
-(setcar (cdr (cddaar tex-compile-commands)) " -shell-escape ")
+(eval-after-load 'tex-mode
+  '(setcar (cdr (cddaar tex-compile-commands)) " -shell-escape "))
 ```
 
-## Python
+## Python<a id="sec-3-5" name="sec-3-5"></a>
 
 [Jedi](http://tkf.github.io/emacs-jedi/released/) offers very nice auto completion for `python-mode`. Mind that it is
 dependent on some python programs as well, so make sure you follow the
@@ -966,7 +1024,7 @@ instructions from the site.
 (add-hook 'python-mode-hook 'jedi:ac-setup)
 ```
 
-## Haskell
+## Haskell<a id="sec-3-6" name="sec-3-6"></a>
 
 `haskell-doc-mode` is similar to `eldoc`, it displays documentation in
 the echo area. Haskell has several indentation modes - I prefer using
@@ -977,11 +1035,12 @@ the echo area. Haskell has several indentation modes - I prefer using
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
 ```
 
-## Matlab
+## Matlab<a id="sec-3-7" name="sec-3-7"></a>
 
-Matlab is very similar to Octave, which is supported by Emacs. We just
-need to let `.m`-files be associated with `octave-mode`.
+`Matlab-mode` works pretty good out of the box, but we can do without the
+splash screen.
 
 ```lisp
-(add-to-list 'matlab-shell-command-switches "-nosplash")
+(eval-after-load 'matlab
+  '(add-to-list 'matlab-shell-command-switches "-nosplash"))
 ```
