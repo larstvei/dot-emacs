@@ -137,6 +137,7 @@ PACKAGE is installed and the current version is deleted."
             elscreen          ; window session manager
             expand-region     ; Increase selected region by semantic units
             flx-ido           ; flx integration for ido
+            idle-require      ; load elisp libraries while Emacs is idle
             ido-vertical-mode ; Makes ido-mode display vertically.
             geiser            ; GNU Emacs and Scheme talk to each other
             haskell-mode      ; A Haskell editing mode
@@ -760,9 +761,6 @@ the languages in ISPELL-LANGUAGES when invoked."
 
 (defun c-setup ()
   (local-set-key (kbd "C-c C-c") 'compile))
-
-(require 'auto-complete-c-headers)
-(add-to-list 'ac-sources 'ac-source-c-headers)
 
 (add-hook 'c-mode-common-hook 'c-setup)
 
