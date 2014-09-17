@@ -510,7 +510,7 @@ the languages in ISPELL-LANGUAGES when invoked."
        (car (setq ispell-languages (cdr ispell-languages)))))))
 
 ;; =Flyspell= signals an error if there is no spell-checking tool is
-;;    installed. We can advice =turn-on=flyspell= and =flyspell-prog-mode= to
+;;    installed. We can advice =turn-on-flyspell= and =flyspell-prog-mode= to
 ;;    only try to enable =flyspell= if a spell-checking tool is available. Also
 ;;    we want to enable cycling the languages by typing =C-c l=, so we bind the
 ;;    function returned from =cycle-languages=.
@@ -538,6 +538,10 @@ the languages in ISPELL-LANGUAGES when invoked."
 
 (setq org-src-fontify-natively t
       org-confirm-babel-evaluate nil)
+
+;; This is quite an ugly fix for allowing code markup for expressions like
+;;    ="this string"=, because the quotation marks causes problems.
+
 (require 'org)
 (setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
 (custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))

@@ -227,6 +227,7 @@ configurations are also dependent on them).
             elscreen          ; window session manager
             expand-region     ; Increase selected region by semantic units
             flx-ido           ; flx integration for ido
+            idle-require      ; load elisp libraries while Emacs is idle
             ido-vertical-mode ; Makes ido-mode display vertically.
             geiser            ; GNU Emacs and Scheme talk to each other
             haskell-mode      ; A Haskell editing mode
@@ -660,7 +661,7 @@ the languages in ISPELL-LANGUAGES when invoked."
 ```
 
 `Flyspell` signals an error if there is no spell-checking tool is
-installed. We can advice `turn-on=flyspell` and `flyspell-prog-mode` to
+installed. We can advice `turn-on-flyspell` and `flyspell-prog-mode` to
 only try to enable `flyspell` if a spell-checking tool is available. Also
 we want to enable cycling the languages by typing `C-c l`, so we bind the
 function returned from `cycle-languages`.
@@ -695,6 +696,12 @@ be themed as they would in their native mode.
 ```lisp
 (setq org-src-fontify-natively t
       org-confirm-babel-evaluate nil)
+```
+
+This is quite an ugly fix for allowing code markup for expressions like
+`"this string"`, because the quotation marks causes problems.
+
+```lisp
 (require 'org)
 (setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
 (custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))
@@ -969,9 +976,6 @@ using `C-c C-c` (instead of `M-x compile`), a habit from `latex-mode`.
 ```lisp
 (defun c-setup ()
   (local-set-key (kbd "C-c C-c") 'compile))
-
-(require 'auto-complete-c-headers)
-(add-to-list 'ac-sources 'ac-source-c-headers)
 
 (add-hook 'c-mode-common-hook 'c-setup)
 ```
