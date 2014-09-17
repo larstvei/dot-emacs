@@ -21,10 +21,13 @@ tangled, and the tangled file is compiled."
 
 ;; Package
 
-;;    Managing extensions for Emacs is simplified using =package= which
-;;    is built in to Emacs 24 and newer. To load downloaded packages we
-;;    need to initialize =package=.
+;;    Managing extensions for Emacs is simplified using =package= which is
+;;    built in to Emacs 24 and newer. To load downloaded packages we need to
+;;    initialize =package=. =cl= is a library that contains many functions from
+;;    Common Lisp, and comes in handy quite often, so we want to make sure it's
+;;    loaded, along with =package=, which is obviously needed.
 
+(require 'cl)
 (require 'package)
 (setq package-enable-at-startup nil)
 (package-initialize)
@@ -130,6 +133,7 @@ PACKAGE is installed and the current version is deleted."
             ace-jump-mode     ; quick cursor location minor mode
             auto-compile      ; automatically compile Emacs Lisp libraries
             auto-complete     ; auto completion
+            centered-window   ; Center the text when there's only one window
             elscreen          ; window session manager
             expand-region     ; Increase selected region by semantic units
             flx-ido           ; flx integration for ido
@@ -148,6 +152,7 @@ PACKAGE is installed and the current version is deleted."
             paredit           ; minor mode for editing parentheses
             powerline         ; Rewrite of Powerline
             pretty-lambdada   ; the word `lambda' as the Greek letter.
+            slime             ; Superior Lisp Interaction Mode for Emacs
             smex              ; M-x interface with Ido-style fuzzy matching.
             undo-tree))       ; Treat undo history as a tree
          ;; Fetch dependencies from all packages.
@@ -218,7 +223,10 @@ PACKAGE is installed and the current version is deleted."
       inhibit-startup-message t     ; No splash screen please.
       initial-scratch-message nil   ; Clean scratch buffer.
       ring-bell-function 'ignore    ; Quiet.
-      undo-tree-auto-save-history t ; Save undo history between sessions.
+      ;; Save undo history between sessions, if you have an undo-dir
+      undo-tree-auto-save-history
+      (file-exists-p
+       (concat user-emacs-directory "undo"))
       undo-tree-history-directory-alist
       ;; Put undo-history files in a directory, if it exists.
       (let ((undo-dir (concat user-emacs-directory "undo")))
@@ -506,17 +514,15 @@ the languages in ISPELL-LANGUAGES when invoked."
 ;;    we want to enable cycling the languages by typing =C-c l=, so we bind the
 ;;    function returned from =cycle-languages=.
 
-(defadvice turn-on-flyspell (around check nil activate)
+(defadvice turn-on-flyspell (before check nil activate)
   "Turns on flyspell only if a spell-checking tool is installed."
   (when (executable-find ispell-program-name)
-    (local-set-key (kbd "C-c l") (cycle-languages))
-    ad-do-it))
+    (local-set-key (kbd "C-c l") (cycle-languages))))
 
-(defadvice flyspell-prog-mode (around check nil activate)
+(defadvice flyspell-prog-mode (before check nil activate)
   "Turns on flyspell only if a spell-checking tool is installed."
   (when (executable-find ispell-program-name)
-    (local-set-key (kbd "C-c l") (cycle-languages))
-    ad-do-it))
+    (local-set-key (kbd "C-c l") (cycle-languages))))
 
 ;; Org
 
@@ -529,7 +535,11 @@ the languages in ISPELL-LANGUAGES when invoked."
 ;; When editing org-files with source-blocks, we want the source blocks to
 ;;    be themed as they would in their native mode.
 
-(setq org-src-fontify-natively t)
+(setq org-src-fontify-natively t
+      org-confirm-babel-evaluate nil)
+(require 'org)
+(setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
+(custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))
 
 ;; Interactive functions
 ;;    <<sec:defuns>>
@@ -567,7 +577,7 @@ the languages in ISPELL-LANGUAGES when invoked."
 ;;    function.
 
 (defun duplicate-thing ()
-  "Ethier duplicates the line or the region"
+  "Duplicates the current line, or the region if active."
   (interactive)
   (save-excursion
     (let ((start (if (region-active-p) (region-beginning) (point-at-bol)))
@@ -587,10 +597,6 @@ the languages in ISPELL-LANGUAGES when invoked."
     (indent-region beg end)
     (whitespace-cleanup)
     (untabify beg (if (< end (point-max)) end (point-max)))))
-
-;; Presentation mode.
-
-
 
 ;; Key bindings
 
@@ -688,7 +694,8 @@ the languages in ISPELL-LANGUAGES when invoked."
 ;;    can add some extra lisp-modes. We run the =pretty-lambda-for-modes=
 ;;    function to activate =pretty-lambda-mode= in lisp modes.
 
-(dolist (mode '(slime-repl-mode geiser-repl-mode))
+(dolist (mode '(slime-repl-mode geiser-repl-mode ielm-mode clojure-mode
+                                cider-repl-mode))
   (add-to-list 'pretty-lambda-auto-modes mode))
 
 (pretty-lambda-for-modes)
@@ -818,6 +825,35 @@ the languages in ISPELL-LANGUAGES when invoked."
 
 (eval-after-load 'tex-mode
   '(setcar (cdr (cddaar tex-compile-commands)) " -shell-escape "))
+
+;; Markdown
+
+;;    I sometimes use a specialized markdown format, where inline math-blocks
+;;    can be achieved by surrounding a LaTeX formula with =$math$= and
+;;    =$/math$=. Writing these out became tedious, so I wrote a small function.
+
+(defun insert-markdown-inline-math-block ()
+  "Inserts an empty math-block if no region is active, otherwise wrap a
+math-block around the region."
+  (interactive)
+  (let* ((beg (region-beginning))
+         (end (region-end))
+         (body (if (region-active-p) (buffer-substring beg end) "")))
+    (when (region-active-p)
+      (delete-region beg end))
+    (insert (concat "$math$ " body " $/math$"))
+    (search-backward " $/math$")))
+
+;; Most of my writing in this markup is in Norwegian, so the dictionary is
+;;    set accordingly. The markup is also sensitive to line breaks, so
+;;    =auto-fill-mode= is disabled. Of course we want to bind our lovely
+;;    function to a key!
+
+(add-hook 'markdown-mode-hook
+          (lambda ()
+            (auto-fill-mode 0)
+            (ispell-change-dictionary "norsk")
+            (local-set-key (kbd "C-c b") 'insert-markdown-inline-math-block)) t)
 
 ;; Python
 

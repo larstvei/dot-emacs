@@ -24,6 +24,7 @@
   - [Java and C](#java-and-c)
   - [Assembler](#assembler)
   - [LaTeX](#latex)
+  - [Markdown](#markdown)
   - [Python](#python)
   - [Haskell](#haskell)
   - [Matlab](#matlab)
@@ -31,11 +32,43 @@
 
 # About<a id="sec-1" name="sec-1"></a>
 
-This is a Emacs configuration file written in `org-mode`. There are a few
-reasons why I wanted to do this. My `.emacs.d/` was a mess, and needed a
-proper clean-up. Also I like keeping all my configurations in a single
-file, using `org-mode` I can keep this file *organized*. I aim to briefly
-explain all my configurations.
+This is an Emacs configuration file written in [Org mode](http://orgmode.org). It is an attempt
+to keep my `~/.emacs.d` tidy, but still be able to keep it all in one
+file. I aim to briefly explain all my configurations as I go along!
+
+I would not recommend using this configuration *as-is*, because it
+probably contains a lot you don't really need. I do, however, hope people
+find some golden nuggets that they can smuggle into their own configs.
+
+If you really do want to try this config out, this is how I'd go about it:
+
+**Clone the repo.**
+
+```sh
+git clone https://github.com/larstvei/dot-emacs
+```
+
+**Backup your old `~/.emacs.d` (if necessary).**
+
+```sh
+mv ~/.emacs.d ~/.emacs.d-bak
+```
+
+**Backup your old `~/.emacs`-file (if necessary).**
+
+```sh
+mv ~/.emacs ~/.emacs-bak
+```
+
+**And finally**
+
+```sh
+mv dot-emacs ~/.emacs.d
+```
+
+On first run it should install a bunch of packages (this might take a
+while), and you might have to restart your Emacs the first time. If you
+experience bugs, please let me know!
 
 # Configurations<a id="sec-2" name="sec-2"></a>
 
@@ -63,11 +96,14 @@ tangled, and the tangled file is compiled."
 
 ## Package<a id="sec-2-2" name="sec-2-2"></a>
 
-Managing extensions for Emacs is simplified using `package` which
-is built in to Emacs 24 and newer. To load downloaded packages we
-need to initialize `package`.
+Managing extensions for Emacs is simplified using `package` which is
+built in to Emacs 24 and newer. To load downloaded packages we need to
+initialize `package`. `cl` is a library that contains many functions from
+Common Lisp, and comes in handy quite often, so we want to make sure it's
+loaded, along with `package`, which is obviously needed.
 
 ```lisp
+(require 'cl)
 (require 'package)
 (setq package-enable-at-startup nil)
 (package-initialize)
@@ -187,6 +223,7 @@ configurations are also dependent on them).
             ace-jump-mode     ; quick cursor location minor mode
             auto-compile      ; automatically compile Emacs Lisp libraries
             auto-complete     ; auto completion
+            centered-window   ; Center the text when there's only one window
             elscreen          ; window session manager
             expand-region     ; Increase selected region by semantic units
             flx-ido           ; flx integration for ido
@@ -205,6 +242,7 @@ configurations are also dependent on them).
             paredit           ; minor mode for editing parentheses
             powerline         ; Rewrite of Powerline
             pretty-lambdada   ; the word `lambda' as the Greek letter.
+            slime             ; Superior Lisp Interaction Mode for Emacs
             smex              ; M-x interface with Ido-style fuzzy matching.
             undo-tree))       ; Treat undo history as a tree
          ;; Fetch dependencies from all packages.
@@ -281,7 +319,10 @@ We can set variables to whatever value we'd like using `setq`.
       inhibit-startup-message t     ; No splash screen please.
       initial-scratch-message nil   ; Clean scratch buffer.
       ring-bell-function 'ignore    ; Quiet.
-      undo-tree-auto-save-history t ; Save undo history between sessions.
+      ;; Save undo history between sessions, if you have an undo-dir
+      undo-tree-auto-save-history
+      (file-exists-p
+       (concat user-emacs-directory "undo"))
       undo-tree-history-directory-alist
       ;; Put undo-history files in a directory, if it exists.
       (let ((undo-dir (concat user-emacs-directory "undo")))
@@ -625,19 +666,17 @@ we want to enable cycling the languages by typing `C-c l`, so we bind the
 function returned from `cycle-languages`.
 
 ```lisp
-(defadvice turn-on-flyspell (around check nil activate)
+(defadvice turn-on-flyspell (before check nil activate)
   "Turns on flyspell only if a spell-checking tool is installed."
   (when (executable-find ispell-program-name)
-    (local-set-key (kbd "C-c l") (cycle-languages))
-    ad-do-it))
+    (local-set-key (kbd "C-c l") (cycle-languages))))
 ```
 
 ```lisp
-(defadvice flyspell-prog-mode (around check nil activate)
+(defadvice flyspell-prog-mode (before check nil activate)
   "Turns on flyspell only if a spell-checking tool is installed."
   (when (executable-find ispell-program-name)
-    (local-set-key (kbd "C-c l") (cycle-languages))
-    ad-do-it))
+    (local-set-key (kbd "C-c l") (cycle-languages))))
 ```
 
 ## Org<a id="sec-2-12" name="sec-2-12"></a>
@@ -654,7 +693,11 @@ When editing org-files with source-blocks, we want the source blocks to
 be themed as they would in their native mode.
 
 ```lisp
-(setq org-src-fontify-natively t)
+(setq org-src-fontify-natively t
+      org-confirm-babel-evaluate nil)
+(require 'org)
+(setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
+(custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))
 ```
 
 ## Interactive functions<a id="sec-2-13" name="sec-2-13"></a>
@@ -701,7 +744,7 @@ function.
 
 ```lisp
 (defun duplicate-thing ()
-  "Ethier duplicates the line or the region"
+  "Duplicates the current line, or the region if active."
   (interactive)
   (save-excursion
     (let ((start (if (region-active-p) (region-beginning) (point-at-bol)))
@@ -723,11 +766,6 @@ To tidy up a buffer we define this function borrowed from [simenheg](https://git
     (indent-region beg end)
     (whitespace-cleanup)
     (untabify beg (if (< end (point-max)) end (point-max)))))
-```
-
-Presentation mode.
-
-```lisp
 ```
 
 ## Key bindings<a id="sec-2-14" name="sec-2-14"></a>
@@ -851,7 +889,8 @@ can add some extra lisp-modes. We run the `pretty-lambda-for-modes`
 function to activate `pretty-lambda-mode` in lisp modes.
 
 ```lisp
-(dolist (mode '(slime-repl-mode geiser-repl-mode))
+(dolist (mode '(slime-repl-mode geiser-repl-mode ielm-mode clojure-mode
+                                cider-repl-mode))
   (add-to-list 'pretty-lambda-auto-modes mode))
 
 (pretty-lambda-for-modes)
@@ -1009,7 +1048,40 @@ Tex- and LaTeX-mode, we can add the flag with a rather dirty statement
   '(setcar (cdr (cddaar tex-compile-commands)) " -shell-escape "))
 ```
 
-## Python<a id="sec-3-5" name="sec-3-5"></a>
+## Markdown<a id="sec-3-5" name="sec-3-5"></a>
+
+I sometimes use a specialized markdown format, where inline math-blocks
+can be achieved by surrounding a LaTeX formula with `$math$` and
+`$/math$`. Writing these out became tedious, so I wrote a small function.
+
+```lisp
+(defun insert-markdown-inline-math-block ()
+  "Inserts an empty math-block if no region is active, otherwise wrap a
+math-block around the region."
+  (interactive)
+  (let* ((beg (region-beginning))
+         (end (region-end))
+         (body (if (region-active-p) (buffer-substring beg end) "")))
+    (when (region-active-p)
+      (delete-region beg end))
+    (insert (concat "$math$ " body " $/math$"))
+    (search-backward " $/math$")))
+```
+
+Most of my writing in this markup is in Norwegian, so the dictionary is
+set accordingly. The markup is also sensitive to line breaks, so
+`auto-fill-mode` is disabled. Of course we want to bind our lovely
+function to a key!
+
+```lisp
+(add-hook 'markdown-mode-hook
+          (lambda ()
+            (auto-fill-mode 0)
+            (ispell-change-dictionary "norsk")
+            (local-set-key (kbd "C-c b") 'insert-markdown-inline-math-block)) t)
+```
+
+## Python<a id="sec-3-6" name="sec-3-6"></a>
 
 [Jedi](http://tkf.github.io/emacs-jedi/released/) offers very nice auto completion for `python-mode`. Mind that it is
 dependent on some python programs as well, so make sure you follow the
@@ -1024,7 +1096,7 @@ instructions from the site.
 (add-hook 'python-mode-hook 'jedi:ac-setup)
 ```
 
-## Haskell<a id="sec-3-6" name="sec-3-6"></a>
+## Haskell<a id="sec-3-7" name="sec-3-7"></a>
 
 `haskell-doc-mode` is similar to `eldoc`, it displays documentation in
 the echo area. Haskell has several indentation modes - I prefer using
@@ -1035,7 +1107,7 @@ the echo area. Haskell has several indentation modes - I prefer using
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
 ```
 
-## Matlab<a id="sec-3-7" name="sec-3-7"></a>
+## Matlab<a id="sec-3-8" name="sec-3-8"></a>
 
 `Matlab-mode` works pretty good out of the box, but we can do without the
 splash screen.
