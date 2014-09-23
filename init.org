@@ -749,6 +749,17 @@
        (untabify beg (if (< end (point-max)) end (point-max)))))
    #+END_SRC
 
+   If you have a link to a raw =.el=-file, run =M-x try= and yank an URL
+   into the minibuffer, and the file will be evaluated.
+
+   #+BEGIN_SRC emacs-lisp
+     (defun try (url)
+       "Takes an URL to a .el-file, and evaluates it."
+       (interactive (list (read-from-minibuffer "url: ")))
+       (with-current-buffer (url-retrieve-synchronously url)
+         (eval-region (search-forward-regexp "^$") (point-max))))
+   #+END_SRC
+
 ** Key bindings
 
    Bindings for [[https://github.com/magnars/expand-region.el][expand-region]].

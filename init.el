@@ -603,6 +603,15 @@ the languages in ISPELL-LANGUAGES when invoked."
     (whitespace-cleanup)
     (untabify beg (if (< end (point-max)) end (point-max)))))
 
+;; If you have a link to a raw =.el=-file, run =M-x try= and yank an URL
+;;    into the minibuffer, and the file will be evaluated.
+
+(defun try (url)
+  "Takes an URL to a .el-file, and evaluates it."
+  (interactive (list (read-from-minibuffer "url: ")))
+  (with-current-buffer (url-retrieve-synchronously url)
+    (eval-region (search-forward-regexp "^$") (point-max))))
+
 ;; Key bindings
 
 ;;    Bindings for [[https://github.com/magnars/expand-region.el][expand-region]].
