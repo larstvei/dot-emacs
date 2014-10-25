@@ -13,10 +13,10 @@
   - [Flyspell](#flyspell)
   - [Org](#org)
   - [Interactive functions](#interactive-functions)
-  - [Key bindings](#key-bindings)
   - [Advice](#advice)
   - [Presentation-mode](#presentation-mode)
-- [Language mode specific](#language-mode-specific)
+- [Mode specific](#mode-specific)
+  - [Shell](#shell)
   - [Lisp](#lisp)
     - [Emacs Lisp](#emacs-lisp)
     - [Common lisp](#common-lisp)
@@ -28,6 +28,8 @@
   - [Python](#python)
   - [Haskell](#haskell)
   - [Matlab](#matlab)
+- [Key bindings](#key-bindings)
+- [License](#license)
 
 
 # About<a id="sec-1" name="sec-1"></a>
@@ -88,8 +90,10 @@ the `after-save-hook` ensuring to always tangle and byte-compile the
 tangled, and the tangled file is compiled."
   (when (equal (buffer-file-name)
                (expand-file-name (concat user-emacs-directory "init.org")))
-    (org-babel-tangle)
-    (byte-compile-file (concat user-emacs-directory "init.el"))))
+    ;; Avoid running hooks when tangling.
+    (let ((prog-mode-hook nil))
+      (org-babel-tangle)
+      (byte-compile-file (concat user-emacs-directory "init.el")))))
 
 (add-hook 'after-save-hook 'tangle-init)
 ```
@@ -143,11 +147,14 @@ in handy.
   "Unless the newest available version of PACKAGE is installed
 PACKAGE is installed and the current version is deleted."
   (unless (newest-package-installed-p package)
-    (let ((pkg-desc (assq package package-alist)))
+    (let ((get-desc (if (version< emacs-version "24.4") 'cdr 'cadr))
+          (pkg-desc (assq package package-alist)))
       (when pkg-desc
-        (package-delete (symbol-name package)
-                        (package-version-join
-                         (package-desc-vers (cdr pkg-desc)))))
+        (if (version< emacs-version "24.4")
+            (package-delete (symbol-name package)
+                            (package-version-join
+                             (package-desc-vers (get-desc pkg-desc))))
+          (package-delete pkg-desc)))
       (and (assq package package-archive-contents)
            (package-install package)))))
 ```
@@ -274,7 +281,7 @@ along with external processes a lot simpler. I also prefer using the
   (setq mac-option-modifier nil
         mac-command-modifier 'meta
         x-select-enable-clipboard t)
-  (run-with-idle-timer 5 nil 'exec-path-from-shell-initialize))
+  (exec-path-from-shell-initialize))
 ```
 
 ## Require<a id="sec-2-4" name="sec-2-4"></a>
@@ -314,7 +321,7 @@ These are what *I* consider to be saner defaults.
 We can set variables to whatever value we'd like using `setq`.
 
 ```lisp
-(setq default-input-method "TeX"    ; Use TeX when toggeling input method.
+(setq default-input-method "TeX"    ; Use TeX when toggling input method.
       doc-view-continuous t         ; At page edge goto next/previous.
       echo-keystrokes 0.1           ; Show keystrokes asap.
       inhibit-startup-message t     ; No splash screen please.
@@ -431,13 +438,15 @@ default.
          '(abbrev-mode                ; E.g. sopl -> System.out.println.
            column-number-mode         ; Show column number in mode line.
            delete-selection-mode      ; Replace selected text.
+           dirtrack-mode              ; directory tracking in *shell*
            recentf-mode               ; Recently opened files.
            show-paren-mode            ; Highlight matching parentheses.
            global-undo-tree-mode))    ; Undo as a tree.
   (funcall mode 1))
 
-(eval-after-load 'auto-compile
-  '((auto-compile-on-save-mode 1)))   ; compile .el files on save.
+(when (version< emacs-version "24.4")
+  (eval-after-load 'auto-compile
+    '((auto-compile-on-save-mode 1))))  ; compile .el files on save.
 ```
 
 This makes `.md`-files open in `markdown-mode`.
@@ -460,39 +469,6 @@ Use the [Inconsolata](http://www.levien.com/type/myfonts/inconsolata.html) font 
 (when (member "Inconsolata-g" (font-family-list))
   (set-face-attribute 'default nil :font "Inconsolata-g-11"))
 ```
-
-[Powerline](https://github.com/milkypostman/powerline) is an extension to customize the mode line. This is modified
-version `powerline-nano-theme`. 
-
-```lisp
-(setq-default
- mode-line-format
- '("%e"
-   (:eval
-    (let* ((active (powerline-selected-window-active))
-           ;; left hand side displays Read only or Modified.
-           (lhs (list (powerline-raw
-                       (cond (buffer-read-only "Read only")
-                             ((buffer-modified-p) "Modified")
-                             (t "")) nil 'l)))
-           ;; right side hand displays (line,column).
-           (rhs (list
-                 (powerline-raw
-                  (concat
-                   "(" (number-to-string (line-number-at-pos))
-                   "," (number-to-string (current-column)) ")") nil 'r)))
-           ;; center displays buffer name.
-           (center (list (powerline-raw "%b" nil))))
-      (concat (powerline-render lhs)
-              (powerline-fill-center nil (/ (powerline-width center) 2.0))
-              (powerline-render center)
-              (powerline-fill nil (powerline-width rhs))
-              (powerline-render rhs))))))
-```
-
-This is what it looks like:
-
-![img](./powerline.png)
 
 ## Ido<a id="sec-2-8" name="sec-2-8"></a>
 
@@ -533,7 +509,6 @@ the standard `execute-extended-command` with `smex`.
 
 ```lisp
 (smex-initialize)
-(global-set-key (kbd "M-x") 'smex)
 ```
 
 ## Calendar<a id="sec-2-9" name="sec-2-9"></a>
@@ -725,25 +700,61 @@ To search recent files useing `ido-mode` we add this snippet from
 
 `just-one-space` removes all whitespace around a point - giving it a
 negative argument it removes newlines as well. We wrap a interactive
-function around it to be able to bind it to a key.
+function around it to be able to bind it to a key. In Emacs 24.4
+`cycle-spacing` was introduced, and it works like just one space, but
+when run in succession it cycles between one, zero and the original
+number of spaces.
 
 ```lisp
-(defun remove-whitespace-inbetween ()
+(defun cycle-spacing-delete-newlines ()
   "Removes whitespace before and after the point."
   (interactive)
-  (just-one-space -1))
+  (if (version< emacs-version "24.4")
+      (just-one-space -1)
+    (cycle-spacing -1)))
 ```
 
-This interactive function switches you to a `shell`, and if triggered in
-the shell it switches back to the previous buffer.
+```lisp
+(defun jump-to-symbol-internal (symbol forwardp)
+  (let* ((point (point))
+         (thing (prin1-to-string symbol))
+         (beg (and (not forwardp) thing (beginning-of-thing 'symbol)))
+         (end (and forwardp thing (end-of-thing 'symbol)))
+         (diff (and thing (if forwardp (- point end) (- point beg)))))
+    (if (and thing
+             (funcall (if forwardp
+                          'search-forward 'search-backward) thing nil t)
+             (eq (intern thing) symbol))
+        (forward-char diff)
+      (goto-char point))))
+
+(defun jump-to-symbol-backward ()
+  (interactive)
+  (jump-to-symbol-internal (symbol-at-point) nil))
+
+(defun jump-to-symbol-forward ()
+  (interactive)
+  (jump-to-symbol-internal (symbol-at-point) t))
+```
+
+I sometimes regret killing the `*scratch*`-buffer, and have realized I
+never want to actually kill it. I just want to get it out of the way, and
+clean it up. The function below does just this for the
+`*scratch*`-buffer, and works like `kill-this-buffer` for any other
+buffer. It removes all buffer content and buries the buffer (this means
+making it the least likely candidate for `other-buffer`).
 
 ```lisp
-(defun switch-to-shell ()
-  "Jumps to eshell or back."
+(defun kill-this-buffer-unless-scratch ()
+  "Works like `kill-this-buffer' unless the current buffer is the
+*scratch* buffer. In witch case the buffer content is deleted and
+the buffer is buried."
   (interactive)
-  (if (string= (buffer-name) "*shell*")
-      (switch-to-prev-buffer)
-    (shell)))
+  (if (not (string= (buffer-name) "*scratch*"))
+      (kill-this-buffer)
+    (delete-region (point-min) (point-max))
+    (switch-to-buffer (other-buffer))
+    (bury-buffer "*scratch*")))
 ```
 
 To duplicate either selected text or a line we define this interactive
@@ -786,61 +797,7 @@ into the minibuffer, and the file will be evaluated.
     (eval-region (search-forward-regexp "^$") (point-max))))
 ```
 
-## Key bindings<a id="sec-2-14" name="sec-2-14"></a>
-
-Bindings for [expand-region](https://github.com/magnars/expand-region.el).
-
-```lisp
-(global-set-key (kbd "C-'")  'er/expand-region)
-(global-set-key (kbd "C-;")  'er/contract-region)
-```
-
-Bindings for [multiple-cursors](https://github.com/magnars/multiple-cursors.el).
-
-```lisp
-(global-set-key (kbd "C-c e")  'mc/edit-lines)
-(global-set-key (kbd "C-c a")  'mc/mark-all-like-this)
-(global-set-key (kbd "C-c n")  'mc/mark-next-like-this)
-```
-
-Bindings for [Magit](http://magit.github.io).
-
-```lisp
-(global-set-key (kbd "C-c m") 'magit-status)
-```
-
-Bindings for [ace-jump-mode](https://github.com/winterTTr/ace-jump-mode).
-
-```lisp
-(global-set-key (kbd "C-c SPC") 'ace-jump-mode)
-```
-
-Bindings for `move-text`.
-
-```lisp
-(global-set-key (kbd "<M-S-up>")    'move-text-up)
-(global-set-key (kbd "<M-S-down>")  'move-text-down)
-```
-
-Bind some native Emacs functions.
-
-```lisp
-(global-set-key (kbd "C-c s")    'ispell-word)
-(global-set-key (kbd "C-c t")    'org-agenda-list)
-(global-set-key (kbd "C-x k")    'kill-this-buffer)
-(global-set-key (kbd "C-x C-r")  'recentf-ido-find-file)
-```
-
-Bind the functions defined above.
-
-```lisp
-(global-set-key (kbd "C-c j")    'remove-whitespace-inbetween)
-(global-set-key (kbd "C-x t")    'switch-to-shell)
-(global-set-key (kbd "C-c d")    'duplicate-thing)
-(global-set-key (kbd "<C-tab>")  'tidy)
-```
-
-## Advice<a id="sec-2-15" name="sec-2-15"></a>
+## Advice<a id="sec-2-14" name="sec-2-14"></a>
 
 An advice can be given to a function to make it behave differently. This
 advice makes `eval-last-sexp` (bound to `C-x C-e`) replace the sexp with
@@ -869,7 +826,7 @@ enabled themes.
   (mapc 'disable-theme custom-enabled-themes))
 ```
 
-## Presentation-mode<a id="sec-2-16" name="sec-2-16"></a>
+## Presentation-mode<a id="sec-2-15" name="sec-2-15"></a>
 
 When giving talks it's nice to be able to scale the text
 globally. `text-scale-mode` works great for a single buffer, this advice
@@ -897,9 +854,50 @@ from the `text-scale-mode`, using `define-globalized-minor-mode`.
   (lambda () (text-scale-mode 1)))
 ```
 
-# Language mode specific<a id="sec-3" name="sec-3"></a>
+# Mode specific<a id="sec-3" name="sec-3"></a>
 
-## Lisp<a id="sec-3-1" name="sec-3-1"></a>
+## Shell<a id="sec-3-1" name="sec-3-1"></a>
+
+I use `shell` whenever i want to use access the command line in Emacs. I
+keep a symlink between my `~/.bash_profile` (because I run OS X) and
+`~/.emacs_bash`, to make the transition between my standard terminal and
+the shell as small as possible. To be able to quickly switch back and
+forth between a shell I make use of this little function.
+
+```lisp
+(defun toggle-shell ()
+  "Jumps to eshell or back."
+  (interactive)
+  (if (string= (buffer-name) "*shell*")
+      (switch-to-prev-buffer)
+    (shell)))
+```
+
+I'd like the `C-l` to work more like the standard terminal (which works
+like running `clear`), and resolve this by simply removing the
+buffer-content. Mind that this is not how `clear` works, it simply adds a
+bunch of newlines, and puts the prompt at the top of the window, so it
+does not remove anything. In Emacs removing stuff is less of a worry,
+since we can always undo!
+
+```lisp
+(defun clear-shell ()
+  "Runs `comint-truncate-buffer' with the
+`comint-buffer-maximum-size' set to zero."
+  (interactive)
+  (let ((comint-buffer-maximum-size 0))
+   (comint-truncate-buffer)))
+```
+
+Lastly we should bind our functions. The `toggle-shell` should be a
+global binding (because we want to be able to switch to a shell from any
+buffer), but the `clear-shell` should only affect `shell-mode`.
+
+```lisp
+(add-hook 'shell-mode-hook (lambda () (local-set-key (kbd "C-l") 'clear-shell)))
+```
+
+## Lisp<a id="sec-3-2" name="sec-3-2"></a>
 
 `Pretty-lambda` provides a customizable variable
 `pretty-lambda-auto-modes` that is a list of common lisp modes. Here we
@@ -923,7 +921,7 @@ in the `pretty-lambda-auto-modes` list.
   (add-hook (intern (concat (symbol-name mode) "-hook")) 'paredit-mode))
 ```
 
-### Emacs Lisp<a id="sec-3-1-1" name="sec-3-1-1"></a>
+### Emacs Lisp<a id="sec-3-2-1" name="sec-3-2-1"></a>
 
 In `emacs-lisp-mode` we can enable `eldoc-mode` to display information
 about a function or a variable in the echo area.
@@ -933,7 +931,7 @@ about a function or a variable in the echo area.
 (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
 ```
 
-### Common lisp<a id="sec-3-1-2" name="sec-3-1-2"></a>
+### Common lisp<a id="sec-3-2-2" name="sec-3-2-2"></a>
 
 I use [Slime](http://www.common-lisp.net/project/slime/) along with `lisp-mode` to edit Common Lisp code. Slime
 provides code evaluation and other great features, a must have for a
@@ -963,7 +961,15 @@ which uses slime completions as a source.
   '(add-to-list 'ac-modes 'slime-repl-mode))
 ```
 
-### Scheme<a id="sec-3-1-3" name="sec-3-1-3"></a>
+More sensible `loop` indentation, borrowed from [simenheg](https://github.com/simenheg).
+
+```lisp
+(setq lisp-loop-forms-indentation   2
+      lisp-simple-loop-indentation  2
+      lisp-loop-keyword-indentation 6)
+```
+
+### Scheme<a id="sec-3-2-3" name="sec-3-2-3"></a>
 
 [Geiser](http://www.nongnu.org/geiser/) provides features similar to Slime for Scheme editing. Everything
 works pretty much out of the box, we only need to add auto completion,
@@ -978,7 +984,7 @@ and specify which scheme-interpreter we prefer.
   '(add-to-list 'geiser-active-implementations 'plt-r5rs)) ;'(racket))
 ```
 
-## Java and C<a id="sec-3-2" name="sec-3-2"></a>
+## Java and C<a id="sec-3-3" name="sec-3-3"></a>
 
 The `c-mode-common-hook` is a general hook that work on all C-like
 languages (C, C++, Java, etc&#x2026;). I like being able to quickly compile
@@ -1012,7 +1018,7 @@ activated.
 (add-hook 'java-mode-hook 'java-setup)
 ```
 
-## Assembler<a id="sec-3-3" name="sec-3-3"></a>
+## Assembler<a id="sec-3-4" name="sec-3-4"></a>
 
 When writing assembler code I use `#` for comments. By defining
 `comment-start` we can add comments using `M-;` like in other programming
@@ -1026,7 +1032,7 @@ modes. Also in assembler should one be able to compile using `C-c C-c`.
 (add-hook 'asm-mode-hook 'asm-setup)
 ```
 
-## LaTeX<a id="sec-3-4" name="sec-3-4"></a>
+## LaTeX<a id="sec-3-5" name="sec-3-5"></a>
 
 `.tex`-files should be associated with `latex-mode` instead of
 `tex-mode`.
@@ -1063,7 +1069,7 @@ Tex- and LaTeX-mode, we can add the flag with a rather dirty statement
   '(setcar (cdr (cddaar tex-compile-commands)) " -shell-escape "))
 ```
 
-## Markdown<a id="sec-3-5" name="sec-3-5"></a>
+## Markdown<a id="sec-3-6" name="sec-3-6"></a>
 
 I sometimes use a specialized markdown format, where inline math-blocks
 can be achieved by surrounding a LaTeX formula with `$math$` and
@@ -1096,22 +1102,9 @@ function to a key!
             (local-set-key (kbd "C-c b") 'insert-markdown-inline-math-block)) t)
 ```
 
-## Python<a id="sec-3-6" name="sec-3-6"></a>
+## Python<a id="sec-3-7" name="sec-3-7"></a>
 
-[Jedi](http://tkf.github.io/emacs-jedi/released/) offers very nice auto completion for `python-mode`. Mind that it is
-dependent on some python programs as well, so make sure you follow the
-instructions from the site.
-
-```lisp
-;; (setq jedi:server-command
-;;       (cons "python3" (cdr jedi:server-command))
-;;       python-shell-interpreter "python3")
-(add-hook 'python-mode-hook 'jedi:setup)
-(setq jedi:complete-on-dot t)
-(add-hook 'python-mode-hook 'jedi:ac-setup)
-```
-
-## Haskell<a id="sec-3-7" name="sec-3-7"></a>
+## Haskell<a id="sec-3-8" name="sec-3-8"></a>
 
 `haskell-doc-mode` is similar to `eldoc`, it displays documentation in
 the echo area. Haskell has several indentation modes - I prefer using
@@ -1122,7 +1115,7 @@ the echo area. Haskell has several indentation modes - I prefer using
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
 ```
 
-## Matlab<a id="sec-3-8" name="sec-3-8"></a>
+## Matlab<a id="sec-3-9" name="sec-3-9"></a>
 
 `Matlab-mode` works pretty good out of the box, but we can do without the
 splash screen.
@@ -1131,3 +1124,111 @@ splash screen.
 (eval-after-load 'matlab
   '(add-to-list 'matlab-shell-command-switches "-nosplash"))
 ```
+
+# Key bindings<a id="sec-4" name="sec-4"></a>
+
+Inspired by [this StackOverflow post](http://stackoverflow.com/questions/683425/globally-override-key-binding-in-emacs) I keep a `custom-bindings-map` that
+holds all my custom bindings. This map can be activated by toggling a
+simple `minor-mode` that does nothing more than activating the map. This
+inhibits other `major-modes` to override these bindings. I keep this at
+the end of the init-file to make sure that all functions are actually
+defined.
+
+```lisp
+(defvar custom-bindings-map (make-keymap)
+  "A keymap for custom bindings.")
+```
+
+Bindings for [expand-region](https://github.com/magnars/expand-region.el).
+
+```lisp
+(define-key custom-bindings-map (kbd "C-'")  'er/expand-region)
+(define-key custom-bindings-map (kbd "C-;")  'er/contract-region)
+```
+
+Bindings for [multiple-cursors](https://github.com/magnars/multiple-cursors.el).
+
+```lisp
+(define-key custom-bindings-map (kbd "C-c e")  'mc/edit-lines)
+(define-key custom-bindings-map (kbd "C-c a")  'mc/mark-all-like-this)
+(define-key custom-bindings-map (kbd "C-c n")  'mc/mark-next-like-this)
+```
+
+Bindings for [Magit](http://magit.github.io).
+
+```lisp
+(define-key custom-bindings-map (kbd "C-c m") 'magit-status)
+```
+
+Bindings for [ace-jump-mode](https://github.com/winterTTr/ace-jump-mode).
+
+```lisp
+(define-key custom-bindings-map (kbd "C-c SPC") 'ace-jump-mode)
+```
+
+Bindings for [Helm](http://emacs-helm.github.io/helm/).
+
+```lisp
+(define-key custom-bindings-map (kbd "C-c h g") 'helm-google-suggest)
+```
+
+Bindings for [smex](https://github.com/nonsequitur/smex). This overrides the standard `M-x`.
+
+```lisp
+(define-key custom-bindings-map (kbd "M-x") 'smex)
+```
+
+Bindings for `move-text`.
+
+```lisp
+(define-key custom-bindings-map (kbd "<M-S-up>")    'move-text-up)
+(define-key custom-bindings-map (kbd "<M-S-down>")  'move-text-down)
+```
+
+Bind some native Emacs functions.
+
+```lisp
+(define-key custom-bindings-map (kbd "C-j")      'newline-and-indent)
+(define-key custom-bindings-map (kbd "C-c s")    'ispell-word)
+(define-key custom-bindings-map (kbd "C-c t")    'org-agenda-list)
+(define-key custom-bindings-map (kbd "C-x C-r")  'recentf-ido-find-file)
+```
+
+Bind the functions defined above.
+
+```lisp
+(define-key custom-bindings-map (kbd "M-p")     'jump-to-symbol-backward)
+(define-key custom-bindings-map (kbd "M-n")     'jump-to-symbol-forward)
+(define-key custom-bindings-map (kbd "C-x k")   'kill-this-buffer-unless-scratch)
+(define-key custom-bindings-map (kbd "C-x t")   'toggle-shell)
+(define-key custom-bindings-map (kbd "C-c j")   'cycle-spacing-delete-newlines)
+(define-key custom-bindings-map (kbd "C-c d")   'duplicate-thing)
+(define-key custom-bindings-map (kbd "<C-tab>") 'tidy)
+```
+
+Lastly we need to activate the map by creating and activating the
+`minor-mode`.
+
+```lisp
+(define-minor-mode custom-bindings-mode
+  "A mode that activates custom-bindings."
+  t nil custom-bindings-map)
+```
+
+# License<a id="sec-5" name="sec-5"></a>
+
+My Emacs configurations written in Org mode
+Copyright (c) 2013 - 2014 Lars Tveito
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
