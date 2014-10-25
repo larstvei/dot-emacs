@@ -14,8 +14,10 @@
 tangled, and the tangled file is compiled."
   (when (equal (buffer-file-name)
                (expand-file-name (concat user-emacs-directory "init.org")))
-    (org-babel-tangle)
-    (byte-compile-file (concat user-emacs-directory "init.el"))))
+    ;; Avoid running hooks when tangling.
+    (let ((prog-mode-hook nil))
+      (org-babel-tangle)
+      (byte-compile-file (concat user-emacs-directory "init.el")))))
 
 (add-hook 'after-save-hook 'tangle-init)
 
@@ -61,11 +63,14 @@ tangled, and the tangled file is compiled."
   "Unless the newest available version of PACKAGE is installed
 PACKAGE is installed and the current version is deleted."
   (unless (newest-package-installed-p package)
-    (let ((pkg-desc (assq package package-alist)))
+    (let ((get-desc (if (version< emacs-version "24.4") 'cdr 'cadr))
+          (pkg-desc (assq package package-alist)))
       (when pkg-desc
-        (package-delete (symbol-name package)
-                        (package-version-join
-                         (package-desc-vers (cdr pkg-desc)))))
+        (if (version< emacs-version "24.4")
+            (package-delete (symbol-name package)
+                            (package-version-join
+                             (package-desc-vers (get-desc pkg-desc))))
+          (package-delete pkg-desc)))
       (and (assq package package-archive-contents)
            (package-install package)))))
 
@@ -182,7 +187,7 @@ PACKAGE is installed and the current version is deleted."
   (setq mac-option-modifier nil
         mac-command-modifier 'meta
         x-select-enable-clipboard t)
-  (run-with-idle-timer 5 nil 'exec-path-from-shell-initialize))
+  (exec-path-from-shell-initialize))
 
 ;; Require
 
@@ -218,7 +223,7 @@ PACKAGE is installed and the current version is deleted."
 
 ;;    We can set variables to whatever value we'd like using =setq=.
 
-(setq default-input-method "TeX"    ; Use TeX when toggeling input method.
+(setq default-input-method "TeX"    ; Use TeX when toggling input method.
       doc-view-continuous t         ; At page edge goto next/previous.
       echo-keystrokes 0.1           ; Show keystrokes asap.
       inhibit-startup-message t     ; No splash screen please.
@@ -315,13 +320,15 @@ PACKAGE is installed and the current version is deleted."
          '(abbrev-mode                ; E.g. sopl -> System.out.println.
            column-number-mode         ; Show column number in mode line.
            delete-selection-mode      ; Replace selected text.
+           dirtrack-mode              ; directory tracking in *shell*
            recentf-mode               ; Recently opened files.
            show-paren-mode            ; Highlight matching parentheses.
            global-undo-tree-mode))    ; Undo as a tree.
   (funcall mode 1))
 
-(eval-after-load 'auto-compile
-  '((auto-compile-on-save-mode 1)))   ; compile .el files on save.
+(when (version< emacs-version "24.4")
+  (eval-after-load 'auto-compile
+    '((auto-compile-on-save-mode 1))))  ; compile .el files on save.
 
 ;; This makes =.md=-files open in =markdown-mode=.
 
@@ -337,33 +344,6 @@ PACKAGE is installed and the current version is deleted."
 
 (when (member "Inconsolata-g" (font-family-list))
   (set-face-attribute 'default nil :font "Inconsolata-g-11"))
-
-;; [[https://github.com/milkypostman/powerline][Powerline]] is an extension to customize the mode line. This is modified
-;;    version =powerline-nano-theme=.
-
-(setq-default
- mode-line-format
- '("%e"
-   (:eval
-    (let* ((active (powerline-selected-window-active))
-           ;; left hand side displays Read only or Modified.
-           (lhs (list (powerline-raw
-                       (cond (buffer-read-only "Read only")
-                             ((buffer-modified-p) "Modified")
-                             (t "")) nil 'l)))
-           ;; right side hand displays (line,column).
-           (rhs (list
-                 (powerline-raw
-                  (concat
-                   "(" (number-to-string (line-number-at-pos))
-                   "," (number-to-string (current-column)) ")") nil 'r)))
-           ;; center displays buffer name.
-           (center (list (powerline-raw "%b" nil))))
-      (concat (powerline-render lhs)
-              (powerline-fill-center nil (/ (powerline-width center) 2.0))
-              (powerline-render center)
-              (powerline-fill nil (powerline-width rhs))
-              (powerline-render rhs))))))
 
 ;; Ido
 
@@ -397,7 +377,6 @@ PACKAGE is installed and the current version is deleted."
 ;;    the standard =execute-extended-command= with =smex=.
 
 (smex-initialize)
-(global-set-key (kbd "M-x") 'smex)
 
 ;; Calendar
 
@@ -561,22 +540,56 @@ the languages in ISPELL-LANGUAGES when invoked."
 
 ;; =just-one-space= removes all whitespace around a point - giving it a
 ;;    negative argument it removes newlines as well. We wrap a interactive
-;;    function around it to be able to bind it to a key.
+;;    function around it to be able to bind it to a key. In Emacs 24.4
+;;    =cycle-spacing= was introduced, and it works like just one space, but
+;;    when run in succession it cycles between one, zero and the original
+;;    number of spaces.
 
-(defun remove-whitespace-inbetween ()
+(defun cycle-spacing-delete-newlines ()
   "Removes whitespace before and after the point."
   (interactive)
-  (just-one-space -1))
+  (if (version< emacs-version "24.4")
+      (just-one-space -1)
+    (cycle-spacing -1)))
 
-;; This interactive function switches you to a =shell=, and if triggered in
-;;    the shell it switches back to the previous buffer.
+(defun jump-to-symbol-internal (symbol forwardp)
+  (let* ((point (point))
+         (thing (prin1-to-string symbol))
+         (beg (and (not forwardp) thing (beginning-of-thing 'symbol)))
+         (end (and forwardp thing (end-of-thing 'symbol)))
+         (diff (and thing (if forwardp (- point end) (- point beg)))))
+    (if (and thing
+             (funcall (if forwardp
+                          'search-forward 'search-backward) thing nil t)
+             (eq (intern thing) symbol))
+        (forward-char diff)
+      (goto-char point))))
 
-(defun switch-to-shell ()
-  "Jumps to eshell or back."
+(defun jump-to-symbol-backward ()
   (interactive)
-  (if (string= (buffer-name) "*shell*")
-      (switch-to-prev-buffer)
-    (shell)))
+  (jump-to-symbol-internal (symbol-at-point) nil))
+
+(defun jump-to-symbol-forward ()
+  (interactive)
+  (jump-to-symbol-internal (symbol-at-point) t))
+
+;; I sometimes regret killing the =*scratch*=-buffer, and have realized I
+;;    never want to actually kill it. I just want to get it out of the way, and
+;;    clean it up. The function below does just this for the
+;;    =*scratch*=-buffer, and works like =kill-this-buffer= for any other
+;;    buffer. It removes all buffer content and buries the buffer (this means
+;;    making it the least likely candidate for =other-buffer=).
+
+(defun kill-this-buffer-unless-scratch ()
+  "Works like `kill-this-buffer' unless the current buffer is the
+*scratch* buffer. In witch case the buffer content is deleted and
+the buffer is buried."
+  (interactive)
+  (if (not (string= (buffer-name) "*scratch*"))
+      (kill-this-buffer)
+    (delete-region (point-min) (point-max))
+    (switch-to-buffer (other-buffer))
+    (bury-buffer "*scratch*")))
 
 ;; To duplicate either selected text or a line we define this interactive
 ;;    function.
@@ -611,46 +624,6 @@ the languages in ISPELL-LANGUAGES when invoked."
   (interactive (list (read-from-minibuffer "url: ")))
   (with-current-buffer (url-retrieve-synchronously url)
     (eval-region (search-forward-regexp "^$") (point-max))))
-
-;; Key bindings
-
-;;    Bindings for [[https://github.com/magnars/expand-region.el][expand-region]].
-
-(global-set-key (kbd "C-'")  'er/expand-region)
-(global-set-key (kbd "C-;")  'er/contract-region)
-
-;; Bindings for [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]].
-
-(global-set-key (kbd "C-c e")  'mc/edit-lines)
-(global-set-key (kbd "C-c a")  'mc/mark-all-like-this)
-(global-set-key (kbd "C-c n")  'mc/mark-next-like-this)
-
-;; Bindings for [[http://magit.github.io][Magit]].
-
-(global-set-key (kbd "C-c m") 'magit-status)
-
-;; Bindings for [[https://github.com/winterTTr/ace-jump-mode][ace-jump-mode]].
-
-(global-set-key (kbd "C-c SPC") 'ace-jump-mode)
-
-;; Bindings for =move-text=.
-
-(global-set-key (kbd "<M-S-up>")    'move-text-up)
-(global-set-key (kbd "<M-S-down>")  'move-text-down)
-
-;; Bind some native Emacs functions.
-
-(global-set-key (kbd "C-c s")    'ispell-word)
-(global-set-key (kbd "C-c t")    'org-agenda-list)
-(global-set-key (kbd "C-x k")    'kill-this-buffer)
-(global-set-key (kbd "C-x C-r")  'recentf-ido-find-file)
-
-;; Bind the functions defined [[sec:defuns][above]].
-
-(global-set-key (kbd "C-c j")    'remove-whitespace-inbetween)
-(global-set-key (kbd "C-x t")    'switch-to-shell)
-(global-set-key (kbd "C-c d")    'duplicate-thing)
-(global-set-key (kbd "<C-tab>")  'tidy)
 
 ;; Advice
 
@@ -700,6 +673,41 @@ the languages in ISPELL-LANGUAGES when invoked."
   global-text-scale-mode
   text-scale-mode
   (lambda () (text-scale-mode 1)))
+
+;; Shell
+
+;;    I use =shell= whenever i want to use access the command line in Emacs. I
+;;    keep a symlink between my =~/.bash_profile= (because I run OS X) and
+;;    =~/.emacs_bash=, to make the transition between my standard terminal and
+;;    the shell as small as possible. To be able to quickly switch back and
+;;    forth between a shell I make use of this little function.
+
+(defun toggle-shell ()
+  "Jumps to eshell or back."
+  (interactive)
+  (if (string= (buffer-name) "*shell*")
+      (switch-to-prev-buffer)
+    (shell)))
+
+;; I'd like the =C-l= to work more like the standard terminal (which works
+;;    like running =clear=), and resolve this by simply removing the
+;;    buffer-content. Mind that this is not how =clear= works, it simply adds a
+;;    bunch of newlines, and puts the prompt at the top of the window, so it
+;;    does not remove anything. In Emacs removing stuff is less of a worry,
+;;    since we can always undo!
+
+(defun clear-shell ()
+  "Runs `comint-truncate-buffer' with the
+`comint-buffer-maximum-size' set to zero."
+  (interactive)
+  (let ((comint-buffer-maximum-size 0))
+   (comint-truncate-buffer)))
+
+;; Lastly we should bind our functions. The =toggle-shell= should be a
+;;    global binding (because we want to be able to switch to a shell from any
+;;    buffer), but the =clear-shell= should only affect =shell-mode=.
+
+(add-hook 'shell-mode-hook (lambda () (local-set-key (kbd "C-l") 'clear-shell)))
 
 ;; Lisp
 
@@ -752,6 +760,12 @@ the languages in ISPELL-LANGUAGES when invoked."
 
 (eval-after-load "auto-complete"
   '(add-to-list 'ac-modes 'slime-repl-mode))
+
+;; More sensible =loop= indentation, borrowed from [[https://github.com/simenheg][simenheg]].
+
+(setq lisp-loop-forms-indentation   2
+      lisp-simple-loop-indentation  2
+      lisp-loop-keyword-indentation 6)
 
 ;; Scheme
 
@@ -866,19 +880,6 @@ math-block around the region."
             (ispell-change-dictionary "norsk")
             (local-set-key (kbd "C-c b") 'insert-markdown-inline-math-block)) t)
 
-;; Python
-
-;;    [[http://tkf.github.io/emacs-jedi/released/][Jedi]] offers very nice auto completion for =python-mode=. Mind that it is
-;;    dependent on some python programs as well, so make sure you follow the
-;;    instructions from the site.
-
-;; (setq jedi:server-command
-;;       (cons "python3" (cdr jedi:server-command))
-;;       python-shell-interpreter "python3")
-(add-hook 'python-mode-hook 'jedi:setup)
-(setq jedi:complete-on-dot t)
-(add-hook 'python-mode-hook 'jedi:ac-setup)
-
 ;; Haskell
 
 ;;    =haskell-doc-mode= is similar to =eldoc=, it displays documentation in
@@ -895,3 +896,71 @@ math-block around the region."
 
 (eval-after-load 'matlab
   '(add-to-list 'matlab-shell-command-switches "-nosplash"))
+
+;; Key bindings
+
+;;    Inspired by [[http://stackoverflow.com/questions/683425/globally-override-key-binding-in-emacs][this StackOverflow post]] I keep a =custom-bindings-map= that
+;;    holds all my custom bindings. This map can be activated by toggling a
+;;    simple =minor-mode= that does nothing more than activating the map. This
+;;    inhibits other =major-modes= to override these bindings. I keep this at
+;;    the end of the init-file to make sure that all functions are actually
+;;    defined.
+
+(defvar custom-bindings-map (make-keymap)
+  "A keymap for custom bindings.")
+
+;; Bindings for [[https://github.com/magnars/expand-region.el][expand-region]].
+
+(define-key custom-bindings-map (kbd "C-'")  'er/expand-region)
+(define-key custom-bindings-map (kbd "C-;")  'er/contract-region)
+
+;; Bindings for [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]].
+
+(define-key custom-bindings-map (kbd "C-c e")  'mc/edit-lines)
+(define-key custom-bindings-map (kbd "C-c a")  'mc/mark-all-like-this)
+(define-key custom-bindings-map (kbd "C-c n")  'mc/mark-next-like-this)
+
+;; Bindings for [[http://magit.github.io][Magit]].
+
+(define-key custom-bindings-map (kbd "C-c m") 'magit-status)
+
+;; Bindings for [[https://github.com/winterTTr/ace-jump-mode][ace-jump-mode]].
+
+(define-key custom-bindings-map (kbd "C-c SPC") 'ace-jump-mode)
+
+;; Bindings for [[http://emacs-helm.github.io/helm/][Helm]].
+
+(define-key custom-bindings-map (kbd "C-c h g") 'helm-google-suggest)
+
+;; Bindings for [[https://github.com/nonsequitur/smex][smex]]. This overrides the standard =M-x=.
+
+(define-key custom-bindings-map (kbd "M-x") 'smex)
+
+;; Bindings for =move-text=.
+
+(define-key custom-bindings-map (kbd "<M-S-up>")    'move-text-up)
+(define-key custom-bindings-map (kbd "<M-S-down>")  'move-text-down)
+
+;; Bind some native Emacs functions.
+
+(define-key custom-bindings-map (kbd "C-j")      'newline-and-indent)
+(define-key custom-bindings-map (kbd "C-c s")    'ispell-word)
+(define-key custom-bindings-map (kbd "C-c t")    'org-agenda-list)
+(define-key custom-bindings-map (kbd "C-x C-r")  'recentf-ido-find-file)
+
+;; Bind the functions defined [[sec:defuns][above]].
+
+(define-key custom-bindings-map (kbd "M-p")     'jump-to-symbol-backward)
+(define-key custom-bindings-map (kbd "M-n")     'jump-to-symbol-forward)
+(define-key custom-bindings-map (kbd "C-x k")   'kill-this-buffer-unless-scratch)
+(define-key custom-bindings-map (kbd "C-x t")   'toggle-shell)
+(define-key custom-bindings-map (kbd "C-c j")   'cycle-spacing-delete-newlines)
+(define-key custom-bindings-map (kbd "C-c d")   'duplicate-thing)
+(define-key custom-bindings-map (kbd "<C-tab>") 'tidy)
+
+;; Lastly we need to activate the map by creating and activating the
+;;    =minor-mode=.
+
+(define-minor-mode custom-bindings-mode
+  "A mode that activates custom-bindings."
+  t nil custom-bindings-map)
