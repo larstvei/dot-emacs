@@ -714,27 +714,38 @@ number of spaces.
     (cycle-spacing -1)))
 ```
 
+Often I want to find other occurrences of a word I'm at, or more
+specifically the symbol (or tag) I'm at. The
+`isearch-forward-symbol-at-point` in Emacs 24.4 works well for this, but
+I don't want to be bothered with the `isearch` interface. Rather jump
+quickly between occurrences of a symbol, or if non is found, don't do
+anything.
+
 ```lisp
-(defun jump-to-symbol-internal (symbol forwardp)
+(defun jump-to-symbol-internal (&optional backwardp)
+  "Jumps to the next symbol near the point if such a symbol
+exists. If BACKWARDP is non-nil it jumps backward."
   (let* ((point (point))
-         (thing (prin1-to-string symbol))
-         (beg (and (not forwardp) thing (beginning-of-thing 'symbol)))
-         (end (and forwardp thing (end-of-thing 'symbol)))
-         (diff (and thing (if forwardp (- point end) (- point beg)))))
-    (if (and thing
-             (funcall (if forwardp
-                          'search-forward 'search-backward) thing nil t)
-             (eq (intern thing) symbol))
-        (forward-char diff)
-      (goto-char point))))
+         (bounds (find-tag-default-bounds))
+         (beg (car bounds)) (end (cdr bounds))
+         (str (isearch-symbol-regexp (find-tag-default)))
+         (search (if backwardp 'search-backward-regexp
+                   'search-forward-regexp)))
+    (goto-char (if backwardp beg end))
+    (funcall search str nil t)
+    (cond ((<= beg (point) end) (goto-char point))
+          (backwardp (forward-char (- point beg)))
+          (t  (backward-char (- end point))))))
 
-(defun jump-to-symbol-backward ()
+(defun jump-to-previous-like-this ()
+  "Jumps to the previous occurrence of the symbol at point."
   (interactive)
-  (jump-to-symbol-internal (symbol-at-point) nil))
+  (jump-to-symbol-internal t))
 
-(defun jump-to-symbol-forward ()
+(defun jump-to-next-like-this ()
+  "Jumps to the next occurrence of the symbol at point."
   (interactive)
-  (jump-to-symbol-internal (symbol-at-point) t))
+  (jump-to-symbol-internal))
 ```
 
 I sometimes regret killing the `*scratch*`-buffer, and have realized I
@@ -1197,8 +1208,8 @@ Bind some native Emacs functions.
 Bind the functions defined above.
 
 ```lisp
-(define-key custom-bindings-map (kbd "M-p")     'jump-to-symbol-backward)
-(define-key custom-bindings-map (kbd "M-n")     'jump-to-symbol-forward)
+(define-key custom-bindings-map (kbd "M-,")     'jump-to-previous-like-this)
+(define-key custom-bindings-map (kbd "M-.")     'jump-to-next-like-this)
 (define-key custom-bindings-map (kbd "C-x k")   'kill-this-buffer-unless-scratch)
 (define-key custom-bindings-map (kbd "C-x t")   'toggle-shell)
 (define-key custom-bindings-map (kbd "C-c j")   'cycle-spacing-delete-newlines)
@@ -1217,7 +1228,8 @@ Lastly we need to activate the map by creating and activating the
 
 # License<a id="sec-5" name="sec-5"></a>
 
-My Emacs configurations written in Org mode
+My Emacs configurations written in Org mode.
+
 Copyright (c) 2013 - 2014 Lars Tveito
 
 This program is free software: you can redistribute it and/or modify
