@@ -84,7 +84,7 @@ To avoid doing this each time a change is made we can add a function to
 the `after-save-hook` ensuring to always tangle and byte-compile the
 `org`-document after changes.
 
-```lisp
+```emacs-lisp
 (defun tangle-init ()
   "If the current buffer is 'init.org' the code-blocks are
 tangled, and the tangled file is compiled."
@@ -106,7 +106,7 @@ initialize `package`. `cl` is a library that contains many functions from
 Common Lisp, and comes in handy quite often, so we want to make sure it's
 loaded, along with `package`, which is obviously needed.
 
-```lisp
+```emacs-lisp
 (require 'cl)
 (require 'package)
 (setq package-enable-at-startup nil)
@@ -116,7 +116,7 @@ loaded, along with `package`, which is obviously needed.
 Packages can be fetched from different mirrors, [melpa](http://melpa.milkbox.net/#/) is the largest
 archive and is well maintained.
 
-```lisp
+```emacs-lisp
 (setq package-archives
       '(("gnu" . "http://elpa.gnu.org/packages/")
         ("org" . "http://orgmode.org/elpa/")
@@ -126,7 +126,7 @@ archive and is well maintained.
 We can define a predicate that tells us whether or not the newest version
 of a package is installed.
 
-```lisp
+```emacs-lisp
 (defun newest-package-installed-p (package)
   "Return true if the newest available PACKAGE is installed."
   (when (package-installed-p package)
@@ -142,7 +142,7 @@ Let's write a function to install a package if it is not installed or
 upgrades it if a new version has been released. Here our predicate comes
 in handy.
 
-```lisp
+```emacs-lisp
 (defun upgrade-or-install-package (package)
   "Unless the newest available version of PACKAGE is installed
 PACKAGE is installed and the current version is deleted."
@@ -161,7 +161,7 @@ PACKAGE is installed and the current version is deleted."
 
 Also, we will need a function to find all dependencies from a given package.
 
-```lisp
+```emacs-lisp
 (defun dependencies (package)
   "Returns a list of dependencies from a given PACKAGE."
   (let* ((pkg-desc (assq package package-alist))
@@ -177,7 +177,7 @@ second specifies whether one should update during the initialization. The
 third is a path to a file where a time-stamp is stored in order to check
 when packages were updated last.
 
-```lisp
+```emacs-lisp
 (defvar days-between-updates 7)
 (defvar do-package-update-on-init t)
 (defvar package-last-update-file
@@ -189,7 +189,7 @@ a hacky way of doing it, using [time-stamps](http://www.gnu.org/software/emacs/m
 a file, we can determine whether or not to do an update. After that we
 must run the `time-stamp`-function to update the time-stamp.
 
-```lisp
+```emacs-lisp
 (require 'time-stamp)
 ;; Open the package-last-update-file
 (with-temp-file package-last-update-file
@@ -219,7 +219,7 @@ Now we can use the function above to make sure packages are installed and
 up to date. Here are some packages I find useful (some of these
 configurations are also dependent on them).
 
-```lisp
+```emacs-lisp
 (when (and do-package-update-on-init
            (y-or-n-p "Update all packages?"))
   (package-refresh-contents)
@@ -276,7 +276,7 @@ to include environment-variables from the shell. It makes useing Emacs
 along with external processes a lot simpler. I also prefer using the
 `Command`-key as the `Meta`-key.
 
-```lisp
+```emacs-lisp
 (when (memq window-system '(mac ns))
   (setq mac-option-modifier nil
         mac-command-modifier 'meta
@@ -293,7 +293,7 @@ configuration. `idle-require` delays the `require`-calls to a time where
 Emacs is in idle. So this is great for stuff you eventually want to load,
 but is not a high priority.
 
-```lisp
+```emacs-lisp
 (require 'idle-require)             ; Need in order to use idle-require
 (require 'auto-complete-config)     ; a configuration for auto-complete-mode
 
@@ -320,7 +320,7 @@ These are what *I* consider to be saner defaults.
 
 We can set variables to whatever value we'd like using `setq`.
 
-```lisp
+```emacs-lisp
 (setq default-input-method "TeX"    ; Use TeX when toggling input method.
       doc-view-continuous t         ; At page edge goto next/previous.
       echo-keystrokes 0.1           ; Show keystrokes asap.
@@ -346,7 +346,7 @@ Some variables are buffer-local, so changing them using `setq` will only
 change them in a single buffer. Using `setq-default` we change the
 buffer-local variable's default value.
 
-```lisp
+```emacs-lisp
 (setq-default fill-column 76                    ; Maximum line width.
               indent-tabs-mode nil              ; Use spaces instead of tabs.
               split-width-threshold 100         ; Split verticly by default.
@@ -358,7 +358,7 @@ Emacs lisp files). I have a directory called `site-lisp` where I keep all
 extensions that have been installed manually (these are mostly my own
 projects).
 
-```lisp
+```emacs-lisp
 (let ((default-directory (concat user-emacs-directory "site-lisp/")))
   (when (file-exists-p default-directory)
     (normal-top-level-add-to-load-path '("."))
@@ -368,14 +368,14 @@ projects).
 Answering *yes* and *no* to each question from Emacs can be tedious, a
 single *y* or *n* will suffice.
 
-```lisp
+```emacs-lisp
 (fset 'yes-or-no-p 'y-or-n-p)
 ```
 
 To avoid file system clutter we put all auto saved files in a single
 directory.
 
-```lisp
+```emacs-lisp
 (defvar emacs-autosave-directory
   (concat user-emacs-directory "autosaves/")
   "This variable dictates where to put auto saves. It is set to a
@@ -391,7 +391,7 @@ directory.
 
 Set `utf-8` as preferred coding system.
 
-```lisp
+```emacs-lisp
 (set-language-environment "UTF-8")
 ```
 
@@ -399,20 +399,20 @@ By default the `narrow-to-region` command is disabled and issues a
 warning, because it might confuse new users. I find it useful sometimes,
 and don't want to be warned.
 
-```lisp
+```emacs-lisp
 (put 'narrow-to-region 'disabled nil)
 ```
 
 Call `auto-complete` default configuration, which enables `auto-complete`
 globally.
 
-```lisp
+```emacs-lisp
 (eval-after-load 'auto-complete-config `(ac-config-default))
 ```
 
 Automaticly revert `doc-view`-buffers when the file changes on disk.
 
-```lisp
+```emacs-lisp
 (add-hook 'doc-view-mode-hook 'auto-revert-mode)
 ```
 
@@ -422,7 +422,7 @@ There are some modes that are enabled by default that I don't find
 particularly useful. We create a list of these modes, and disable all of
 these.
 
-```lisp
+```emacs-lisp
 (dolist (mode
          '(tool-bar-mode                ; No toolbars, more room for text.
            scroll-bar-mode              ; No scroll bars either.
@@ -433,7 +433,7 @@ these.
 Let's apply the same technique for enabling modes that are disabled by
 default.
 
-```lisp
+```emacs-lisp
 (dolist (mode
          '(abbrev-mode                ; E.g. sopl -> System.out.println.
            column-number-mode         ; Show column number in mode line.
@@ -451,7 +451,7 @@ default.
 
 This makes `.md`-files open in `markdown-mode`.
 
-```lisp
+```emacs-lisp
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 ```
 
@@ -459,13 +459,13 @@ This makes `.md`-files open in `markdown-mode`.
 
 Change the color-theme to `monokai` (downloaded using `package`).
 
-```lisp
+```emacs-lisp
 (load-theme 'monokai t)
 ```
 
 Use the [Inconsolata](http://www.levien.com/type/myfonts/inconsolata.html) font if it's installed on the system.
 
-```lisp
+```emacs-lisp
 (when (member "Inconsolata-g" (font-family-list))
   (set-face-attribute 'default nil :font "Inconsolata-g-11"))
 ```
@@ -478,7 +478,7 @@ names you can write a part of it and select one from a list of
 possibilities. Using `ido-vertical-mode` changes the way possibilities
 are displayed, and `flx-ido-mode` enables fuzzy matching.
 
-```lisp
+```emacs-lisp
 (dolist (mode
          '(ido-mode                   ; Interactivly do.
            ido-everywhere             ; Use Ido for all buffer/file reading.
@@ -490,7 +490,7 @@ are displayed, and `flx-ido-mode` enables fuzzy matching.
 We can set the order of file selections in `ido`. I prioritize source
 files along with `org`- and `tex`-files.
 
-```lisp
+```emacs-lisp
 (setq ido-file-extensions-order
       '(".el" ".scm" ".lisp" ".java" ".c" ".h" ".org" ".tex"))
 ```
@@ -499,7 +499,7 @@ Sometimes when using `ido-switch-buffer` the `*Messages*` buffer get in
 the way, so we set it to be ignored (it can be accessed using `C-h e`, so
 there is really no need for it in the buffer list).
 
-```lisp
+```emacs-lisp
 (add-to-list 'ido-ignore-buffers "*Messages*")
 ```
 
@@ -507,7 +507,7 @@ To make `M-x` behave more like `ido-mode` we can use the `smex`
 package. It needs to be initialized, and we can replace the binding to
 the standard `execute-extended-command` with `smex`.
 
-```lisp
+```emacs-lisp
 (smex-initialize)
 ```
 
@@ -516,7 +516,7 @@ the standard `execute-extended-command` with `smex`.
 Define a function to display week numbers in `calender-mode`. The snippet
 is from [EmacsWiki](http://www.emacswiki.org/emacs/CalendarWeekNumbers).
 
-```lisp
+```emacs-lisp
 (defun calendar-show-week (arg)
   "Displaying week number in calendar-mode."
   (interactive "P")
@@ -536,13 +536,13 @@ is from [EmacsWiki](http://www.emacswiki.org/emacs/CalendarWeekNumbers).
 
 Evaluate the `calendar-show-week` function.
 
-```lisp
+```emacs-lisp
 (calendar-show-week t)
 ```
 
 Set Monday as the first day of the week, and set my location.
 
-```lisp
+```emacs-lisp
 (setq calendar-week-start-day 1
       calendar-latitude 60.0
       calendar-longitude 10.7
@@ -556,7 +556,7 @@ computers. Because the mail-setup wont work without these programs
 installed we bind `load-mail-setup` to `nil`. If the value is changed to
 a `non-nil` value mail is setup.
 
-```lisp
+```emacs-lisp
 (defvar load-mail-setup nil)
 
 (when load-mail-setup
@@ -600,7 +600,7 @@ a `non-nil` value mail is setup.
 Flyspell offers on-the-fly spell checking. We can enable flyspell for all
 text-modes with this snippet.
 
-```lisp
+```emacs-lisp
 (add-hook 'text-mode-hook 'turn-on-flyspell)
 ```
 
@@ -609,7 +609,7 @@ enables spell checking for comments and strings. We can enable it for all
 programming modes using the `prog-mode-hook`. Flyspell interferes with
 auto-complete mode, but there is a workaround provided by auto complete.
 
-```lisp
+```emacs-lisp
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 (eval-after-load 'auto-complete
   '(ac-flyspell-workaround))
@@ -621,7 +621,7 @@ cycle of languages, so that cycling in one buffer does not change the
 state in a different buffer (this problem occurs if you only have one
 global cycle). We can implement this by using a [closure](http://www.gnu.org/software/emacs/manual/html_node/elisp/Closures.html).
 
-```lisp
+```emacs-lisp
 (defun cycle-languages ()
   "Changes the ispell dictionary to the first element in
 ISPELL-LANGUAGES, and returns an interactive function that cycles
@@ -641,14 +641,14 @@ only try to enable `flyspell` if a spell-checking tool is available. Also
 we want to enable cycling the languages by typing `C-c l`, so we bind the
 function returned from `cycle-languages`.
 
-```lisp
+```emacs-lisp
 (defadvice turn-on-flyspell (before check nil activate)
   "Turns on flyspell only if a spell-checking tool is installed."
   (when (executable-find ispell-program-name)
     (local-set-key (kbd "C-c l") (cycle-languages))))
 ```
 
-```lisp
+```emacs-lisp
 (defadvice flyspell-prog-mode (before check nil activate)
   "Turns on flyspell only if a spell-checking tool is installed."
   (when (executable-find ispell-program-name)
@@ -659,7 +659,7 @@ function returned from `cycle-languages`.
 
 I use `org-agenda` for appointments and such.
 
-```lisp
+```emacs-lisp
 (setq org-agenda-start-on-weekday nil              ; Show agenda from today.
       org-agenda-files '("~/Dropbox/life.org")     ; A list of agenda files.
       org-agenda-default-appointment-duration 120) ; 2 hours appointments.
@@ -668,7 +668,7 @@ I use `org-agenda` for appointments and such.
 When editing org-files with source-blocks, we want the source blocks to
 be themed as they would in their native mode.
 
-```lisp
+```emacs-lisp
 (setq org-src-fontify-natively t
       org-confirm-babel-evaluate nil)
 ```
@@ -676,7 +676,7 @@ be themed as they would in their native mode.
 This is quite an ugly fix for allowing code markup for expressions like
 `"this string"`, because the quotation marks causes problems.
 
-```lisp
+```emacs-lisp
 (require 'org)
 (setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
 (custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))
@@ -689,7 +689,7 @@ This is quite an ugly fix for allowing code markup for expressions like
 To search recent files useing `ido-mode` we add this snippet from
 [EmacsWiki](http://www.emacswiki.org/emacs/CalendarWeekNumbers).
 
-```lisp
+```emacs-lisp
 (defun recentf-ido-find-file ()
   "Find a recent file using Ido."
   (interactive)
@@ -705,7 +705,7 @@ function around it to be able to bind it to a key. In Emacs 24.4
 when run in succession it cycles between one, zero and the original
 number of spaces.
 
-```lisp
+```emacs-lisp
 (defun cycle-spacing-delete-newlines ()
   "Removes whitespace before and after the point."
   (interactive)
@@ -721,7 +721,7 @@ I don't want to be bothered with the `isearch` interface. Rather jump
 quickly between occurrences of a symbol, or if non is found, don't do
 anything.
 
-```lisp
+```emacs-lisp
 (defun jump-to-symbol-internal (&optional backwardp)
   "Jumps to the next symbol near the point if such a symbol
 exists. If BACKWARDP is non-nil it jumps backward."
@@ -755,7 +755,7 @@ clean it up. The function below does just this for the
 buffer. It removes all buffer content and buries the buffer (this means
 making it the least likely candidate for `other-buffer`).
 
-```lisp
+```emacs-lisp
 (defun kill-this-buffer-unless-scratch ()
   "Works like `kill-this-buffer' unless the current buffer is the
 *scratch* buffer. In witch case the buffer content is deleted and
@@ -771,7 +771,7 @@ the buffer is buried."
 To duplicate either selected text or a line we define this interactive
 function.
 
-```lisp
+```emacs-lisp
 (defun duplicate-thing ()
   "Duplicates the current line, or the region if active."
   (interactive)
@@ -786,7 +786,7 @@ function.
 
 To tidy up a buffer we define this function borrowed from [simenheg](https://github.com/simenheg).
 
-```lisp
+```emacs-lisp
 (defun tidy ()
   "Ident, untabify and unwhitespacify current buffer, or region if active."
   (interactive)
@@ -800,7 +800,7 @@ To tidy up a buffer we define this function borrowed from [simenheg](https://git
 If you have a link to a raw `.el`-file, run `M-x try` and yank an URL
 into the minibuffer, and the file will be evaluated.
 
-```lisp
+```emacs-lisp
 (defun try (url)
   "Takes an URL to a .el-file, and evaluates it."
   (interactive (list (read-from-minibuffer "url: ")))
@@ -814,7 +814,7 @@ An advice can be given to a function to make it behave differently. This
 advice makes `eval-last-sexp` (bound to `C-x C-e`) replace the sexp with
 the value.
 
-```lisp
+```emacs-lisp
 (defadvice eval-last-sexp (around replace-sexp (arg) activate)
   "Replace sexp when called with a prefix argument."
   (if arg
@@ -831,7 +831,7 @@ current custom theme is not disabled. This often gives weird-looking
 results; we can advice `load-theme` to always disable themes currently
 enabled themes. 
 
-```lisp
+```emacs-lisp
 (defadvice load-theme
   (before disable-before-load (theme &optional no-confirm no-enable) activate) 
   (mapc 'disable-theme custom-enabled-themes))
@@ -843,7 +843,7 @@ When giving talks it's nice to be able to scale the text
 globally. `text-scale-mode` works great for a single buffer, this advice
 makes this work globally.
 
-```lisp
+```emacs-lisp
 (defadvice text-scale-mode (around all-buffers (arg) activate)
   (if (not global-text-scale-mode)
       ad-do-it
@@ -856,7 +856,7 @@ makes this work globally.
 We don't want this to be default behavior, so we can make a global mode
 from the `text-scale-mode`, using `define-globalized-minor-mode`.
 
-```lisp
+```emacs-lisp
 (require 'face-remap)
 
 (define-globalized-minor-mode
@@ -875,7 +875,7 @@ keep a symlink between my `~/.bash_profile` (because I run OS X) and
 the shell as small as possible. To be able to quickly switch back and
 forth between a shell I make use of this little function.
 
-```lisp
+```emacs-lisp
 (defun toggle-shell ()
   "Jumps to eshell or back."
   (interactive)
@@ -891,7 +891,7 @@ bunch of newlines, and puts the prompt at the top of the window, so it
 does not remove anything. In Emacs removing stuff is less of a worry,
 since we can always undo!
 
-```lisp
+```emacs-lisp
 (defun clear-shell ()
   "Runs `comint-truncate-buffer' with the
 `comint-buffer-maximum-size' set to zero."
@@ -904,7 +904,7 @@ Lastly we should bind our functions. The `toggle-shell` should be a
 global binding (because we want to be able to switch to a shell from any
 buffer), but the `clear-shell` should only affect `shell-mode`.
 
-```lisp
+```emacs-lisp
 (add-hook 'shell-mode-hook (lambda () (local-set-key (kbd "C-l") 'clear-shell)))
 ```
 
@@ -915,7 +915,7 @@ buffer), but the `clear-shell` should only affect `shell-mode`.
 can add some extra lisp-modes. We run the `pretty-lambda-for-modes`
 function to activate `pretty-lambda-mode` in lisp modes.
 
-```lisp
+```emacs-lisp
 (dolist (mode '(slime-repl-mode geiser-repl-mode ielm-mode clojure-mode
                                 cider-repl-mode))
   (add-to-list 'pretty-lambda-auto-modes mode))
@@ -926,7 +926,7 @@ function to activate `pretty-lambda-mode` in lisp modes.
 I use `Paredit` when editing lisp code, we enable this for all lisp-modes
 in the `pretty-lambda-auto-modes` list.
 
-```lisp
+```emacs-lisp
 (dolist (mode pretty-lambda-auto-modes)
   ;; add paredit-mode to all mode-hooks
   (add-hook (intern (concat (symbol-name mode) "-hook")) 'paredit-mode))
@@ -937,7 +937,7 @@ in the `pretty-lambda-auto-modes` list.
 In `emacs-lisp-mode` we can enable `eldoc-mode` to display information
 about a function or a variable in the echo area.
 
-```lisp
+```emacs-lisp
 (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
 (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
 ```
@@ -950,21 +950,21 @@ Common Lisp developer. [Quicklisp](http://www.quicklisp.org/beta/) is a library 
 and you can install Slime following the instructions from the site along
 with this snippet.
 
-```lisp
+```emacs-lisp
 (when (file-exists-p "~/.quicklisp/slime-helper.el")
   (load (expand-file-name "~/.quicklisp/slime-helper.el")))
 ```
 
 We can specify what Common Lisp program Slime should use (I use SBCL).
 
-```lisp
+```emacs-lisp
 (setq inferior-lisp-program "sbcl")
 ```
 
 To improve auto completion for Common Lisp editing we can use `ac-slime`
 which uses slime completions as a source.
 
-```lisp
+```emacs-lisp
 (add-hook 'slime-mode-hook 'set-up-slime-ac)
 (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
 
@@ -974,10 +974,14 @@ which uses slime completions as a source.
 
 More sensible `loop` indentation, borrowed from [simenheg](https://github.com/simenheg).
 
-```lisp
-(setq lisp-loop-forms-indentation   2
+```emacs-lisp
+(setq lisp-loop-forms-indentation   6
       lisp-simple-loop-indentation  2
       lisp-loop-keyword-indentation 6)
+```
+
+```emacs-lisp
+(define-key slime-repl-mode-map (kbd "C-l") 'slime-repl-clear-buffer)
 ```
 
 ### Scheme<a id="sec-3-2-3" name="sec-3-2-3"></a>
@@ -986,7 +990,7 @@ More sensible `loop` indentation, borrowed from [simenheg](https://github.com/si
 works pretty much out of the box, we only need to add auto completion,
 and specify which scheme-interpreter we prefer.
 
-```lisp
+```emacs-lisp
 (add-hook 'geiser-mode-hook 'ac-geiser-setup)
 (add-hook 'geiser-repl-mode-hook 'ac-geiser-setup)
 (eval-after-load "auto-complete"
@@ -1001,7 +1005,7 @@ The `c-mode-common-hook` is a general hook that work on all C-like
 languages (C, C++, Java, etc&#x2026;). I like being able to quickly compile
 using `C-c C-c` (instead of `M-x compile`), a habit from `latex-mode`.
 
-```lisp
+```emacs-lisp
 (defun c-setup ()
   (local-set-key (kbd "C-c C-c") 'compile))
 
@@ -1011,7 +1015,7 @@ using `C-c C-c` (instead of `M-x compile`), a habit from `latex-mode`.
 Some statements in Java appear often, and become tedious to write
 out. We can use abbrevs to speed this up.
 
-```lisp
+```emacs-lisp
 (define-abbrev-table 'java-mode-abbrev-table
   '(("psv" "public static void main(String[] args) {" nil 0)
     ("sopl" "System.out.println" nil 0)
@@ -1021,7 +1025,7 @@ out. We can use abbrevs to speed this up.
 To be able to use the abbrev table defined above, `abbrev-mode` must be
 activated.
 
-```lisp
+```emacs-lisp
 (defun java-setup ()
   (abbrev-mode t)
   (setq-local compile-command (concat "javac " (buffer-name))))
@@ -1035,7 +1039,7 @@ When writing assembler code I use `#` for comments. By defining
 `comment-start` we can add comments using `M-;` like in other programming
 modes. Also in assembler should one be able to compile using `C-c C-c`.
 
-```lisp
+```emacs-lisp
 (defun asm-setup ()
   (setq comment-start "#")
   (local-set-key (kbd "C-c C-c") 'compile))
@@ -1048,14 +1052,14 @@ modes. Also in assembler should one be able to compile using `C-c C-c`.
 `.tex`-files should be associated with `latex-mode` instead of
 `tex-mode`.
 
-```lisp
+```emacs-lisp
 (add-to-list 'auto-mode-alist '("\\.tex\\'" . latex-mode))
 ```
 
 I like using the [Minted](https://code.google.com/p/minted/) package for source blocks in LaTeX. To make org
 use this we add the following snippet.
 
-```lisp
+```emacs-lisp
 (eval-after-load 'org
   '(add-to-list 'org-latex-packages-alist '("" "minted")))
 (setq org-latex-listings 'minted)
@@ -1067,7 +1071,7 @@ Because [Minted](https://code.google.com/p/minted/) uses [Pygments](http://pygme
 Tex- and LaTeX-mode, we can add the flag with a rather dirty statement
 (if anyone finds a nicer way to do this, please let me know).
 
-```lisp
+```emacs-lisp
 (eval-after-load 'ox-latex
   '(setq org-latex-pdf-process
          (mapcar
@@ -1086,7 +1090,7 @@ I sometimes use a specialized markdown format, where inline math-blocks
 can be achieved by surrounding a LaTeX formula with `$math$` and
 `$/math$`. Writing these out became tedious, so I wrote a small function.
 
-```lisp
+```emacs-lisp
 (defun insert-markdown-inline-math-block ()
   "Inserts an empty math-block if no region is active, otherwise wrap a
 math-block around the region."
@@ -1105,7 +1109,7 @@ set accordingly. The markup is also sensitive to line breaks, so
 `auto-fill-mode` is disabled. Of course we want to bind our lovely
 function to a key!
 
-```lisp
+```emacs-lisp
 (add-hook 'markdown-mode-hook
           (lambda ()
             (auto-fill-mode 0)
@@ -1121,7 +1125,7 @@ function to a key!
 the echo area. Haskell has several indentation modes - I prefer using
 `haskell-indent`.
 
-```lisp
+```emacs-lisp
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
 ```
@@ -1131,7 +1135,7 @@ the echo area. Haskell has several indentation modes - I prefer using
 `Matlab-mode` works pretty good out of the box, but we can do without the
 splash screen.
 
-```lisp
+```emacs-lisp
 (eval-after-load 'matlab
   '(add-to-list 'matlab-shell-command-switches "-nosplash"))
 ```
@@ -1145,21 +1149,21 @@ inhibits other `major-modes` to override these bindings. I keep this at
 the end of the init-file to make sure that all functions are actually
 defined.
 
-```lisp
+```emacs-lisp
 (defvar custom-bindings-map (make-keymap)
   "A keymap for custom bindings.")
 ```
 
 Bindings for [expand-region](https://github.com/magnars/expand-region.el).
 
-```lisp
+```emacs-lisp
 (define-key custom-bindings-map (kbd "C-'")  'er/expand-region)
 (define-key custom-bindings-map (kbd "C-;")  'er/contract-region)
 ```
 
 Bindings for [multiple-cursors](https://github.com/magnars/multiple-cursors.el).
 
-```lisp
+```emacs-lisp
 (define-key custom-bindings-map (kbd "C-c e")  'mc/edit-lines)
 (define-key custom-bindings-map (kbd "C-c a")  'mc/mark-all-like-this)
 (define-key custom-bindings-map (kbd "C-c n")  'mc/mark-next-like-this)
@@ -1167,38 +1171,38 @@ Bindings for [multiple-cursors](https://github.com/magnars/multiple-cursors.el).
 
 Bindings for [Magit](http://magit.github.io).
 
-```lisp
+```emacs-lisp
 (define-key custom-bindings-map (kbd "C-c m") 'magit-status)
 ```
 
 Bindings for [ace-jump-mode](https://github.com/winterTTr/ace-jump-mode).
 
-```lisp
+```emacs-lisp
 (define-key custom-bindings-map (kbd "C-c SPC") 'ace-jump-mode)
 ```
 
 Bindings for [Helm](http://emacs-helm.github.io/helm/).
 
-```lisp
+```emacs-lisp
 (define-key custom-bindings-map (kbd "C-c h g") 'helm-google-suggest)
 ```
 
 Bindings for [smex](https://github.com/nonsequitur/smex). This overrides the standard `M-x`.
 
-```lisp
+```emacs-lisp
 (define-key custom-bindings-map (kbd "M-x") 'smex)
 ```
 
 Bindings for `move-text`.
 
-```lisp
+```emacs-lisp
 (define-key custom-bindings-map (kbd "<M-S-up>")    'move-text-up)
 (define-key custom-bindings-map (kbd "<M-S-down>")  'move-text-down)
 ```
 
 Bind some native Emacs functions.
 
-```lisp
+```emacs-lisp
 (define-key custom-bindings-map (kbd "C-j")      'newline-and-indent)
 (define-key custom-bindings-map (kbd "C-c s")    'ispell-word)
 (define-key custom-bindings-map (kbd "C-c t")    'org-agenda-list)
@@ -1207,7 +1211,7 @@ Bind some native Emacs functions.
 
 Bind the functions defined above.
 
-```lisp
+```emacs-lisp
 (define-key custom-bindings-map (kbd "M-,")     'jump-to-previous-like-this)
 (define-key custom-bindings-map (kbd "M-.")     'jump-to-next-like-this)
 (define-key custom-bindings-map (kbd "C-x k")   'kill-this-buffer-unless-scratch)
@@ -1220,7 +1224,7 @@ Bind the functions defined above.
 Lastly we need to activate the map by creating and activating the
 `minor-mode`.
 
-```lisp
+```emacs-lisp
 (define-minor-mode custom-bindings-mode
   "A mode that activates custom-bindings."
   t nil custom-bindings-map)

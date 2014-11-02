@@ -774,9 +774,11 @@ the buffer is buried."
 
 ;; More sensible =loop= indentation, borrowed from [[https://github.com/simenheg][simenheg]].
 
-(setq lisp-loop-forms-indentation   2
+(setq lisp-loop-forms-indentation   6
       lisp-simple-loop-indentation  2
       lisp-loop-keyword-indentation 6)
+
+(define-key slime-repl-mode-map (kbd "C-l") 'slime-repl-clear-buffer)
 
 ;; Scheme
 
