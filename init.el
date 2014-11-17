@@ -21,6 +21,16 @@ tangled, and the tangled file is compiled."
 
 (add-hook 'after-save-hook 'tangle-init)
 
+;; I'd like to keep a few settings private, so we load a =private.el= if it
+;;    exists after the init-file has loaded.
+
+(add-hook
+ 'after-init-hook
+ (lambda ()
+   (let ((private-file (concat user-emacs-directory "private.el")))
+     (when (file-exists-p private-file)
+       (load-file private-file)))))
+
 ;; Package
 
 ;;    Managing extensions for Emacs is simplified using =package= which is
@@ -131,7 +141,6 @@ PACKAGE is installed and the current version is deleted."
 (when (and do-package-update-on-init
            (y-or-n-p "Update all packages?"))
   (package-refresh-contents)
-
   (let* ((packages
           '(ac-geiser         ; Auto-complete backend for geiser
             ac-slime          ; An auto-complete source using slime completions
@@ -160,7 +169,8 @@ PACKAGE is installed and the current version is deleted."
             pretty-lambdada   ; the word `lambda' as the Greek letter.
             slime             ; Superior Lisp Interaction Mode for Emacs
             smex              ; M-x interface with Ido-style fuzzy matching.
-            undo-tree))       ; Treat undo history as a tree
+            undo-tree         ; Treat undo history as a tree
+            try))             ; Try out Emacs packages.
          ;; Fetch dependencies from all packages.
          (reqs (mapcar 'dependencies packages))
          ;; Append these to the original list, and remove any duplicates.
@@ -336,14 +346,25 @@ PACKAGE is installed and the current version is deleted."
 
 ;; Visual
 
-;;    Change the color-theme to =monokai= (downloaded using =package=).
+;;    Change the color-theme to =leuven=.
 
-(load-theme 'monokai t)
+(load-theme 'leuven t)
+
+;; =leuven= is my preferred light theme, but =monokai= makes a very nice
+;;    dark theme. I want to be able to cycle between these.
+
+(defun cycle-themes ()
+  "Returns a function that lets you cycle your themes."
+  (lexical-let ((themes '#1=(leuven monokai . #1#)))
+    (lambda ()
+      (interactive)
+      ;; Rotates the thme cycle and changes the current theme.
+      (load-theme (car (setq themes (cdr themes))) t))))
 
 ;; Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
 
-(when (member "Inconsolata-g" (font-family-list))
-  (set-face-attribute 'default nil :font "Inconsolata-g-11"))
+(when (member "Inconsolata" (font-family-list))
+  (set-face-attribute 'default nil :font "Inconsolata-13"))
 
 ;; Ido
 
@@ -509,7 +530,7 @@ the languages in ISPELL-LANGUAGES when invoked."
 ;;    I use =org-agenda= for appointments and such.
 
 (setq org-agenda-start-on-weekday nil              ; Show agenda from today.
-      org-agenda-files '("~/Dropbox/life.org")     ; A list of agenda files.
+      org-agenda-files '("~/Dropbox/cal.org")      ; A list of agenda files.
       org-agenda-default-appointment-duration 120) ; 2 hours appointments.
 
 ;; When editing org-files with source-blocks, we want the source blocks to
@@ -521,9 +542,11 @@ the languages in ISPELL-LANGUAGES when invoked."
 ;; This is quite an ugly fix for allowing code markup for expressions like
 ;;    ="this string"=, because the quotation marks causes problems.
 
-(require 'org)
-(setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
-(custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))
+;;(require 'org)
+(eval-after-load "org"
+  '(progn
+     (setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
+     (custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))))
 
 ;; Interactive functions
 ;;    <<sec:defuns>>
@@ -627,15 +650,6 @@ the buffer is buried."
     (whitespace-cleanup)
     (untabify beg (if (< end (point-max)) end (point-max)))))
 
-;; If you have a link to a raw =.el=-file, run =M-x try= and yank an URL
-;;    into the minibuffer, and the file will be evaluated.
-
-(defun try (url)
-  "Takes an URL to a .el-file, and evaluates it."
-  (interactive (list (read-from-minibuffer "url: ")))
-  (with-current-buffer (url-retrieve-synchronously url)
-    (eval-region (search-forward-regexp "^$") (point-max))))
-
 ;; Advice
 
 ;;    An advice can be given to a function to make it behave differently. This
@@ -707,7 +721,7 @@ the buffer is buried."
 ;;    does not remove anything. In Emacs removing stuff is less of a worry,
 ;;    since we can always undo!
 
-(defun clear-shell ()
+(defun clear-comint ()
   "Runs `comint-truncate-buffer' with the
 `comint-buffer-maximum-size' set to zero."
   (interactive)
@@ -718,7 +732,7 @@ the buffer is buried."
 ;;    global binding (because we want to be able to switch to a shell from any
 ;;    buffer), but the =clear-shell= should only affect =shell-mode=.
 
-(add-hook 'shell-mode-hook (lambda () (local-set-key (kbd "C-l") 'clear-shell)))
+(add-hook 'comint-mode-hook (lambda () (local-set-key (kbd "C-l") 'clear-comint)))
 
 ;; Lisp
 
@@ -756,8 +770,14 @@ the buffer is buried."
 ;;     and you can install Slime following the instructions from the site along
 ;;     with this snippet.
 
-(when (file-exists-p "~/.quicklisp/slime-helper.el")
-  (load (expand-file-name "~/.quicklisp/slime-helper.el")))
+(defun activate-slime-helper ()
+  (when (file-exists-p "~/.quicklisp/slime-helper.elc")
+    (load (expand-file-name "~/.quicklisp/slime-helper.elc"))
+    (define-key slime-repl-mode-map (kbd "C-l")
+      'slime-repl-clear-buffer))
+  (remove-hook 'lisp-mode-hook #'activate-slime-helper))
+
+(add-hook 'lisp-mode-hook #'activate-slime-helper)
 
 ;; We can specify what Common Lisp program Slime should use (I use SBCL).
 
@@ -778,7 +798,7 @@ the buffer is buried."
       lisp-simple-loop-indentation  2
       lisp-loop-keyword-indentation 6)
 
-(define-key slime-repl-mode-map (kbd "C-l") 'slime-repl-clear-buffer)
+
 
 ;; Scheme
 
@@ -925,7 +945,7 @@ math-block around the region."
 ;; Bindings for [[https://github.com/magnars/expand-region.el][expand-region]].
 
 (define-key custom-bindings-map (kbd "C-'")  'er/expand-region)
-(define-key custom-bindings-map (kbd "C-;")  'er/contract-region)
+(define-key custom-bindings-map (kbd "C-\"") 'er/contract-region)
 
 ;; Bindings for [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]].
 
@@ -963,8 +983,11 @@ math-block around the region."
 
 ;; Bind the functions defined [[sec:defuns][above]].
 
+(define-key global-map          (kbd "M-p")     'jump-to-previous-like-this)
+(define-key global-map          (kbd "M-n")     'jump-to-next-like-this)
 (define-key custom-bindings-map (kbd "M-,")     'jump-to-previous-like-this)
 (define-key custom-bindings-map (kbd "M-.")     'jump-to-next-like-this)
+(define-key custom-bindings-map (kbd "C-c .")   (cycle-themes))
 (define-key custom-bindings-map (kbd "C-x k")   'kill-this-buffer-unless-scratch)
 (define-key custom-bindings-map (kbd "C-x t")   'toggle-shell)
 (define-key custom-bindings-map (kbd "C-c j")   'cycle-spacing-delete-newlines)

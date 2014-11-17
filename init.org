@@ -67,6 +67,18 @@
      (add-hook 'after-save-hook 'tangle-init)
    #+END_SRC
 
+   I'd like to keep a few settings private, so we load a =private.el= if it
+   exists after the init-file has loaded.
+
+   #+BEGIN_SRC emacs-lisp
+     (add-hook
+      'after-init-hook
+      (lambda ()
+        (let ((private-file (concat user-emacs-directory "private.el")))
+          (when (file-exists-p private-file)
+            (load-file private-file)))))
+   #+END_SRC
+
 ** Package
 
    Managing extensions for Emacs is simplified using =package= which is
@@ -192,7 +204,6 @@
      (when (and do-package-update-on-init
                 (y-or-n-p "Update all packages?"))
        (package-refresh-contents)
-
        (let* ((packages
                '(ac-geiser         ; Auto-complete backend for geiser
                  ac-slime          ; An auto-complete source using slime completions
@@ -221,7 +232,8 @@
                  pretty-lambdada   ; the word `lambda' as the Greek letter.
                  slime             ; Superior Lisp Interaction Mode for Emacs
                  smex              ; M-x interface with Ido-style fuzzy matching.
-                 undo-tree))       ; Treat undo history as a tree
+                 undo-tree         ; Treat undo history as a tree
+                 try))             ; Try out Emacs packages.
               ;; Fetch dependencies from all packages.
               (reqs (mapcar 'dependencies packages))
               ;; Append these to the original list, and remove any duplicates.
@@ -428,17 +440,31 @@
 
 ** Visual
 
-   Change the color-theme to =monokai= (downloaded using =package=).
+   Change the color-theme to =leuven=.
 
    #+BEGIN_SRC emacs-lisp
-     (load-theme 'monokai t)
+     (load-theme 'leuven t)
+   #+END_SRC
+
+   =leuven= is my preferred light theme, but =monokai= makes a very nice
+   dark theme. I want to be able to cycle between these.
+
+   #+BEGIN_SRC emacs-lisp
+     (defun cycle-themes ()
+       "Returns a function that lets you cycle your themes."
+       (lexical-let ((themes '#1=(leuven monokai . #1#)))
+         (lambda ()
+           (interactive)
+           ;; Rotates the thme cycle and changes the current theme.
+           (load-theme (car (setq themes (cdr themes))) t))))
+
    #+END_SRC
 
    Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
 
    #+BEGIN_SRC emacs-lisp
-     (when (member "Inconsolata-g" (font-family-list))
-       (set-face-attribute 'default nil :font "Inconsolata-g-11"))
+     (when (member "Inconsolata" (font-family-list))
+       (set-face-attribute 'default nil :font "Inconsolata-13"))
 
    #+END_SRC
 
@@ -666,7 +692,7 @@
 
    #+BEGIN_SRC emacs-lisp
      (setq org-agenda-start-on-weekday nil              ; Show agenda from today.
-           org-agenda-files '("~/Dropbox/life.org")     ; A list of agenda files.
+           org-agenda-files '("~/Dropbox/cal.org")      ; A list of agenda files.
            org-agenda-default-appointment-duration 120) ; 2 hours appointments.
    #+END_SRC
 
@@ -683,9 +709,11 @@
    ="this string"=, because the quotation marks causes problems.
 
    #+BEGIN_SRC emacs-lisp
-     (require 'org)
-     (setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
-     (custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))
+     ;;(require 'org)
+     (eval-after-load "org"
+       '(progn
+          (setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
+          (custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))))
    #+END_SRC
 
 ** Interactive functions
@@ -802,17 +830,6 @@
          (untabify beg (if (< end (point-max)) end (point-max)))))
    #+END_SRC
 
-   If you have a link to a raw =.el=-file, run =M-x try= and yank an URL
-   into the minibuffer, and the file will be evaluated.
-
-   #+BEGIN_SRC emacs-lisp
-     (defun try (url)
-       "Takes an URL to a .el-file, and evaluates it."
-       (interactive (list (read-from-minibuffer "url: ")))
-       (with-current-buffer (url-retrieve-synchronously url)
-         (eval-region (search-forward-regexp "^$") (point-max))))
-   #+END_SRC
-
 ** Advice
 
    An advice can be given to a function to make it behave differently. This
@@ -896,7 +913,7 @@
    since we can always undo!
 
    #+BEGIN_SRC emacs-lisp
-     (defun clear-shell ()
+     (defun clear-comint ()
        "Runs `comint-truncate-buffer' with the
      `comint-buffer-maximum-size' set to zero."
        (interactive)
@@ -909,7 +926,7 @@
    buffer), but the =clear-shell= should only affect =shell-mode=.
 
    #+BEGIN_SRC emacs-lisp
-     (add-hook 'shell-mode-hook (lambda () (local-set-key (kbd "C-l") 'clear-shell)))
+     (add-hook 'comint-mode-hook (lambda () (local-set-key (kbd "C-l") 'clear-comint)))
    #+END_SRC
 
 ** Lisp
@@ -955,8 +972,14 @@
     with this snippet.
 
     #+BEGIN_SRC emacs-lisp
-      (when (file-exists-p "~/.quicklisp/slime-helper.el")
-        (load (expand-file-name "~/.quicklisp/slime-helper.el")))
+      (defun activate-slime-helper ()
+        (when (file-exists-p "~/.quicklisp/slime-helper.elc")
+          (load (expand-file-name "~/.quicklisp/slime-helper.elc"))
+          (define-key slime-repl-mode-map (kbd "C-l")
+            'slime-repl-clear-buffer))
+        (remove-hook 'lisp-mode-hook #'activate-slime-helper))
+
+      (add-hook 'lisp-mode-hook #'activate-slime-helper)
     #+END_SRC
 
     We can specify what Common Lisp program Slime should use (I use SBCL).
@@ -985,7 +1008,7 @@
     #+END_SRC
 
     #+BEGIN_SRC emacs-lisp
-      (define-key slime-repl-mode-map (kbd "C-l") 'slime-repl-clear-buffer)
+
     #+END_SRC
 
 *** Scheme
@@ -1174,7 +1197,7 @@
 
    #+BEGIN_SRC emacs-lisp
      (define-key custom-bindings-map (kbd "C-'")  'er/expand-region)
-     (define-key custom-bindings-map (kbd "C-;")  'er/contract-region)
+     (define-key custom-bindings-map (kbd "C-\"") 'er/contract-region)
    #+END_SRC
 
    Bindings for [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]].
@@ -1228,8 +1251,11 @@
    Bind the functions defined [[sec:defuns][above]].
 
    #+BEGIN_SRC emacs-lisp
+     (define-key global-map          (kbd "M-p")     'jump-to-previous-like-this)
+     (define-key global-map          (kbd "M-n")     'jump-to-next-like-this)
      (define-key custom-bindings-map (kbd "M-,")     'jump-to-previous-like-this)
      (define-key custom-bindings-map (kbd "M-.")     'jump-to-next-like-this)
+     (define-key custom-bindings-map (kbd "C-c .")   (cycle-themes))
      (define-key custom-bindings-map (kbd "C-x k")   'kill-this-buffer-unless-scratch)
      (define-key custom-bindings-map (kbd "C-x t")   'toggle-shell)
      (define-key custom-bindings-map (kbd "C-c j")   'cycle-spacing-delete-newlines)
