@@ -111,12 +111,19 @@
      (defun newest-package-installed-p (package)
        "Return true if the newest available PACKAGE is installed."
        (when (package-installed-p package)
-         (let* ((local-pkg-desc (or (assq package package-alist)
-                                    (assq package package--builtins)))
-                (newest-pkg-desc (assq package package-archive-contents)))
-           (and local-pkg-desc newest-pkg-desc
-                (version-list-= (package-desc-vers (cdr local-pkg-desc))
-                                (package-desc-vers (cdr newest-pkg-desc)))))))
+         (let* ((get-desc (if (version< emacs-version "24.4") 'cdr 'cadr))
+                (builtin-version  (assq package package--builtin-versions))
+                (local-pkg-desc   (assq package package-alist))
+                (newest-pkg-desc  (assq package package-archive-contents)))
+           (cond ((and local-pkg-desc newest-pkg-desc)
+                  (version-list-= (package-desc-version
+                                   (funcall get-desc local-pkg-desc))
+                                  (package-desc-version 
+                                   (funcall get-desc newest-pkg-desc))))
+                 ((and builtin-version newest-pkg-desc)
+                  (version-list-= builtin-version
+                                  (package-desc-version 
+                                   (funcall get-desc newest-pkg-desc))))))))
    #+END_SRC
 
    Let's write a function to install a package if it is not installed or
@@ -128,13 +135,12 @@
        "Unless the newest available version of PACKAGE is installed
      PACKAGE is installed and the current version is deleted."
        (unless (newest-package-installed-p package)
-         (let ((get-desc (if (version< emacs-version "24.4") 'cdr 'cadr))
-               (pkg-desc (assq package package-alist)))
+         (let ((pkg-desc (assq package package-alist)))
            (when pkg-desc
              (if (version< emacs-version "24.4")
                  (package-delete (symbol-name package)
                                  (package-version-join
-                                  (package-desc-vers (get-desc pkg-desc))))
+                                  (package-desc-vers (cdr pkg-desc))))
                (package-delete pkg-desc)))
            (and (assq package package-archive-contents)
                 (package-install package)))))
