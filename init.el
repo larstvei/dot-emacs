@@ -635,16 +635,18 @@ the buffer is buried."
 ;; To duplicate either selected text or a line we define this interactive
 ;;    function.
 
-(defun duplicate-thing ()
-  "Duplicates the current line, or the region if active."
-  (interactive)
+(defun duplicate-thing (comment)
+  "Duplicates the current line, or the region if active. If an argument is
+given, the duplicated region will be commented out."
+  (interactive "P")
   (save-excursion
     (let ((start (if (region-active-p) (region-beginning) (point-at-bol)))
           (end   (if (region-active-p) (region-end) (point-at-eol))))
       (goto-char end)
       (unless (region-active-p)
         (newline))
-      (insert (buffer-substring start end)))))
+      (insert (buffer-substring start end))
+      (when comment (comment-region start end)))))
 
 ;; To tidy up a buffer we define this function borrowed from [[https://github.com/simenheg][simenheg]].
 
