@@ -339,6 +339,7 @@ PACKAGE is installed and the current version is deleted."
            dirtrack-mode              ; directory tracking in *shell*
            recentf-mode               ; Recently opened files.
            show-paren-mode            ; Highlight matching parentheses.
+           projectile-global-mode     ; Manage and navigate projects.
            global-undo-tree-mode))    ; Undo as a tree.
   (funcall mode 1))
 
