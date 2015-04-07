@@ -78,9 +78,24 @@
    It tangles the org-file, so that this file is overwritten with the actual
    configuration.
 
-   We can use =C-c C-v t= to run =org-babel-tangle=, which extracts the code
-   blocks from the current file into a source-specific file (in this case a
-   =.el=-file).
+   There is no reason to track the =init.el= that is generated; by running
+   the following command =git= will not bother tracking it:
+
+   #+BEGIN_SRC sh :tangle no
+     git update-index --assume-unchanged init.el
+   #+END_SRC
+
+   If one wishes to make changes to the repo-version of =init.el= start
+   tracking again with:
+
+   #+BEGIN_SRC sh :tangle no
+     git update-index --no-assume-unchanged init.el
+   #+END_SRC
+
+   The =init.el= should (after the first run) mirror the source blocks in
+   the =init.org=. We can use =C-c C-v t= to run =org-babel-tangle=, which
+   extracts the code blocks from the current file into a source-specific
+   file (in this case a =.el=-file).
 
    To avoid doing this each time a change is made we can add a function to
    the =after-save-hook= ensuring to always tangle and byte-compile the
