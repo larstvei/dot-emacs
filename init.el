@@ -883,12 +883,16 @@ given, the duplicated region will be commented out."
 
 (add-hook 'asm-mode-hook 'asm-setup)
 
-;; LaTeX
+;; LaTeX and org-mode LaTeX export
 
 ;;    =.tex=-files should be associated with =latex-mode= instead of
 ;;    =tex-mode=.
 
 (add-to-list 'auto-mode-alist '("\\.tex\\'" . latex-mode))
+
+;; Use ~biblatex~ for bibliography.
+
+(setq-default bibtex-dialect 'biblatex)
 
 ;; I like using the [[https://code.google.com/p/minted/][Minted]] package for source blocks in LaTeX. To make org
 ;;    use this we add the following snippet.
@@ -903,16 +907,34 @@ given, the duplicated region will be commented out."
 ;;    Tex- and LaTeX-mode, we can add the flag with a rather dirty statement
 ;;    (if anyone finds a nicer way to do this, please let me know).
 
-(eval-after-load 'ox-latex
-  '(setq org-latex-pdf-process
-         (mapcar
-          (lambda (str)
-            (concat "pdflatex -shell-escape "
-                    (substring str (string-match "-" str))))
-          org-latex-pdf-process)))
-
 (eval-after-load 'tex-mode
   '(setcar (cdr (cddaar tex-compile-commands)) " -shell-escape "))
+
+;; When exporting from Org to LaTeX, use ~latexmk~ for compilation.
+
+(eval-after-load 'ox-latex
+  '(setq org-latex-pdf-process
+         '("latexmk -pdflatex='pdflatex -shell-escape -interaction nonstopmode' -pdf -f %f")))
+
+;; For my thesis, I need to use our university's LaTeX class, this snippet
+;;    makes that class available.
+
+(eval-after-load "ox-latex"
+  '(progn
+     (add-to-list 'org-latex-classes
+                  '("ifimaster"
+                    "\\documentclass{ifimaster}
+[DEFAULT-PACKAGES]
+[PACKAGES]
+[EXTRA]
+\\usepackage{babel,csquotes,ifimasterforside,url,varioref}"
+                   ("\\chapter{%s}" . "\\chapter*{%s}")
+                   ("\\section{%s}" . "\\section*{%s}")
+                   ("\\subsection{%s}" . "\\subsection*{%s}")
+                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+    (custom-set-variables '(org-export-allow-bind-keywords t))))
 
 ;; Markdown
 

@@ -1106,13 +1106,19 @@
      (add-hook 'asm-mode-hook 'asm-setup)
    #+END_SRC
 
-** LaTeX
+** LaTeX and org-mode LaTeX export
 
    =.tex=-files should be associated with =latex-mode= instead of
    =tex-mode=.
 
    #+BEGIN_SRC emacs-lisp
      (add-to-list 'auto-mode-alist '("\\.tex\\'" . latex-mode))
+   #+END_SRC
+
+   Use ~biblatex~ for bibliography.
+
+   #+BEGIN_SRC emacs-lisp
+     (setq-default bibtex-dialect 'biblatex)
    #+END_SRC
 
    I like using the [[https://code.google.com/p/minted/][Minted]] package for source blocks in LaTeX. To make org
@@ -1131,16 +1137,38 @@
    (if anyone finds a nicer way to do this, please let me know).
 
    #+BEGIN_SRC emacs-lisp
-     (eval-after-load 'ox-latex
-       '(setq org-latex-pdf-process
-              (mapcar
-               (lambda (str)
-                 (concat "pdflatex -shell-escape "
-                         (substring str (string-match "-" str))))
-               org-latex-pdf-process)))
-
      (eval-after-load 'tex-mode
        '(setcar (cdr (cddaar tex-compile-commands)) " -shell-escape "))
+   #+END_SRC
+
+   When exporting from Org to LaTeX, use ~latexmk~ for compilation.
+
+   #+BEGIN_SRC emacs-lisp
+     (eval-after-load 'ox-latex
+       '(setq org-latex-pdf-process
+              '("latexmk -pdflatex='pdflatex -shell-escape -interaction nonstopmode' -pdf -f %f")))
+   #+END_SRC
+
+   For my thesis, I need to use our university's LaTeX class, this snippet
+   makes that class available.
+
+   #+BEGIN_SRC emacs-lisp
+     (eval-after-load "ox-latex"
+       '(progn
+          (add-to-list 'org-latex-classes
+                       '("ifimaster"
+                         "\\documentclass{ifimaster}
+     [DEFAULT-PACKAGES]
+     [PACKAGES]
+     [EXTRA]
+     \\usepackage{babel,csquotes,ifimasterforside,url,varioref}"
+                        ("\\chapter{%s}" . "\\chapter*{%s}")
+                        ("\\section{%s}" . "\\section*{%s}")
+                        ("\\subsection{%s}" . "\\subsection*{%s}")
+                        ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                        ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                        ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+         (custom-set-variables '(org-export-allow-bind-keywords t))))
    #+END_SRC
 
 ** Markdown
