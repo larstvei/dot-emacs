@@ -65,11 +65,11 @@ tangled, and the tangled file is compiled."
       (cond ((and local-pkg-desc newest-pkg-desc)
              (version-list-= (package-desc-version
                               (funcall get-desc local-pkg-desc))
-                             (package-desc-version 
+                             (package-desc-version
                               (funcall get-desc newest-pkg-desc))))
             ((and builtin-version newest-pkg-desc)
              (version-list-= builtin-version
-                             (package-desc-version 
+                             (package-desc-version
                               (funcall get-desc newest-pkg-desc))))))))
 
 ;; Let's write a function to install a package if it is not installed or
@@ -702,7 +702,7 @@ given, the duplicated region will be commented out."
 ;;    enabled themes.
 
 (defadvice load-theme
-  (before disable-before-load (theme &optional no-confirm no-enable) activate) 
+  (before disable-before-load (theme &optional no-confirm no-enable) activate)
   (mapc 'disable-theme custom-enabled-themes))
 
 ;; Presentation-mode

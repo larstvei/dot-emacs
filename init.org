@@ -117,11 +117,11 @@
            (cond ((and local-pkg-desc newest-pkg-desc)
                   (version-list-= (package-desc-version
                                    (funcall get-desc local-pkg-desc))
-                                  (package-desc-version 
+                                  (package-desc-version
                                    (funcall get-desc newest-pkg-desc))))
                  ((and builtin-version newest-pkg-desc)
                   (version-list-= builtin-version
-                                  (package-desc-version 
+                                  (package-desc-version
                                    (funcall get-desc newest-pkg-desc))))))))
    #+END_SRC
 
@@ -475,7 +475,7 @@
    #+END_SRC
 
    # [[https://github.com/milkypostman/powerline][Powerline]] is an extension to customize the mode line. This is modified
-   # version =powerline-nano-theme=. 
+   # version =powerline-nano-theme=.
 
    # #+BEGIN_SRC emacs-lisp
    # (setq-default
@@ -504,7 +504,7 @@
    # #+END_SRC
 
    # This is what it looks like:
-   
+
    # [[./powerline.png]]
 
 ** Ido
@@ -885,11 +885,11 @@
    When interactively changing the theme (using =M-x load-theme=), the
    current custom theme is not disabled. This often gives weird-looking
    results; we can advice =load-theme= to always disable themes currently
-   enabled themes. 
+   enabled themes.
 
    #+BEGIN_SRC emacs-lisp
      (defadvice load-theme
-       (before disable-before-load (theme &optional no-confirm no-enable) activate) 
+       (before disable-before-load (theme &optional no-confirm no-enable) activate)
        (mapc 'disable-theme custom-enabled-themes))
    #+END_SRC
 
@@ -929,7 +929,7 @@
    =~/.emacs_bash=, to make the transition between my standard terminal and
    the shell as small as possible. To be able to quickly switch back and
    forth between a shell I make use of this little function.
-   
+
    #+BEGIN_SRC emacs-lisp
      (defun toggle-shell ()
        "Jumps to eshell or back."
@@ -954,7 +954,7 @@
        (let ((comint-buffer-maximum-size 0))
         (comint-truncate-buffer)))
    #+END_SRC
-   
+
    Lastly we should bind our functions. The =toggle-shell= should be a
    global binding (because we want to be able to switch to a shell from any
    buffer), but the =clear-shell= should only affect =shell-mode=.
@@ -1311,16 +1311,16 @@
   My Emacs configurations written in Org mode.
 
   Copyright (c) 2013 - 2014 Lars Tveito
-  
+
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-  
+
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
