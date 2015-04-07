@@ -1010,6 +1010,7 @@ math-block around the region."
 (define-key custom-bindings-map (kbd "C-c s")    'ispell-word)
 (define-key custom-bindings-map (kbd "C-c t")    'org-agenda-list)
 (define-key custom-bindings-map (kbd "C-x C-r")  'recentf-ido-find-file)
+(define-key custom-bindings-map (kbd "C-x m")    'mu4e)
 
 ;; Bind the functions defined [[sec:defuns][above]].
 
