@@ -707,27 +707,29 @@ given, the duplicated region will be commented out."
 
 ;; Presentation-mode
 
-;;    When giving talks it's nice to be able to scale the text
-;;    globally. =text-scale-mode= works great for a single buffer, this advice
-;;    makes this work globally.
+;;    When giving talks it's nice to be able to adjust the size of everything
+;;    (not just a buffer like ~text-scale-mode~ provides). This is not a
+;;    particularly neat solution, but it works OK. It simply
+;;    increases/decreases the size of the font. It assumes that your using
+;;    Inconsolata with size 14 by default. This should be probably be
+;;    generalized (or maybe be substituted by a package if it's out there).
 
-(defadvice text-scale-mode (around all-buffers (arg) activate)
-  (if (not global-text-scale-mode)
-      ad-do-it
-    (setq-default text-scale-mode-amount text-scale-mode-amount)
-    (dolist (buffer (buffer-list))
-      (with-current-buffer buffer
-        ad-do-it))))
+(defun global-scale-default ()
+  (interactive)
+  (set-face-attribute 'default nil :font "Inconsolata-14"))
 
-;; We don't want this to be default behavior, so we can make a global mode
-;;    from the =text-scale-mode=, using =define-globalized-minor-mode=.
+(lexical-let ((size 14))
+  (defun global-scale-up ()
+    (interactive)
+    (set-face-attribute
+     'default nil
+     :font (concat "Inconsolata-" (number-to-string (incf size)))))
 
-(require 'face-remap)
-
-(define-globalized-minor-mode
-  global-text-scale-mode
-  text-scale-mode
-  (lambda () (text-scale-mode 1)))
+  (defun global-scale-down ()
+    (interactive)
+    (set-face-attribute
+     'default nil
+     :font (concat "Inconsolata-" (number-to-string (decf size))))))
 
 ;; Shell
 
@@ -1042,6 +1044,9 @@ math-block around the region."
 (define-key custom-bindings-map (kbd "M-.")     'jump-to-next-like-this)
 (define-key custom-bindings-map (kbd "C-c .")   (cycle-themes))
 (define-key custom-bindings-map (kbd "C-x k")   'kill-this-buffer-unless-scratch)
+(define-key custom-bindings-map (kbd "C-c C-0") 'global-scale-default)
+(define-key custom-bindings-map (kbd "C-c C-=") 'global-scale-up)
+(define-key custom-bindings-map (kbd "C-c C--") 'global-scale-down)
 (define-key custom-bindings-map (kbd "C-x t")   'toggle-shell)
 (define-key custom-bindings-map (kbd "C-c j")   'cycle-spacing-delete-newlines)
 (define-key custom-bindings-map (kbd "C-c d")   'duplicate-thing)
