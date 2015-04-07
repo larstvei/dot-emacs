@@ -89,7 +89,6 @@
    #+BEGIN_SRC emacs-lisp
      (require 'cl)
      (require 'package)
-     (setq package-enable-at-startup nil)
      (package-initialize)
    #+END_SRC
 
@@ -103,154 +102,49 @@
              ("MELPA" . "http://melpa.milkbox.net/packages/")))
    #+END_SRC
 
-   We can define a predicate that tells us whether or not the newest version
-   of a package is installed.
+   The configuration assumes that the packages listed below are
+   installed. To ensure we install missing packages if they are missing.
 
    #+BEGIN_SRC emacs-lisp
-     (defun newest-package-installed-p (package)
-       "Return true if the newest available PACKAGE is installed."
-       (when (package-installed-p package)
-         (let* ((get-desc (if (version< emacs-version "24.4") 'cdr 'cadr))
-                (builtin-version  (assq package package--builtin-versions))
-                (local-pkg-desc   (assq package package-alist))
-                (newest-pkg-desc  (assq package package-archive-contents)))
-           (cond ((and local-pkg-desc newest-pkg-desc)
-                  (version-list-= (package-desc-version
-                                   (funcall get-desc local-pkg-desc))
-                                  (package-desc-version
-                                   (funcall get-desc newest-pkg-desc))))
-                 ((and builtin-version newest-pkg-desc)
-                  (version-list-= builtin-version
-                                  (package-desc-version
-                                   (funcall get-desc newest-pkg-desc))))))))
-   #+END_SRC
-
-   Let's write a function to install a package if it is not installed or
-   upgrades it if a new version has been released. Here our predicate comes
-   in handy.
-
-   #+BEGIN_SRC emacs-lisp
-     (defun upgrade-or-install-package (package)
-       "Unless the newest available version of PACKAGE is installed
-     PACKAGE is installed and the current version is deleted."
-       (unless (newest-package-installed-p package)
-         (let ((pkg-desc (assq package package-alist)))
-           (when pkg-desc
-             (if (version< emacs-version "24.4")
-                 (package-delete (symbol-name package)
-                                 (package-version-join
-                                  (package-desc-vers (cdr pkg-desc))))
-               (package-delete pkg-desc)))
-           (and (assq package package-archive-contents)
-                (package-install package)))))
-   #+END_SRC
-
-   Also, we will need a function to find all dependencies from a given package.
-
-   #+BEGIN_SRC emacs-lisp
-     (defun dependencies (package)
-       "Returns a list of dependencies from a given PACKAGE."
-       (let* ((pkg-desc (assq package package-alist))
-              (reqs (and pkg-desc (package-desc-reqs (cdr pkg-desc)))))
-         (mapcar 'car reqs)))
-   #+END_SRC
-
-   The =package-refresh-contents= function downloads archive descriptions,
-   this is a major bottleneck in this configuration. To avoid this we can
-   try to only check for updates once every day or so. Here are three
-   variables. The first specifies how often we should check for updates. The
-   second specifies whether one should update during the initialization. The
-   third is a path to a file where a time-stamp is stored in order to check
-   when packages were updated last.
-
-   #+BEGIN_SRC emacs-lisp
-     (defvar days-between-updates 7)
-     (defvar do-package-update-on-init t)
-     (defvar package-last-update-file
-       (expand-file-name (concat user-emacs-directory ".package-last-update")))
-   #+END_SRC
-
-   The tricky part is figuring out when packages were last updated. Here is
-   a hacky way of doing it, using [[http://www.gnu.org/software/emacs/manual/html_node/emacs/Time-Stamps.html][time-stamps]]. By adding a time-stamp to the
-   a file, we can determine whether or not to do an update. After that we
-   must run the =time-stamp=-function to update the time-stamp.
-
-   #+BEGIN_SRC emacs-lisp
-     (require 'time-stamp)
-     ;; Open the package-last-update-file
-     (with-temp-file package-last-update-file
-       (if (file-exists-p package-last-update-file)
-           (progn
-             ;; Insert it's original content's.
-             (insert-file-contents package-last-update-file)
-             (let ((start (re-search-forward time-stamp-start nil t))
-                   (end (re-search-forward time-stamp-end nil t)))
-               (when (and start end)
-                 ;; Assuming we have found a time-stamp, we check determine if it's
-                 ;; time to update.
-                 (setq do-package-update-on-init
-                       (<= days-between-updates
-                           (days-between
-                            (current-time-string)
-                            (buffer-substring-no-properties start end))))
-                 ;; Remember to update the time-stamp.
-                 (when do-package-update-on-init
-                   (time-stamp)))))
-         ;; If no such file exists it is created with a time-stamp.
-         (insert "Time-stamp: <>")
-         (time-stamp)))
-   #+END_SRC
-
-   Now we can use the function above to make sure packages are installed and
-   up to date. Here are some packages I find useful (some of these
-   configurations are also dependent on them).
-
-   #+BEGIN_SRC emacs-lisp
-     (when (and do-package-update-on-init
-                (y-or-n-p "Update all packages?"))
-       (package-refresh-contents)
-       (let* ((packages
-               '(ac-geiser         ; Auto-complete backend for geiser
-                 ac-slime          ; An auto-complete source using slime completions
-                 ace-jump-mode     ; quick cursor location minor mode
-                 auto-compile      ; automatically compile Emacs Lisp libraries
-                 auto-complete     ; auto completion
-                 centered-window   ; Center the text when there's only one window
-                 elscreen          ; window session manager
-                 expand-region     ; Increase selected region by semantic units
-                 flx-ido           ; flx integration for ido
-                 idle-require      ; load elisp libraries while Emacs is idle
-                 ido-vertical-mode ; Makes ido-mode display vertically.
-                 geiser            ; GNU Emacs and Scheme talk to each other
-                 haskell-mode      ; A Haskell editing mode
-                 jedi              ; Python auto-completion for Emacs
-                 js2-mode          ; Improved JavaScript editing mode
-                 magit             ; control Git from Emacs
-                 markdown-mode     ; Emacs Major mode for Markdown-formatted files.
-                 matlab-mode       ; MATLAB integration with Emacs.
-                 monokai-theme     ; A fruity color theme for Emacs.
-                 move-text         ; Move current line or region with M-up or M-down
-                 multiple-cursors  ; Multiple cursors for Emacs.
-                 org               ; Outline-based notes management and organizer
-                 paredit           ; minor mode for editing parentheses
-                 powerline         ; Rewrite of Powerline
-                 pretty-lambdada   ; the word `lambda' as the Greek letter.
-                 slime             ; Superior Lisp Interaction Mode for Emacs
-                 smex              ; M-x interface with Ido-style fuzzy matching.
-                 undo-tree         ; Treat undo history as a tree
-                 try))             ; Try out Emacs packages.
-              ;; Fetch dependencies from all packages.
-              (reqs (mapcar 'dependencies packages))
-              ;; Append these to the original list, and remove any duplicates.
-              (packages (delete-dups (apply 'append packages reqs))))
-
-         (dolist (package packages)
-           (upgrade-or-install-package package)))
-
-       ;; This package is only relevant for Mac OS X.
-       (when (memq window-system '(mac ns))
-         (upgrade-or-install-package 'exec-path-from-shell))
-       (package-initialize))
+     (let* ((packages
+             '(ac-geiser            ; Auto-complete backend for geiser
+               ac-slime             ; An auto-complete source using slime completions
+               ace-jump-mode        ; quick cursor location minor mode
+               auto-compile         ; automatically compile Emacs Lisp libraries
+               auto-complete        ; auto completion
+               centered-window-mode ; Center the text when there's only one window
+               elscreen             ; window session manager
+               expand-region        ; Increase selected region by semantic units
+               flx-ido              ; flx integration for ido
+               idle-require         ; load elisp libraries while Emacs is idle
+               ido-vertical-mode    ; Makes ido-mode display vertically
+               geiser               ; GNU Emacs and Scheme talk to each other
+               haskell-mode         ; A Haskell editing mode
+               jedi                 ; Python auto-completion for Emacs
+               js2-mode             ; Improved JavaScript editing mode
+               magit                ; control Git from Emacs
+               markdown-mode        ; Emacs Major mode for Markdown-formatted files
+               matlab-mode          ; MATLAB integration with Emacs
+               monokai-theme        ; A fruity color theme for Emacs
+               move-text            ; Move current line or region with M-up or M-down
+               multiple-cursors     ; Multiple cursors for Emacs.
+               org                  ; Outline-based notes management and organizer
+               paredit              ; minor mode for editing parentheses
+               powerline            ; Rewrite of Powerline
+               pretty-lambdada      ; the word `lambda' as the Greek letter.
+               projectile           ; Manage and navigate projects in Emacs easily
+               slime                ; Superior Lisp Interaction Mode for Emacs
+               smex                 ; M-x interface with Ido-style fuzzy matching
+               undo-tree            ; Treat undo history as a tree
+               try))                ; Try out Emacs packages
+            ;; Remove all packages already installed
+            (packages (remove-if 'package-installed-p packages)))
+       (when packages
+         (package-refresh-contents)
+         (mapcar 'package-install packages)
+         ;; This package is only relevant for Mac OS X.
+         (when (memq window-system '(mac ns))
+           (pacakge-install-package 'exec-path-from-shell))))
    #+END_SRC
 
 ** Mac OS X
