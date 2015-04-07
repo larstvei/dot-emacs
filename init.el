@@ -841,7 +841,7 @@ given, the duplicated region will be commented out."
 (eval-after-load "auto-complete"
   '(add-to-list 'ac-modes 'geiser-repl-mode))
 (eval-after-load "geiser"
-  '(add-to-list 'geiser-active-implementations 'plt-r5rs)) ;'(racket))
+  '(setq geiser-active-implementations '(racket)))
 
 ;; Java and C
 
