@@ -1,10 +1,9 @@
+#+TITLE: Emacs configuration file
+#+AUTHOR: Lars Tveito
 #+BABEL: :cache yes
 #+LATEX_HEADER: \usepackage{parskip}
 #+LATEX_HEADER: \usepackage{inconsolata}
 #+PROPERTY: header-args :tangle yes :comments org
-
-#+TITLE: Emacs configuration file
-#+AUTHOR: Lars Tveito
 
 * About
 
