@@ -371,7 +371,7 @@ PACKAGE is installed and the current version is deleted."
 ;; Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
 
 (when (member "Inconsolata" (font-family-list))
-  (set-face-attribute 'default nil :font "Inconsolata-13"))
+  (set-face-attribute 'default nil :font "Inconsolata-14"))
 
 ;; Ido
 
