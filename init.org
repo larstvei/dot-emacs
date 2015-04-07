@@ -381,12 +381,6 @@
 
    #+END_SRC
 
-   This makes =.md=-files open in =markdown-mode=.
-
-   #+BEGIN_SRC emacs-lisp
-     (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-   #+END_SRC
-
 ** Visual
 
    Change the color-theme to =leuven=.
@@ -1115,6 +1109,12 @@
    #+END_SRC
 
 ** Markdown
+
+   This makes =.md=-files open in =markdown-mode=.
+
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+   #+END_SRC
 
    I sometimes use a specialized markdown format, where inline math-blocks
    can be achieved by surrounding a LaTeX formula with =$math$= and
