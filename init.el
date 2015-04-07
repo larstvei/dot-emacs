@@ -438,24 +438,32 @@ PACKAGE is installed and the current version is deleted."
       calendar-longitude 10.7
       calendar-location-name "Oslo, Norway")
 
-;; Mail
+;; mu4e and offlineimap
 
-;;    I use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] (which is a part of [[http://www.djcbsoftware.nl/code/mu/][mu]]) along with [[http://docs.offlineimap.org/en/latest/][offlineimap]] on one of my
-;;    computers. Because the mail-setup wont work without these programs
-;;    installed we bind =load-mail-setup= to =nil=. If the value is changed to
-;;    a =non-nil= value mail is setup.
+;;    I might not be at a computer using my very specific mail-setup, but if my
+;;    mail-folder exists, then it's probably safe to load.
 
-(defvar load-mail-setup nil)
+(defvar load-mail-setup (file-exists-p "~/.ifimail"))
+
+;; mu4e
+
+;;     mu4e must be informed where it can find your mail and where the
+;;     different folders of interest are located. Some additional mu4e-tweaks
+;;     are supplied here as well.
+
+;;     ~message-insert-signature~ is an existing Emacs function, that adds your
+;;     signature prefixed by a ~"-- "~ at the end of the email, which is a
+;;     convention I don't really follow. I redefine it as a function that adds
+;;     some newlines and my signature at the top of the email.
 
 (when load-mail-setup
   (eval-after-load 'mu4e
     '(progn
        ;; Some basic mu4e settings.
        (setq mu4e-maildir           "~/.ifimail"     ; top-level Maildir
-             mu4e-sent-folder       "/INBOX.Sent"    ; folder for sent messages
+             mu4e-sent-folder       "/Sent Items"    ; folder for sent messages
              mu4e-drafts-folder     "/INBOX.Drafts"  ; unfinished messages
              mu4e-trash-folder      "/INBOX.Trash"   ; trashed messages
-             mu4e-refile-folder     "/INBOX.Archive" ; saved messages
              mu4e-get-mail-command  "offlineimap"    ; offlineimap to fetch mail
              mu4e-compose-signature "- Lars"         ; Sign my name
              mu4e-update-interval   (* 5 60)         ; update every 5 min
@@ -466,21 +474,34 @@ PACKAGE is installed and the current version is deleted."
 
        ;; Setup for sending mail.
        (setq user-full-name
-             "Lars Tveito"                        ; Your full name
+             "Lars Tveito"                          ; Your full name
              user-mail-address
-             "larstvei@ifi.uio.no"                ; And email-address
+             "larstvei@ifi.uio.no"                  ; And email-address
              smtpmail-smtp-server
-             "smtp.uio.no"                        ; Host to mail-server
-             smtpmail-smtp-service 465            ; Port to mail-server
-             smtpmail-stream-type 'ssl            ; Protocol used for sending
-             send-mail-function 'smtpmail-send-it ; Use smpt to send
-             mail-user-agent 'mu4e-user-agent)    ; Use mu4e!
+             "smtp.uio.no"                          ; Host to mail-server
+             smtpmail-smtp-service 465              ; Port to mail-server
+             smtpmail-stream-type 'ssl              ; Protocol used for sending
+             send-mail-function 'smtpmail-send-it   ; Use smpt to send
+             mail-user-agent 'mu4e-user-agent)      ; Use mu4e
 
        ;; Register file types that can be handled by ImageMagick.
        (when (fboundp 'imagemagick-register-types)
-         (imagemagick-register-types))))
-  (autoload 'mu4e "mu4e" nil t)
-  (global-set-key (kbd "C-x m") 'mu4e))
+         (imagemagick-register-types))
+
+       (add-hook 'mu4e-compose-mode-hook
+                 (lambda ()
+                   (auto-fill-mode 0)
+                   (visual-line-mode 1)
+                   (ispell-change-dictionary "norsk")))
+
+       (add-hook 'mu4e-view-mode-hook (lambda () (visual-line-mode 1)))
+
+       (defun message-insert-signature ()
+         (goto-char (point-min))
+         (search-forward-regexp "^$")
+         (insert "\n\n\n" mu4e-compose-signature))))
+
+  (autoload 'mu4e "mu4e" nil t))
 
 ;; Flyspell
 
