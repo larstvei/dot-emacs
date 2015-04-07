@@ -44,9 +44,43 @@
 * Configurations
 ** Meta
 
-   Emacs can only load =.el=-files. We can use =C-c C-v t= to run
-   =org-babel-tangle=, which extracts the code blocks from the current file
-   into a source-specific file (in this case a =.el=-file).
+   All changes to the configuration should be done in =init.org=, *not* in
+   =init.el=. Any changes in the =init.el= will be overwritten by saving
+   =init.org=. The =init.el= in this repo should not be tracked by git, and
+   is replaced the first time Emacs is started (assuming it has been renamed
+   to =~/.emacs.d=).
+
+   Emacs can't load =.org=-files directly, but =org-mode= provides functions
+   to extract the code blocks and write them to a file. There are multiple
+   ways of handling this; like suggested by [[http://emacs.stackexchange.com/questions/3143/can-i-use-org-mode-to-structure-my-emacs-or-other-el-configuration-file][this StackOverflow post]], one
+   could just use =org-babel-load-file=, but I had problems with
+   byte-compilation. Previously I tracked both the =org.=- and =el.=-files,
+   but the git commits got a little messy. So here is a new approach.
+
+   When this configuration is loaded for the first time, the ~init.el~ is
+   the file that is loaded. It looks like this:
+
+   #+BEGIN_SRC emacs-lisp :tangle no
+     ;; This file replaces itself with the actual configuration at first run.
+
+     ;; We can't tangle without org!
+     (require 'org)
+     ;; Open the configuration
+     (find-file (concat user-emacs-directory "init.org"))
+     ;; tangle it
+     (org-babel-tangle)
+     ;; load it
+     (load-file (concat user-emacs-directory "init.el"))
+     ;; finally byte-compile it
+     (byte-compile-file (concat user-emacs-directory "init.el"))
+   #+END_SRC
+
+   It tangles the org-file, so that this file is overwritten with the actual
+   configuration.
+
+   We can use =C-c C-v t= to run =org-babel-tangle=, which extracts the code
+   blocks from the current file into a source-specific file (in this case a
+   =.el=-file).
 
    To avoid doing this each time a change is made we can add a function to
    the =after-save-hook= ensuring to always tangle and byte-compile the
