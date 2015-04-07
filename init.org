@@ -17,25 +17,25 @@
 
   If you really do want to try this config out, this is how I'd go about it:
 
-  *Clone the repo.*
-  #+BEGIN_SRC sh :tangle no
-    git clone https://github.com/larstvei/dot-emacs
-  #+END_SRC
+  * Clone the repo.
+    #+BEGIN_SRC sh :tangle no
+      git clone https://github.com/larstvei/dot-emacs
+    #+END_SRC
 
-  *Backup your old =~/.emacs.d= (if necessary).*
-  #+BEGIN_SRC sh :tangle no
-    mv ~/.emacs.d ~/.emacs.d-bak
-  #+END_SRC
+  * Backup your old =~/.emacs.d= (if necessary).
+    #+BEGIN_SRC sh :tangle no
+      mv ~/.emacs.d ~/.emacs.d-bak
+    #+END_SRC
 
-  *Backup your old =~/.emacs=-file (if necessary).*
-  #+BEGIN_SRC sh :tangle no
-    mv ~/.emacs ~/.emacs-bak
-  #+END_SRC
+  * Backup your old =~/.emacs=-file (if necessary).
+    #+BEGIN_SRC sh :tangle no
+      mv ~/.emacs ~/.emacs-bak
+    #+END_SRC
 
-  *And finally*
-  #+BEGIN_SRC sh :tangle no
-    mv dot-emacs ~/.emacs.d
-  #+END_SRC
+  * And finally
+    #+BEGIN_SRC sh :tangle no
+      mv dot-emacs ~/.emacs.d
+    #+END_SRC
 
   On first run it should install a bunch of packages (this might take a
   while), and you might have to restart your Emacs the first time. If you
