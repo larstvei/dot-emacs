@@ -193,7 +193,7 @@
          (mapcar 'package-install packages)
          ;; This package is only relevant for Mac OS X.
          (when (memq window-system '(mac ns))
-           (pacakge-install-package 'exec-path-from-shell))))
+           (package-install 'exec-path-from-shell))))
    #+END_SRC
 
 ** Mac OS X
