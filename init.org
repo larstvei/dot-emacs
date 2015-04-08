@@ -633,7 +633,7 @@
             (car (setq ispell-languages (cdr ispell-languages)))))))
    #+END_SRC
 
-   =Flyspell= signals an error if there is no spell-checking tool is
+   =flyspell= signals an error if there is no spell-checking tool is
    installed. We can advice =turn-on-flyspell= and =flyspell-prog-mode= to
    only try to enable =flyspell= if a spell-checking tool is available. Also
    we want to enable cycling the languages by typing =C-c l=, so we bind the
@@ -701,7 +701,7 @@
    =just-one-space= removes all whitespace around a point - giving it a
    negative argument it removes newlines as well. We wrap a interactive
    function around it to be able to bind it to a key. In Emacs 24.4
-   =cycle-spacing= was introduced, and it works like just one space, but
+   =cycle-spacing= was introduced, and it works like =just-one-space=, but
    when run in succession it cycles between one, zero and the original
    number of spaces.
 
