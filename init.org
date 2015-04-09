@@ -201,7 +201,7 @@
    I run this configuration mostly on Mac OS X, so we need a couple of
    settings to make things work smoothly. In the package section
    =exec-path-from-shell= is included (only if you're running OS X), this is
-   to include environment-variables from the shell. It makes useing Emacs
+   to include environment-variables from the shell. It makes using Emacs
    along with external processes a lot simpler. I also prefer using the
    =Command=-key as the =Meta=-key.
 
