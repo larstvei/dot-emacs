@@ -164,11 +164,11 @@
                centered-window-mode ; Center the text when there's only one window
                elscreen             ; window session manager
                expand-region        ; Increase selected region by semantic units
-               flx-ido              ; flx integration for ido
                idle-require         ; load elisp libraries while Emacs is idle
-               ido-vertical-mode    ; Makes ido-mode display vertically
                geiser               ; GNU Emacs and Scheme talk to each other
                haskell-mode         ; A Haskell editing mode
+               helm                 ; Incremental and narrowing framework
+               helm-projectile      ; Helm integration for Projectile
                jedi                 ; Python auto-completion for Emacs
                js2-mode             ; Improved JavaScript editing mode
                magit                ; control Git from Emacs
@@ -183,7 +183,6 @@
                pretty-lambdada      ; the word `lambda' as the Greek letter.
                projectile           ; Manage and navigate projects in Emacs easily
                slime                ; Superior Lisp Interaction Mode for Emacs
-               smex                 ; M-x interface with Ido-style fuzzy matching
                undo-tree            ; Treat undo history as a tree
                try))                ; Try out Emacs packages
             ;; Remove all packages already installed
@@ -235,7 +234,6 @@
                 ox-md                    ; Markdown exporter (from org)
                 pretty-lambdada          ; show 'lambda' as the greek letter.
                 recentf                  ; recently opened files
-                smex                     ; M-x interface Ido-style.
                 tex-mode))               ; TeX, LaTeX, and SliTeX mode commands
        (idle-require feature))
 
@@ -442,45 +440,29 @@
 
    # [[./powerline.png]]
 
-** Ido
+** Helm
 
-   Interactive do (or =ido-mode=) changes the way you switch buffers and
-   open files/directories. Instead of writing complete file paths and buffer
-   names you can write a part of it and select one from a list of
-   possibilities. Using =ido-vertical-mode= changes the way possibilities
-   are displayed, and =flx-ido-mode= enables fuzzy matching.
-
-   #+BEGIN_SRC emacs-lisp
-     (dolist (mode
-              '(ido-mode                   ; Interactivly do.
-                ido-everywhere             ; Use Ido for all buffer/file reading.
-                ido-vertical-mode          ; Makes ido-mode display vertically.
-                flx-ido-mode))             ; Toggle flx ido mode.
-       (funcall mode 1))
-   #+END_SRC
-
-   We can set the order of file selections in =ido=. I prioritize source
-   files along with =org=- and =tex=-files.
+   I've been a long time user of ~ido-mode~ along with ~ido-vertical-mode~,
+   and don't have any particular complaints. Though I've got a feeling I'm
+   missing out on something by not using [[https://github.com/emacs-helm/helm][helm]]. I will [[http://tuhdo.github.io/helm-intro.html][this excellent
+   tutorial]] as a starting point, along with some of the suggested
+   configurations. Note that the changes in bindings are located in the key
+   bindings (found near the end of the configuration).
 
    #+BEGIN_SRC emacs-lisp
-     (setq ido-file-extensions-order
-           '(".el" ".scm" ".lisp" ".java" ".c" ".h" ".org" ".tex"))
-   #+END_SRC
+     (require 'helm)
+     (require 'helm-config)
 
-   Sometimes when using =ido-switch-buffer= the =*Messages*= buffer get in
-   the way, so we set it to be ignored (it can be accessed using =C-h e=, so
-   there is really no need for it in the buffer list).
+     (setq helm-split-window-in-side-p t
+           helm-M-x-fuzzy-match t
+           helm-buffers-fuzzy-matching t
+           helm-recentf-fuzzy-match t
+           helm-move-to-line-cycle-in-source t
+           projectile-completion-system 'helm)
 
-   #+BEGIN_SRC emacs-lisp
-     (add-to-list 'ido-ignore-buffers "*Messages*")
-   #+END_SRC
-
-   To make =M-x= behave more like =ido-mode= we can use the =smex=
-   package. It needs to be initialized, and we can replace the binding to
-   the standard =execute-extended-command= with =smex=.
-
-   #+BEGIN_SRC emacs-lisp
-     (smex-initialize)
+     (helm-mode 1)
+     (helm-projectile-on)
+     (helm-adaptive-mode 1)
    #+END_SRC
 
 ** Calendar
@@ -685,18 +667,6 @@
 
 ** Interactive functions
    <<sec:defuns>>
-
-   To search recent files useing =ido-mode= we add this snippet from
-   [[http://www.emacswiki.org/emacs/CalendarWeekNumbers][EmacsWiki]].
-
-   #+BEGIN_SRC emacs-lisp
-     (defun recentf-ido-find-file ()
-       "Find a recent file using Ido."
-       (interactive)
-       (let ((f (ido-completing-read "Choose recent file: " recentf-list nil t)))
-         (when f
-           (find-file f))))
-   #+END_SRC
 
    =just-one-space= removes all whitespace around a point - giving it a
    negative argument it removes newlines as well. We wrap a interactive
@@ -1226,13 +1196,18 @@
    Bindings for [[http://emacs-helm.github.io/helm/][Helm]].
 
    #+BEGIN_SRC emacs-lisp
+     (define-key custom-bindings-map (kbd "C-c h")   'helm-command-prefix)
+     (define-key custom-bindings-map (kbd "M-:")     'helm-eval-expression-with-eldoc)
+     (define-key custom-bindings-map (kbd "M-x")     'helm-M-x)
+     (define-key custom-bindings-map (kbd "M-y")     'helm-show-kill-ring)
+     (define-key custom-bindings-map (kbd "C-x b")   'helm-mini)
+     (define-key custom-bindings-map (kbd "C-x C-f") 'helm-find-files)
+     (define-key custom-bindings-map (kbd "C-c h o") 'helm-occur)
      (define-key custom-bindings-map (kbd "C-c h g") 'helm-google-suggest)
-   #+END_SRC
 
-   Bindings for [[https://github.com/nonsequitur/smex][smex]]. This overrides the standard =M-x=.
-
-   #+BEGIN_SRC emacs-lisp
-     (define-key custom-bindings-map (kbd "M-x") 'smex)
+     (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
+     (define-key helm-map (kbd "C-i")   'helm-execute-persistent-action)
+     (define-key helm-map (kbd "C-z")   'helm-select-action)
    #+END_SRC
 
    Bindings for =move-text=.
@@ -1248,7 +1223,6 @@
      (define-key custom-bindings-map (kbd "C-j")      'newline-and-indent)
      (define-key custom-bindings-map (kbd "C-c s")    'ispell-word)
      (define-key custom-bindings-map (kbd "C-c t")    'org-agenda-list)
-     (define-key custom-bindings-map (kbd "C-x C-r")  'recentf-ido-find-file)
      (define-key custom-bindings-map (kbd "C-x m")    'mu4e)
    #+END_SRC
 
