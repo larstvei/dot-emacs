@@ -156,11 +156,8 @@
 
    #+BEGIN_SRC emacs-lisp
      (let* ((packages
-             '(ac-geiser            ; Auto-complete backend for geiser
-               ac-slime             ; An auto-complete source using slime completions
-               ace-jump-mode        ; quick cursor location minor mode
+             '(ace-jump-mode        ; quick cursor location minor mode
                auto-compile         ; automatically compile Emacs Lisp libraries
-               auto-complete        ; auto completion
                centered-window-mode ; Center the text when there's only one window
                elscreen             ; window session manager
                expand-region        ; Increase selected region by semantic units
@@ -223,7 +220,6 @@
 
    #+BEGIN_SRC emacs-lisp
      (require 'idle-require)             ; Need in order to use idle-require
-     (require 'auto-complete-config)     ; a configuration for auto-complete-mode
 
      (dolist (feature
               '(auto-compile             ; auto-compile .el files
@@ -329,13 +325,6 @@
 
    #+BEGIN_SRC emacs-lisp
      (put 'narrow-to-region 'disabled nil)
-   #+END_SRC
-
-   Call =auto-complete= default configuration, which enables =auto-complete=
-   globally.
-
-   #+BEGIN_SRC emacs-lisp
-     (eval-after-load 'auto-complete-config `(ac-config-default))
    #+END_SRC
 
    Automaticly revert =doc-view=-buffers when the file changes on disk.
@@ -586,13 +575,10 @@
 
    To use flyspell for programming there is =flyspell-prog-mode=, that only
    enables spell checking for comments and strings. We can enable it for all
-   programming modes using the =prog-mode-hook=. Flyspell interferes with
-   auto-complete mode, but there is a workaround provided by auto complete.
+   programming modes using the =prog-mode-hook=.
 
    #+BEGIN_SRC emacs-lisp
      (add-hook 'prog-mode-hook 'flyspell-prog-mode)
-     (eval-after-load 'auto-complete
-       '(ac-flyspell-workaround))
    #+END_SRC
 
    When working with several languages, we should be able to cycle through
@@ -927,17 +913,6 @@
       (setq inferior-lisp-program "sbcl")
     #+END_SRC
 
-    To improve auto completion for Common Lisp editing we can use =ac-slime=
-    which uses slime completions as a source.
-
-    #+BEGIN_SRC emacs-lisp
-      (add-hook 'slime-mode-hook 'set-up-slime-ac)
-      (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
-
-      (eval-after-load "auto-complete"
-        '(add-to-list 'ac-modes 'slime-repl-mode))
-    #+END_SRC
-
     More sensible =loop= indentation, borrowed from [[https://github.com/simenheg][simenheg]].
 
     #+BEGIN_SRC emacs-lisp
@@ -957,10 +932,6 @@
     and specify which scheme-interpreter we prefer.
 
    #+BEGIN_SRC emacs-lisp
-     (add-hook 'geiser-mode-hook 'ac-geiser-setup)
-     (add-hook 'geiser-repl-mode-hook 'ac-geiser-setup)
-     (eval-after-load "auto-complete"
-       '(add-to-list 'ac-modes 'geiser-repl-mode))
      (eval-after-load "geiser"
        '(setq geiser-active-implementations '(racket)))
    #+END_SRC
