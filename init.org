@@ -159,6 +159,7 @@
              '(ace-jump-mode        ; quick cursor location minor mode
                auto-compile         ; automatically compile Emacs Lisp libraries
                centered-window-mode ; Center the text when there's only one window
+               company              ; Modular text completion framework
                elscreen             ; window session manager
                expand-region        ; Increase selected region by semantic units
                idle-require         ; load elisp libraries while Emacs is idle
@@ -166,6 +167,7 @@
                haskell-mode         ; A Haskell editing mode
                helm                 ; Incremental and narrowing framework
                helm-projectile      ; Helm integration for Projectile
+               helm-company         ; Helm interface for company-mode
                jedi                 ; Python auto-completion for Emacs
                js2-mode             ; Improved JavaScript editing mode
                magit                ; control Git from Emacs
@@ -399,7 +401,19 @@
 
 
 
+** Completion
 
+   [[https://github.com/auto-complete/auto-complete][Auto-Complete]] has been a part of my config for years, but I want to try
+   out [[http://company-mode.github.io/][company-mode]]. If I code in an environment with good completion, I've
+   made an habit of trying to /guess/ function-names, and looking at the
+   completions for the right one. So I want a pretty aggressive completion
+   system, hence the no delay settings and short prefix length.
+
+   #+BEGIN_SRC emacs-lisp
+     (setq company-idle-delay 0
+           company-echo-delay 0
+           company-minimum-prefix-length 1)
+   #+END_SRC
 
 ** Helm
 
@@ -1134,6 +1148,18 @@
 
    #+BEGIN_SRC emacs-lisp
      (define-key custom-bindings-map (kbd "C-c SPC") 'ace-jump-mode)
+   #+END_SRC
+
+   Bindings for [[http://company-mode.github.io/][company-mode]].
+
+   #+BEGIN_SRC emacs-lisp
+     (define-key company-active-map (kbd "C-d") 'company-show-doc-buffer)
+     (define-key company-active-map (kbd "C-n") 'company-select-next)
+     (define-key company-active-map (kbd "C-p") 'company-select-previous)
+     (define-key company-active-map (kbd "<tab>") 'company-complete)
+
+     (define-key company-mode-map (kbd "C-:") 'helm-company)
+     (define-key company-active-map (kbd "C-:") 'helm-company)
    #+END_SRC
 
    Bindings for [[http://emacs-helm.github.io/helm/][Helm]].
