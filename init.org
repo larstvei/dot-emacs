@@ -397,38 +397,9 @@
        (set-face-attribute 'default nil :font "Inconsolata-14"))
    #+END_SRC
 
-   # [[https://github.com/milkypostman/powerline][Powerline]] is an extension to customize the mode line. This is modified
-   # version =powerline-nano-theme=.
 
-   # #+BEGIN_SRC emacs-lisp
-   # (setq-default
-   #  mode-line-format
-   #  '("%e"
-   #    (:eval
-   #     (let* ((active (powerline-selected-window-active))
-   #            ;; left hand side displays Read only or Modified.
-   #            (lhs (list (powerline-raw
-   #                        (cond (buffer-read-only "Read only")
-   #                              ((buffer-modified-p) "Modified")
-   #                              (t "")) nil 'l)))
-   #            ;; right side hand displays (line,column).
-   #            (rhs (list
-   #                  (powerline-raw
-   #                   (concat
-   #                    "(" (number-to-string (line-number-at-pos))
-   #                    "," (number-to-string (current-column)) ")") nil 'r)))
-   #            ;; center displays buffer name.
-   #            (center (list (powerline-raw "%b" nil))))
-   #       (concat (powerline-render lhs)
-   #               (powerline-fill-center nil (/ (powerline-width center) 2.0))
-   #               (powerline-render center)
-   #               (powerline-fill nil (powerline-width rhs))
-   #               (powerline-render rhs))))))
-   # #+END_SRC
 
-   # This is what it looks like:
 
-   # [[./powerline.png]]
 
 ** Helm
 
