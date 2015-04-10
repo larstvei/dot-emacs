@@ -352,19 +352,20 @@
 
    #+BEGIN_SRC emacs-lisp
      (dolist (mode
-              '(abbrev-mode                ; E.g. sopl -> System.out.println.
-                column-number-mode         ; Show column number in mode line.
-                delete-selection-mode      ; Replace selected text.
+              '(abbrev-mode                ; E.g. sopl -> System.out.println
+                column-number-mode         ; Show column number in mode line
+                global-company-mode        ; Auto-completion everywhere
+                delete-selection-mode      ; Replace selected text
                 dirtrack-mode              ; directory tracking in *shell*
-                recentf-mode               ; Recently opened files.
-                show-paren-mode            ; Highlight matching parentheses.
-                projectile-global-mode     ; Manage and navigate projects.
-                global-undo-tree-mode))    ; Undo as a tree.
+                recentf-mode               ; Recently opened files
+                show-paren-mode            ; Highlight matching parentheses
+                projectile-global-mode     ; Manage and navigate projects
+                global-undo-tree-mode))    ; Undo as a tree
        (funcall mode 1))
 
      (when (version< emacs-version "24.4")
        (eval-after-load 'auto-compile
-         '((auto-compile-on-save-mode 1))))  ; compile .el files on save.
+         '((auto-compile-on-save-mode 1))))  ; compile .el files on save
 
    #+END_SRC
 
