@@ -160,6 +160,7 @@
                auto-compile         ; automatically compile Emacs Lisp libraries
                centered-window-mode ; Center the text when there's only one window
                company              ; Modular text completion framework
+               diminish             ; Diminished modes from modeline
                elscreen             ; window session manager
                expand-region        ; Increase selected region by semantic units
                idle-require         ; load elisp libraries while Emacs is idle
@@ -399,7 +400,28 @@
        (set-face-attribute 'default nil :font "Inconsolata-14"))
    #+END_SRC
 
+   [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] allows you to hide or abbreviate their presence in the
+   modeline. I rarely look at the modeline to find out what minor-modes are
+   enabled, so I disable every global minor-mode, and some for lisp editing.
 
+   To ensure that the mode is loaded before diminish it, we should use
+   ~with-eval-after-load~. To avoid typing this multiple times a small macro
+   is provided.
+
+   #+BEGIN_SRC emacs-lisp
+     (defmacro safe-diminish (file mode &optional new-name)
+       `(with-eval-after-load ,file
+          (diminish ,mode ,new-name)))
+
+     (diminish 'auto-fill-function)
+     (safe-diminish "eldoc" 'eldoc-mode)
+     (safe-diminish "flyspell" 'flyspell-mode)
+     (safe-diminish "helm-mode" 'helm-mode)
+     (safe-diminish "undo-tree" 'undo-tree-mode)
+     (safe-diminish "company" 'company-mode)
+     (safe-diminish "projectile" 'projectile-mode)
+     (safe-diminish "paredit" 'paredit-mode "()")
+   #+END_SRC
 
 ** Completion
 
