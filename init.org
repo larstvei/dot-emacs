@@ -418,7 +418,6 @@
      (safe-diminish "flyspell" 'flyspell-mode)
      (safe-diminish "helm-mode" 'helm-mode)
      (safe-diminish "undo-tree" 'undo-tree-mode)
-     (safe-diminish "company" 'company-mode)
      (safe-diminish "projectile" 'projectile-mode)
      (safe-diminish "paredit" 'paredit-mode "()")
    #+END_SRC
