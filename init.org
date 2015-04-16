@@ -442,8 +442,16 @@
    and don't have any particular complaints. Though I've got a feeling I'm
    missing out on something by not using [[https://github.com/emacs-helm/helm][helm]]. I will [[http://tuhdo.github.io/helm-intro.html][this excellent
    tutorial]] as a starting point, along with some of the suggested
-   configurations. Note that the changes in bindings are located in the key
-   bindings (found near the end of the configuration).
+   configurations.
+
+   ~helm~ has a wonderful feature, being able to grep files by ~C-s~
+   anywhere; this is useful, but I almost always want to do recursive greps
+   (which you can do by ~C-u C-s~). [[http://beyondgrep.com/][ack]] is a great ~grep~-replacement, and
+   is designed to search source code. Let's replace ~grep~ with ~ack~ and do
+   recursive searches by default.
+
+   Note that some changes in bindings are located in the key bindings (found
+   near the end of the configuration).
 
    #+BEGIN_SRC emacs-lisp
      (require 'helm)
@@ -455,6 +463,9 @@
            helm-recentf-fuzzy-match t
            helm-move-to-line-cycle-in-source t
            projectile-completion-system 'helm)
+
+     (when (executable-find "ack")
+       (setq helm-grep-default-command "ack -H --no-group --no-color %e %p %f"))
 
      (helm-mode 1)
      (helm-projectile-on)
