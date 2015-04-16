@@ -449,10 +449,8 @@
    configurations.
 
    ~helm~ has a wonderful feature, being able to grep files by ~C-s~
-   anywhere; this is useful, but I almost always want to do recursive greps
-   (which you can do by ~C-u C-s~). [[http://beyondgrep.com/][ack]] is a great ~grep~-replacement, and
-   is designed to search source code. Let's replace ~grep~ with ~ack~ and do
-   recursive searches by default.
+   anywhere, which is useful. [[http://beyondgrep.com/][ack]] is a great ~grep~-replacement, and is
+   designed to search source code, so I want to use that if it's available.
 
    Note that some changes in bindings are located in the key bindings (found
    near the end of the configuration).
@@ -469,7 +467,10 @@
            projectile-completion-system 'helm)
 
      (when (executable-find "ack")
-       (setq helm-grep-default-command "ack -H --no-group --no-color %e %p %f"))
+       (setq helm-grep-default-command
+             "ack -Hn --no-group --no-color %e %p %f"
+             helm-grep-default-recurse-command
+             "ack -H --no-group --no-color %e %p %f"))
 
      (helm-mode 1)
      (helm-projectile-on)
@@ -955,7 +956,7 @@
 
    #+BEGIN_SRC emacs-lisp
      (eval-after-load "geiser"
-       '(setq geiser-active-implementations '(racket)))
+       '(setq geiser-active-implementations '(guile racket)))
    #+END_SRC
 
 ** Java and C
