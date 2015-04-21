@@ -658,9 +658,10 @@
    be themed as they would in their native mode.
 
    #+BEGIN_SRC emacs-lisp
-     (setq org-src-fontify-natively t
-           org-confirm-babel-evaluate nil)
-
+   (setq org-src-fontify-natively t
+         org-src-tab-acts-natively t
+         org-confirm-babel-evaluate nil
+         org-edit-src-content-indentation 0)
    #+END_SRC
 
    This is quite an ugly fix for allowing code markup for expressions like
