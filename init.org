@@ -1204,7 +1204,6 @@
 
    #+BEGIN_SRC emacs-lisp
      (define-key custom-bindings-map (kbd "C-c h")   'helm-command-prefix)
-     (define-key custom-bindings-map (kbd "M-:")     'helm-eval-expression-with-eldoc)
      (define-key custom-bindings-map (kbd "M-x")     'helm-M-x)
      (define-key custom-bindings-map (kbd "M-y")     'helm-show-kill-ring)
      (define-key custom-bindings-map (kbd "C-x b")   'helm-mini)
