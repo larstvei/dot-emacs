@@ -957,7 +957,7 @@
 
    #+BEGIN_SRC emacs-lisp
      (eval-after-load "geiser"
-       '(setq geiser-active-implementations '(guile racket)))
+       '(setq geiser-active-implementations '(guile)))
    #+END_SRC
 
 ** Java and C
