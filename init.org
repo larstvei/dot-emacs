@@ -1109,6 +1109,7 @@
    (add-hook 'markdown-mode-hook
              (lambda ()
                (auto-fill-mode 0)
+               (visual-line-mode 1)
                (ispell-change-dictionary "norsk")
                (local-set-key (kbd "C-c b") 'insert-markdown-inline-math-block)) t)
    #+END_SRC
