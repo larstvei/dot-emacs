@@ -256,16 +256,6 @@
          inhibit-startup-message t     ; No splash screen please.
          initial-scratch-message nil   ; Clean scratch buffer.
          ring-bell-function 'ignore    ; Quiet.
-         ;; Save undo history between sessions, if you have an undo-dir
-         undo-tree-auto-save-history
-         (file-exists-p
-          (concat user-emacs-directory "undo"))
-         undo-tree-history-directory-alist
-         ;; Put undo-history files in a directory, if it exists.
-         (let ((undo-dir (concat user-emacs-directory "undo")))
-           (and (file-exists-p undo-dir)
-                (list (cons "." undo-dir)))))
-
    ;; Some mac-bindings interfere with Emacs bindings.
    (when (boundp 'mac-pass-command-to-system)
      (setq mac-pass-command-to-system nil))
@@ -422,7 +412,6 @@
    (safe-diminish "eldoc" 'eldoc-mode)
    (safe-diminish "flyspell" 'flyspell-mode)
    (safe-diminish "helm-mode" 'helm-mode)
-   (safe-diminish "undo-tree" 'undo-tree-mode)
    (safe-diminish "projectile" 'projectile-mode)
    (safe-diminish "paredit" 'paredit-mode "()")
    #+END_SRC
