@@ -127,7 +127,7 @@
           (load-file private-file)))))
    #+END_SRC
 
-** Package
+** Packages
 
    Managing extensions for Emacs is simplified using =package= which is
    built in to Emacs 24 and newer. To load downloaded packages we need to
@@ -155,44 +155,46 @@
    installed. To ensure we install missing packages if they are missing.
 
    #+BEGIN_SRC emacs-lisp
-   (let* ((packages
-           '(ace-jump-mode        ; quick cursor location minor mode
-             auto-compile         ; automatically compile Emacs Lisp libraries
-             centered-window-mode ; Center the text when there's only one window
-             company              ; Modular text completion framework
-             diminish             ; Diminished modes from modeline
-             elscreen             ; window session manager
-             expand-region        ; Increase selected region by semantic units
-             idle-require         ; load elisp libraries while Emacs is idle
-             geiser               ; GNU Emacs and Scheme talk to each other
-             haskell-mode         ; A Haskell editing mode
-             helm                 ; Incremental and narrowing framework
-             helm-projectile      ; Helm integration for Projectile
-             helm-company         ; Helm interface for company-mode
-             jedi                 ; Python auto-completion for Emacs
-             js2-mode             ; Improved JavaScript editing mode
-             magit                ; control Git from Emacs
-             markdown-mode        ; Emacs Major mode for Markdown-formatted files
-             matlab-mode          ; MATLAB integration with Emacs
-             monokai-theme        ; A fruity color theme for Emacs
-             move-text            ; Move current line or region with M-up or M-down
-             multiple-cursors     ; Multiple cursors for Emacs.
-             org                  ; Outline-based notes management and organizer
-             paredit              ; minor mode for editing parentheses
-             powerline            ; Rewrite of Powerline
-             pretty-lambdada      ; the word `lambda' as the Greek letter.
-             projectile           ; Manage and navigate projects in Emacs easily
-             slime                ; Superior Lisp Interaction Mode for Emacs
-             undo-tree            ; Treat undo history as a tree
-             try))                ; Try out Emacs packages
-          ;; Remove all packages already installed
-          (packages (remove-if 'package-installed-p packages)))
-     (when packages
-       (package-refresh-contents)
-       (mapcar 'package-install packages)
-       ;; This package is only relevant for Mac OS X.
-       (when (memq window-system '(mac ns))
-         (package-install 'exec-path-from-shell))))
+     (let* ((packages
+             '(ace-jump-mode        ; quick cursor location minor mode
+               auto-compile         ; automatically compile Emacs Lisp libraries
+               centered-window-mode ; Center the text when there's only one window
+               cider                ; Clojure Interactive Development Environment
+               company              ; Modular text completion framework
+               define-word          ; display the definition of word at point
+               diminish             ; Diminished modes from modeline
+               elscreen             ; window session manager
+               expand-region        ; Increase selected region by semantic units
+               idle-require         ; load elisp libraries while Emacs is idle
+               geiser               ; GNU Emacs and Scheme talk to each other
+               haskell-mode         ; A Haskell editing mode
+               helm                 ; Incremental and narrowing framework
+               helm-projectile      ; Helm integration for Projectile
+               helm-company         ; Helm interface for company-mode
+               jedi                 ; Python auto-completion for Emacs
+               js2-mode             ; Improved JavaScript editing mode
+               magit                ; control Git from Emacs
+               markdown-mode        ; Emacs Major mode for Markdown-formatted files
+               matlab-mode          ; MATLAB integration with Emacs
+               monokai-theme        ; A fruity color theme for Emacs
+               move-text            ; Move current line or region with M-up or M-down
+               multiple-cursors     ; Multiple cursors for Emacs.
+               olivetti             ; Minor mode for a nice writing environment
+               org                  ; Outline-based notes management and organizer
+               paredit              ; minor mode for editing parentheses
+               powerline            ; Rewrite of Powerline
+               pretty-lambdada      ; the word `lambda' as the Greek letter.
+               projectile           ; Manage and navigate projects in Emacs easily
+               slime                ; Superior Lisp Interaction Mode for Emacs
+               try))                ; Try out Emacs packages
+            ;; Remove all packages already installed
+            (packages (remove-if 'package-installed-p packages)))
+       (when packages
+         (ignore-errors (package-refresh-contents)
+                        (mapcar 'package-install packages)
+                        ;; This package is only relevant for Mac OS X.
+                        (when (memq window-system '(mac ns))
+                          (package-install 'exec-path-from-shell)))))
    #+END_SRC
 
 ** Mac OS X
@@ -1161,6 +1163,19 @@
   #+BEGIN_SRC emacs-lisp
   (defvar custom-bindings-map (make-keymap)
     "A keymap for custom bindings.")
+  #+END_SRC
+
+  Bindings for [[https://github.com/rnkn/olivetti][olivetti]].
+
+  #+BEGIN_SRC emacs-lisp
+  (define-key custom-bindings-map (kbd "C-c [") 'olivetti-shrink)
+  (define-key custom-bindings-map (kbd "C-c ]") 'olivetti-expand)
+  #+END_SRC
+
+  Bindings for [[https://github.com/abo-abo/define-word][define-word]].
+
+  #+BEGIN_SRC emacs-lisp
+  (define-key custom-bindings-map (kbd "C-c D") 'define-word-at-point)
   #+END_SRC
 
   Bindings for [[https://github.com/magnars/expand-region.el][expand-region]].
