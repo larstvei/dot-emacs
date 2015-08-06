@@ -444,15 +444,14 @@
 
 ** Helm
 
-   I've been a long time user of ~ido-mode~ along with ~ido-vertical-mode~,
-   and don't have any particular complaints. Though I've got a feeling I'm
-   missing out on something by not using [[https://github.com/emacs-helm/helm][helm]]. I will [[http://tuhdo.github.io/helm-intro.html][this excellent
-   tutorial]] as a starting point, along with some of the suggested
-   configurations.
+   I've been a long time user of ~ido-mode~ along with ~ido-vertical-mode~, and
+   don't have any particular complaints. Though I've got a feeling I'm missing
+   out on something by not using [[https://github.com/emacs-helm/helm][helm]]. I will [[http://tuhdo.github.io/helm-intro.html][this excellent tutorial]] as a
+   starting point, along with some of the suggested configurations.
 
-   ~helm~ has a wonderful feature, being able to grep files by ~C-s~
-   anywhere, which is useful. [[http://beyondgrep.com/][ack]] is a great ~grep~-replacement, and is
-   designed to search source code, so I want to use that if it's available.
+   ~helm~ has a wonderful feature, being able to grep files by ~C-s~ anywhere,
+   which is useful. [[http://beyondgrep.com/][ack]] is a great ~grep~-replacement, and is designed to
+   search source code, so I want to use that if it's available.
 
    Note that some changes in bindings are located in the key bindings (found
    near the end of the configuration).
