@@ -3,7 +3,7 @@
 #+BABEL: :cache yes
 #+LATEX_HEADER: \usepackage{parskip}
 #+LATEX_HEADER: \usepackage{inconsolata}
-#+PROPERTY: header-args :tangle yes :comments org
+#+PROPERTY: header-args :tangle yes
 
 * About
 
