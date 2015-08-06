@@ -256,6 +256,7 @@
          inhibit-startup-message t     ; No splash screen please.
          initial-scratch-message nil   ; Clean scratch buffer.
          ring-bell-function 'ignore    ; Quiet.
+         sentence-end-double-space nil); No double space
    ;; Some mac-bindings interfere with Emacs bindings.
    (when (boundp 'mac-pass-command-to-system)
      (setq mac-pass-command-to-system nil))
