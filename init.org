@@ -208,7 +208,8 @@
 
    #+BEGIN_SRC emacs-lisp
    (when (memq window-system '(mac ns))
-     (setq mac-option-modifier nil
+     (setq ns-pop-up-frames nil
+           mac-option-modifier nil
            mac-command-modifier 'meta
            x-select-enable-clipboard t)
      (exec-path-from-shell-initialize))
