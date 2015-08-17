@@ -359,8 +359,7 @@
               dirtrack-mode              ; directory tracking in *shell*
               recentf-mode               ; Recently opened files
               show-paren-mode            ; Highlight matching parentheses
-              projectile-global-mode     ; Manage and navigate projects
-              global-undo-tree-mode))    ; Undo as a tree
+              projectile-global-mode))   ; Manage and navigate projects
      (funcall mode 1))
 
    (when (version< emacs-version "24.4")
