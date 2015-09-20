@@ -165,6 +165,7 @@
              focus                ; Dim color of text in surrounding sections
              idle-require         ; load elisp libraries while Emacs is idle
              geiser               ; GNU Emacs and Scheme talk to each other
+             git-gutter-fringe    ; Fringe version of git-gutter.el
              haskell-mode         ; A Haskell editing mode
              helm                 ; Incremental and narrowing framework
              helm-company         ; Helm interface for company-mode
@@ -354,6 +355,7 @@
             '(abbrev-mode                ; E.g. sopl -> System.out.println
               column-number-mode         ; Show column number in mode line
               global-company-mode        ; Auto-completion everywhere
+              global-git-gutter-mode     ; Show changes latest commit
               delete-selection-mode      ; Replace selected text
               dirtrack-mode              ; directory tracking in *shell*
               recentf-mode               ; Recently opened files
@@ -416,6 +418,23 @@
    (safe-diminish "helm-mode" 'helm-mode)
    (safe-diminish "projectile" 'projectile-mode)
    (safe-diminish "paredit" 'paredit-mode "()")
+   #+END_SRC
+
+   [[https://github.com/syohex/emacs-git-gutter-fringe][git-gutter-fringe]] gives a great visual indication of where you've made
+   changes since your last commit. There are several packages that performs
+   this task; the reason I've ended up with =git-gutter-fringe= is that it
+   reuses the (already present) fringe, saving a tiny bit of screen-estate.
+
+   I smuggled some configurations from [[https://github.com/torenord/.emacs.d/][torenord]], providing a cleaner look.
+
+   #+BEGIN_SRC emacs-lisp
+   (require 'git-gutter-fringe)
+
+   (dolist (p '((git-gutter:added    . "#0c0")
+                (git-gutter:deleted  . "#c00")
+                (git-gutter:modified . "#c0c")))
+     (set-face-foreground (car p) (cdr p))
+     (set-face-background (car p) (cdr p)))
    #+END_SRC
 
 ** PDF Tools
