@@ -156,8 +156,7 @@
 
    #+BEGIN_SRC emacs-lisp
    (let* ((packages
-           '(ace-jump-mode        ; quick cursor location minor mode
-             auto-compile         ; automatically compile Emacs Lisp libraries
+           '(auto-compile         ; automatically compile Emacs Lisp libraries
              cider                ; Clojure Interactive Development Environment
              company              ; Modular text completion framework
              define-word          ; display the definition of word at point
@@ -1202,12 +1201,6 @@
 
   #+BEGIN_SRC emacs-lisp
   (define-key custom-bindings-map (kbd "C-c m") 'magit-status)
-  #+END_SRC
-
-  Bindings for [[https://github.com/winterTTr/ace-jump-mode][ace-jump-mode]].
-
-  #+BEGIN_SRC emacs-lisp
-  (define-key custom-bindings-map (kbd "C-c SPC") 'ace-jump-mode)
   #+END_SRC
 
   Bindings for [[http://company-mode.github.io/][company-mode]].
