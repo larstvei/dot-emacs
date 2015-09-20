@@ -392,8 +392,10 @@
    Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
 
    #+BEGIN_SRC emacs-lisp
-   (when (member "Inconsolata" (font-family-list))
-     (set-face-attribute 'default nil :font "Inconsolata-14"))
+   (cond ((member "Source Code Pro" (font-family-list))
+          (set-face-attribute 'default nil :font "Source Code Pro-13"))
+         ((member "Inconsolata" (font-family-list))
+          (set-face-attribute 'default nil :font "Inconsolata-14")))
    #+END_SRC
 
    [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] allows you to hide or abbreviate their presence in the
