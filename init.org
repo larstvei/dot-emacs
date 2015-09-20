@@ -419,6 +419,18 @@
    (safe-diminish "paredit" 'paredit-mode "()")
    #+END_SRC
 
+** PDF Tools
+
+   [[https://github.com/politza/pdf-tools][PDF Tools]] makes a huge improvement on the built-in [[http://www.gnu.org/software/emacs/manual/html_node/emacs/Document-View.html][doc-view-mode]]; the only
+   drawback is the =pdf-tools-install= (which has to be executed before the
+   package can be used) takes a couple of /seconds/ to execute. Instead of
+   running it at init-time, we'll run it whenever a PDF is opened. Note that
+   it's only slow on the first run!
+
+   #+BEGIN_SRC emacs-lisp
+   (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
+   #+END_SRC
+
 ** Completion
 
    [[https://github.com/auto-complete/auto-complete][Auto-Complete]] has been a part of my config for years, but I want to try
