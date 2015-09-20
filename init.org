@@ -1220,6 +1220,8 @@
   (define-key custom-bindings-map (kbd "C-x C-f") 'helm-find-files)
   (define-key custom-bindings-map (kbd "C-c h o") 'helm-occur)
   (define-key custom-bindings-map (kbd "C-c h g") 'helm-google-suggest)
+  (define-key custom-bindings-map (kbd "M-i")     'helm-swoop)
+  (define-key custom-bindings-map (kbd "M-I")     'helm-multi-swoop-all)
 
   (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
   (define-key helm-map (kbd "C-i")   'helm-execute-persistent-action)
