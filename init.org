@@ -251,13 +251,14 @@
    We can set variables to whatever value we'd like using =setq=.
 
    #+BEGIN_SRC emacs-lisp
-   (setq default-input-method "TeX"    ; Use TeX when toggling input method.
+   (setq auto-revert-interval 1        ; Refresh buffers fast
+         default-input-method "TeX"    ; Use TeX when toggling input method.
          doc-view-continuous t         ; At page edge goto next/previous.
          echo-keystrokes 0.1           ; Show keystrokes asap.
          inhibit-startup-message t     ; No splash screen please.
          initial-scratch-message nil   ; Clean scratch buffer.
          ring-bell-function 'ignore    ; Quiet.
-         sentence-end-double-space nil); No double space
+   sentence-end-double-space nil); No double space
    ;; Some mac-bindings interfere with Emacs bindings.
    (when (boundp 'mac-pass-command-to-system)
      (setq mac-pass-command-to-system nil))
@@ -447,6 +448,7 @@
    it's only slow on the first run!
 
    #+BEGIN_SRC emacs-lisp
+   (add-hook 'pdf-tools-enabled-hook 'auto-revert-mode)
    (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
    #+END_SRC
 
