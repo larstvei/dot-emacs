@@ -184,7 +184,6 @@
              org                  ; Outline-based notes management and organizer
              paredit              ; minor mode for editing parentheses
              pdf-tools            ; Emacs support library for PDF files.
-             pretty-lambdada      ; the word `lambda' as the Greek letter.
              projectile           ; Manage and navigate projects in Emacs easily
              slime                ; Superior Lisp Interaction Mode for Emacs
              try))                ; Try out Emacs packages
@@ -235,7 +234,6 @@
               ob-matlab                ; org-babel matlab
               ox-latex                 ; the latex-exporter (from org)
               ox-md                    ; Markdown exporter (from org)
-              pretty-lambdada          ; show 'lambda' as the greek letter.
               recentf                  ; recently opened files
               tex-mode))               ; TeX, LaTeX, and SliTeX mode commands
      (idle-require feature))
@@ -354,15 +352,16 @@
 
    #+BEGIN_SRC emacs-lisp
    (dolist (mode
-            '(abbrev-mode                ; E.g. sopl -> System.out.println
-              column-number-mode         ; Show column number in mode line
-              global-company-mode        ; Auto-completion everywhere
-              global-git-gutter-mode     ; Show changes latest commit
-              delete-selection-mode      ; Replace selected text
-              dirtrack-mode              ; directory tracking in *shell*
-              recentf-mode               ; Recently opened files
-              show-paren-mode            ; Highlight matching parentheses
-              projectile-global-mode))   ; Manage and navigate projects
+            '(abbrev-mode                  ; E.g. sopl -> System.out.println
+              column-number-mode           ; Show column number in mode line
+              global-company-mode          ; Auto-completion everywhere
+              global-git-gutter-mode       ; Show changes latest commit
+              global-prettify-symbols-mode ; Greek letters should look greek
+              delete-selection-mode        ; Replace selected text
+              dirtrack-mode                ; directory tracking in *shell*
+              recentf-mode                 ; Recently opened files
+              show-paren-mode              ; Highlight matching parentheses
+              projectile-global-mode))     ; Manage and navigate projects
      (funcall mode 1))
 
    (when (version< emacs-version "24.4")
@@ -437,6 +436,16 @@
                 (git-gutter:modified . "#c0c")))
      (set-face-foreground (car p) (cdr p))
      (set-face-background (car p) (cdr p)))
+   #+END_SRC
+
+   New in Emacs 24.4 is the =prettify-symbols-mode=! It's neat.
+
+   #+BEGIN_SRC emacs-lisp
+   (setq-default prettify-symbols-alist '(("lambda" . ?λ)
+                                          ("delta" . ?Δ)
+                                          ("gamma" . ?Γ)
+                                          ("phi" . ?φ)
+                                          ("psi" . ?ψ)))
    #+END_SRC
 
 ** PDF Tools
@@ -911,24 +920,18 @@
 
 ** Lisp
 
-   =Pretty-lambda= provides a customizable variable
-   =pretty-lambda-auto-modes= that is a list of common lisp modes. Here we
-   can add some extra lisp-modes. We run the =pretty-lambda-for-modes=
-   function to activate =pretty-lambda-mode= in lisp modes.
+   I use =Paredit= when editing lisp code, we enable this for all lisp-modes.
 
    #+BEGIN_SRC emacs-lisp
-   (dolist (mode '(slime-repl-mode geiser-repl-mode ielm-mode clojure-mode
-                                   cider-repl-mode))
-     (add-to-list 'pretty-lambda-auto-modes mode))
-
-   (pretty-lambda-for-modes)
-   #+END_SRC
-
-   I use =Paredit= when editing lisp code, we enable this for all lisp-modes
-   in the =pretty-lambda-auto-modes= list.
-
-   #+BEGIN_SRC emacs-lisp
-   (dolist (mode pretty-lambda-auto-modes)
+   (dolist (mode '(cider-repl-mode
+                   clojure-mode
+                   ielm-mode
+                   geiser-repl-mode
+                   slime-repl-mode
+                   lisp-mode
+                   emacs-lisp-mode
+                   lisp-interaction-mode
+                   scheme-mode))
      ;; add paredit-mode to all mode-hooks
      (add-hook (intern (concat (symbol-name mode) "-hook")) 'paredit-mode))
    #+END_SRC
