@@ -951,8 +951,8 @@
 
     #+BEGIN_SRC emacs-lisp
     (defun activate-slime-helper ()
-      (when (file-exists-p "~/.quicklisp/slime-helper.elc")
-        (load (expand-file-name "~/.quicklisp/slime-helper.elc"))
+      (when (file-exists-p "~/.quicklisp/slime-helper.el")
+        (load (expand-file-name "~/.quicklisp/slime-helper.el"))
         (define-key slime-repl-mode-map (kbd "C-l")
           'slime-repl-clear-buffer))
       (remove-hook 'lisp-mode-hook #'activate-slime-helper))
