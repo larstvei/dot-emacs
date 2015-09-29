@@ -176,6 +176,7 @@
              magit                ; control Git from Emacs
              markdown-mode        ; Emacs Major mode for Markdown-formatted files
              matlab-mode          ; MATLAB integration with Emacs
+             maude-mode           ; Emacs mode for the programming language Maude
              monokai-theme        ; A fruity color theme for Emacs
              move-text            ; Move current line or region with M-up or M-down
              multiple-cursors     ; Multiple cursors for Emacs.
