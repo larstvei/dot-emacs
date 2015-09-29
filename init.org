@@ -501,6 +501,8 @@
            helm-grep-default-recurse-command
            "ack -H --no-group --no-color %e %p %f"))
 
+   (set-face-attribute 'helm-selection nil :background "cyan")
+
    (helm-mode 1)
    (helm-projectile-on)
    (helm-adaptive-mode 1)
