@@ -686,12 +686,17 @@
 
 ** Org
 
-   I use =org-agenda= for appointments and such.
+   I use =org-agenda= along with =org-capture= for appointments and such.
 
    #+BEGIN_SRC emacs-lisp
    (setq org-agenda-start-on-weekday nil              ; Show agenda from today.
-         org-agenda-files '("~/Dropbox/cal.org")      ; A list of agenda files.
-         org-agenda-default-appointment-duration 120) ; 2 hours appointments.
+         org-agenda-files '("~/Dropbox/agenda.org")   ; A list of agenda files.
+         org-agenda-default-appointment-duration 120  ; 2 hours appointments.
+         org-capture-templates                        ; Template for adding tasks.
+         '(("t" "Oppgave" entry (file+headline "~/Dropbox/agenda.org" "Oppgaver")
+            "** TODO %?" :prepend t)
+           ("a" "Avtale" entry (file+headline "~/Dropbox/agenda.org" "Avtaler")
+            "** %?\n   SCHEDULED: %T" :prepend t)))
    #+END_SRC
 
    When editing org-files with source-blocks, we want the source blocks to
@@ -1272,8 +1277,10 @@
   #+BEGIN_SRC emacs-lisp
   (define-key custom-bindings-map (kbd "C-j")      'newline-and-indent)
   (define-key custom-bindings-map (kbd "C-c s")    'ispell-word)
-  (define-key custom-bindings-map (kbd "C-c t")    'org-agenda-list)
+  (define-key custom-bindings-map (kbd "C-c c")    'org-capture)
   (define-key custom-bindings-map (kbd "C-x m")    'mu4e)
+  (define-key custom-bindings-map (kbd "C-c t")
+    (lambda () (interactive) (org-agenda nil "n")))
   #+END_SRC
 
   Bind the functions defined [[sec:defuns][above]].
