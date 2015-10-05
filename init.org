@@ -1217,8 +1217,8 @@
   Bindings for [[https://github.com/magnars/expand-region.el][expand-region]].
 
   #+BEGIN_SRC emacs-lisp
-  (define-key custom-bindings-map (kbd "C-'")  'er/expand-region)
-  (define-key custom-bindings-map (kbd "C-\"") 'er/contract-region)
+  (define-key custom-bindings-map (kbd "C->")  'er/expand-region)
+  (define-key custom-bindings-map (kbd "C-<")  'er/contract-region)
   #+END_SRC
 
   Bindings for [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]].
