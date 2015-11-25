@@ -1201,13 +1201,6 @@
     "A keymap for custom bindings.")
   #+END_SRC
 
-  Bindings for [[https://github.com/rnkn/olivetti][olivetti]].
-
-  #+BEGIN_SRC emacs-lisp
-  (define-key custom-bindings-map (kbd "C-c [") 'olivetti-shrink)
-  (define-key custom-bindings-map (kbd "C-c ]") 'olivetti-expand)
-  #+END_SRC
-
   Bindings for [[https://github.com/abo-abo/define-word][define-word]].
 
   #+BEGIN_SRC emacs-lisp
