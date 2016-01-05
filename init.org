@@ -1186,6 +1186,16 @@
    (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
    #+END_SRC
 
+** Maude
+
+   Use =---= for comments in Maude.
+
+   #+BEGIN_SRC emacs-lisp
+   (add-hook 'maude-mode-hook
+             (lambda ()
+               (setq-local comment-start "---")))
+   #+END_SRC
+
 ** Matlab
 
    =Matlab-mode= works pretty good out of the box, but we can do without the
