@@ -184,7 +184,6 @@
              matlab-mode          ; MATLAB integration with Emacs
              maude-mode           ; Emacs mode for the programming language Maude
              monokai-theme        ; A fruity color theme for Emacs
-             move-text            ; Move current line or region with M-up or M-down
              multiple-cursors     ; Multiple cursors for Emacs.
              olivetti             ; Minor mode for a nice writing environment
              org                  ; Outline-based notes management and organizer
@@ -1264,13 +1263,6 @@
   (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
   (define-key helm-map (kbd "C-i")   'helm-execute-persistent-action)
   (define-key helm-map (kbd "C-z")   'helm-select-action)
-  #+END_SRC
-
-  Bindings for =move-text=.
-
-  #+BEGIN_SRC emacs-lisp
-  (define-key custom-bindings-map (kbd "<M-S-up>")    'move-text-up)
-  (define-key custom-bindings-map (kbd "<M-S-down>")  'move-text-down)
   #+END_SRC
 
   Bind some native Emacs functions.
