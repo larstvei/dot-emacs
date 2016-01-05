@@ -171,6 +171,7 @@
              idle-require         ; load elisp libraries while Emacs is idle
              geiser               ; GNU Emacs and Scheme talk to each other
              git-gutter-fringe    ; Fringe version of git-gutter.el
+             golden-ratio         ; Automatic resizing windows to golden ratio
              haskell-mode         ; A Haskell editing mode
              helm                 ; Incremental and narrowing framework
              helm-company         ; Helm interface for company-mode
@@ -365,6 +366,7 @@
               global-prettify-symbols-mode ; Greek letters should look greek
               delete-selection-mode        ; Replace selected text
               dirtrack-mode                ; directory tracking in *shell*
+              golden-ratio-mode            ; Automatic resizing of windows
               recentf-mode                 ; Recently opened files
               show-paren-mode              ; Highlight matching parentheses
               projectile-global-mode))     ; Manage and navigate projects
