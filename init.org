@@ -184,11 +184,11 @@
              matlab-mode          ; MATLAB integration with Emacs
              maude-mode           ; Emacs mode for the programming language Maude
              monokai-theme        ; A fruity color theme for Emacs
-             multiple-cursors     ; Multiple cursors for Emacs.
+             multiple-cursors     ; Multiple cursors for Emacs
              olivetti             ; Minor mode for a nice writing environment
              org                  ; Outline-based notes management and organizer
              paredit              ; minor mode for editing parentheses
-             pdf-tools            ; Emacs support library for PDF files.
+             pdf-tools            ; Emacs support library for PDF files
              projectile           ; Manage and navigate projects in Emacs easily
              slime                ; Superior Lisp Interaction Mode for Emacs
              try))                ; Try out Emacs packages
@@ -254,18 +254,18 @@
    We can set variables to whatever value we'd like using =setq=.
 
    #+BEGIN_SRC emacs-lisp
-   (setq auto-revert-interval 1        ; Refresh buffers fast
-         default-input-method "TeX"    ; Use TeX when toggling input method.
-         doc-view-continuous t         ; At page edge goto next/previous.
-         echo-keystrokes 0.1           ; Show keystrokes asap.
-         inhibit-startup-message t     ; No splash screen please.
-         initial-scratch-message nil   ; Clean scratch buffer.
-         ring-bell-function 'ignore    ; Quiet.
-   sentence-end-double-space nil); No double space
+   (setq auto-revert-interval 1            ; Refresh buffers fast
+         custom-file (make-temp-file "")   ; Discard customization's
+         default-input-method "TeX"        ; Use TeX when toggling input method
+         echo-keystrokes 0.1               ; Show keystrokes asap
+         inhibit-startup-message t         ; No splash screen please
+         initial-scratch-message nil       ; Clean scratch buffer
+         recentf-max-saved-items 100       ; Show more recent files
+         ring-bell-function 'ignore        ; Quiet
+         sentence-end-double-space nil)    ; No double space
    ;; Some mac-bindings interfere with Emacs bindings.
    (when (boundp 'mac-pass-command-to-system)
      (setq mac-pass-command-to-system nil))
-
    #+END_SRC
 
    Some variables are buffer-local, so changing them using =setq= will only
@@ -346,9 +346,9 @@
 
    #+BEGIN_SRC emacs-lisp
    (dolist (mode
-            '(tool-bar-mode                ; No toolbars, more room for text.
-              scroll-bar-mode              ; No scroll bars either.
-              blink-cursor-mode))          ; The blinking cursor gets old.
+            '(tool-bar-mode                ; No toolbars, more room for text
+              scroll-bar-mode              ; No scroll bars either
+              blink-cursor-mode))          ; The blinking cursor gets old
      (funcall mode 0))
    #+END_SRC
 
@@ -359,16 +359,16 @@
    (dolist (mode
             '(abbrev-mode                  ; E.g. sopl -> System.out.println
               column-number-mode           ; Show column number in mode line
+              delete-selection-mode        ; Replace selected text
+              dirtrack-mode                ; directory tracking in *shell*
               drag-stuff-global-mode       ; Drag stuff around
               global-company-mode          ; Auto-completion everywhere
               global-git-gutter-mode       ; Show changes latest commit
               global-prettify-symbols-mode ; Greek letters should look greek
-              delete-selection-mode        ; Replace selected text
-              dirtrack-mode                ; directory tracking in *shell*
               golden-ratio-mode            ; Automatic resizing of windows
+              projectile-global-mode       ; Manage and navigate projects
               recentf-mode                 ; Recently opened files
-              show-paren-mode              ; Highlight matching parentheses
-              projectile-global-mode))     ; Manage and navigate projects
+              show-paren-mode))            ; Highlight matching parentheses
      (funcall mode 1))
 
    (when (version< emacs-version "24.4")
