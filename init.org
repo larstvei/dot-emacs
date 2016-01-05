@@ -696,12 +696,13 @@
    I use =org-agenda= along with =org-capture= for appointments and such.
 
    #+BEGIN_SRC emacs-lisp
-   (setq org-agenda-start-on-weekday nil              ; Show agenda from today.
-         org-agenda-files '("~/Dropbox/agenda.org")   ; A list of agenda files.
-         org-agenda-default-appointment-duration 120  ; 2 hours appointments.
-         org-capture-templates                        ; Template for adding tasks.
+   (setq org-agenda-files '("~/Dropbox/agenda.org")  ; A list of agenda files
+         org-agenda-default-appointment-duration 120 ; 2 hours appointments
+         org-capture-templates                       ; Template for adding tasks
          '(("t" "Oppgave" entry (file+headline "~/Dropbox/agenda.org" "Oppgaver")
             "** TODO %?" :prepend t)
+           ("m" "Master" entry (file+olp "~/Dropbox/agenda.org" "Oppgaver" "Master")
+            "*** TODO %?" :prepend t)
            ("a" "Avtale" entry (file+headline "~/Dropbox/agenda.org" "Avtaler")
             "** %?\n   SCHEDULED: %T" :prepend t)))
    #+END_SRC
