@@ -1279,6 +1279,9 @@
   Bind some native Emacs functions.
 
   #+BEGIN_SRC emacs-lisp
+  (define-key custom-bindings-map (kbd "M-u")      'upcase-dwim)
+  (define-key custom-bindings-map (kbd "M-c")      'capitalize-dwim)
+  (define-key custom-bindings-map (kbd "M-l")      'downcase-dwim)
   (define-key custom-bindings-map (kbd "C-j")      'newline-and-indent)
   (define-key custom-bindings-map (kbd "C-c s")    'ispell-word)
   (define-key custom-bindings-map (kbd "C-c c")    'org-capture)
