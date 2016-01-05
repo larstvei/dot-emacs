@@ -832,6 +832,26 @@
        (untabify beg (if (< end (point-max)) end (point-max)))))
    #+END_SRC
 
+   Org mode does currently not support synctex (which enables you to jump from
+   a point in your TeX-file to the corresponding point in the pdf), and it
+   [[http://comments.gmane.org/gmane.emacs.orgmode/69454][seems like a tricky problem]].
+
+   Calling this function from an org-buffer jumps to the corresponding section
+   in the exported pdf (given that the pdf-file exists), using pdf-tools.
+
+   #+BEGIN_SRC emacs-lisp
+   (defun org-sync-pdf ()
+     (interactive)
+     (let ((headline (nth 4 (org-heading-components)))
+           (pdf (concat (file-name-base (buffer-name)) ".pdf")))
+       (when (file-exists-p pdf)
+         (find-file-other-window pdf)
+         (pdf-links-action-perform
+          (cl-find headline (pdf-info-outline pdf)
+                   :key (lambda (alist) (cdr (assoc 'title alist)))
+                   :test 'string-equal)))))
+   #+END_SRC
+
 ** Advice
 
    An advice can be given to a function to make it behave differently. This
@@ -1306,6 +1326,8 @@
   (define-key custom-bindings-map (kbd "C-c j")   'cycle-spacing-delete-newlines)
   (define-key custom-bindings-map (kbd "C-c d")   'duplicate-thing)
   (define-key custom-bindings-map (kbd "<C-tab>") 'tidy)
+  (with-eval-after-load 'org
+    (define-key org-mode-map (kbd "C-'") 'org-sync-pdf))
   #+END_SRC
 
   Lastly we need to activate the map by creating and activating the
