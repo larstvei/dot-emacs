@@ -165,6 +165,7 @@
              company              ; Modular text completion framework
              define-word          ; display the definition of word at point
              diminish             ; Diminished modes from modeline
+             drag-stuff           ; Drag stuff around in Emacs
              expand-region        ; Increase selected region by semantic units
              focus                ; Dim color of text in surrounding sections
              idle-require         ; load elisp libraries while Emacs is idle
@@ -358,6 +359,7 @@
    (dolist (mode
             '(abbrev-mode                  ; E.g. sopl -> System.out.println
               column-number-mode           ; Show column number in mode line
+              drag-stuff-global-mode       ; Drag stuff around
               global-company-mode          ; Auto-completion everywhere
               global-git-gutter-mode       ; Show changes latest commit
               global-prettify-symbols-mode ; Greek letters should look greek
