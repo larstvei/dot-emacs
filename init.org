@@ -891,22 +891,30 @@
    generalized (or maybe be substituted by a package if it's out there).
 
    #+BEGIN_SRC emacs-lisp
-   (defun global-scale-default ()
-     (interactive)
-     (set-face-attribute 'default nil :font "Inconsolata-14"))
+   (lexical-let* ((default (face-attribute 'default :height))
+                  (size default))
 
-   (lexical-let ((size 14))
+     (defun global-scale-default ()
+       (interactive)
+       (setq size default)
+       (global-scale-internal size))
+
      (defun global-scale-up ()
        (interactive)
-       (set-face-attribute
-        'default nil
-        :font (concat "Inconsolata-" (number-to-string (incf size)))))
+       (global-scale-internal (incf size 20)))
 
      (defun global-scale-down ()
        (interactive)
-       (set-face-attribute
-        'default nil
-        :font (concat "Inconsolata-" (number-to-string (decf size))))))
+       (global-scale-internal (decf size 20)))
+
+     (defun global-scale-internal (arg)
+       (set-face-attribute 'default nil :height arg)
+       (set-temporary-overlay-map
+        (let ((map (make-sparse-keymap)))
+          (define-key map (kbd "C-=") 'global-scale-up)
+          (define-key map (kbd "C-+") 'global-scale-up)
+          (define-key map (kbd "C--") 'global-scale-down)
+          (define-key map (kbd "C-0") 'global-scale-default) map))))
    #+END_SRC
 
 * Mode specific
