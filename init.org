@@ -1329,6 +1329,7 @@
   (define-key custom-bindings-map (kbd "C-x k")   'kill-this-buffer-unless-scratch)
   (define-key custom-bindings-map (kbd "C-c C-0") 'global-scale-default)
   (define-key custom-bindings-map (kbd "C-c C-=") 'global-scale-up)
+  (define-key custom-bindings-map (kbd "C-c C-+") 'global-scale-up)
   (define-key custom-bindings-map (kbd "C-c C--") 'global-scale-down)
   (define-key custom-bindings-map (kbd "C-x t")   'toggle-shell)
   (define-key custom-bindings-map (kbd "C-c j")   'cycle-spacing-delete-newlines)
