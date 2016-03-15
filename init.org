@@ -181,9 +181,9 @@
              js2-mode             ; Improved JavaScript editing mode
              magit                ; control Git from Emacs
              markdown-mode        ; Emacs Major mode for Markdown-formatted files
+             material-theme       ; A Theme based on Google Material Design
              matlab-mode          ; MATLAB integration with Emacs
              maude-mode           ; Emacs mode for the programming language Maude
-             monokai-theme        ; A fruity color theme for Emacs
              multiple-cursors     ; Multiple cursors for Emacs
              olivetti             ; Minor mode for a nice writing environment
              org                  ; Outline-based notes management and organizer
@@ -391,7 +391,7 @@
    #+BEGIN_SRC emacs-lisp
    (defun cycle-themes ()
      "Returns a function that lets you cycle your themes."
-     (lexical-let ((themes '#1=(leuven monokai . #1#)))
+     (lexical-let ((themes '#1=(leuven material . #1#)))
        (lambda ()
          (interactive)
          ;; Rotates the thme cycle and changes the current theme.
