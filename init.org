@@ -908,7 +908,7 @@
        (global-scale-internal (decf size 20)))
 
      (defun global-scale-internal (arg)
-       (set-face-attribute 'default nil :height arg)
+       (set-face-attribute 'default (selected-frame) :height arg)
        (set-temporary-overlay-map
         (let ((map (make-sparse-keymap)))
           (define-key map (kbd "C-=") 'global-scale-up)
