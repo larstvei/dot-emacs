@@ -881,14 +881,10 @@
      (mapc 'disable-theme custom-enabled-themes))
    #+END_SRC
 
-** Presentation-mode
+** global-scale-mode
 
-   When giving talks it's nice to be able to adjust the size of everything
-   (not just a buffer like ~text-scale-mode~ provides). This is not a
-   particularly neat solution, but it works OK. It simply
-   increases/decreases the size of the font. It assumes that your using
-   Inconsolata with size 14 by default. This should be probably be
-   generalized (or maybe be substituted by a package if it's out there).
+   These functions provide something close to ~text-scale-mode~, but for every
+   buffer, including the minibuffer and mode line.
 
    #+BEGIN_SRC emacs-lisp
    (lexical-let* ((default (face-attribute 'default :height))
