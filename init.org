@@ -1243,20 +1243,20 @@
     "A keymap for custom bindings.")
   #+END_SRC
 
-  Bindings for [[https://github.com/abo-abo/define-word][define-word]].
+** Bindings for [[https://github.com/abo-abo/define-word][define-word]]
 
   #+BEGIN_SRC emacs-lisp
   (define-key custom-bindings-map (kbd "C-c D") 'define-word-at-point)
   #+END_SRC
 
-  Bindings for [[https://github.com/magnars/expand-region.el][expand-region]].
+** Bindings for [[https://github.com/magnars/expand-region.el][expand-region]]
 
   #+BEGIN_SRC emacs-lisp
   (define-key custom-bindings-map (kbd "C->")  'er/expand-region)
   (define-key custom-bindings-map (kbd "C-<")  'er/contract-region)
   #+END_SRC
 
-  Bindings for [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]].
+** Bindings for [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]]
 
   #+BEGIN_SRC emacs-lisp
   (define-key custom-bindings-map (kbd "C-c e")  'mc/edit-lines)
@@ -1264,13 +1264,13 @@
   (define-key custom-bindings-map (kbd "C-c n")  'mc/mark-next-like-this)
   #+END_SRC
 
-  Bindings for [[http://magit.github.io][Magit]].
+** Bindings for [[http://magit.github.io][Magit]]
 
   #+BEGIN_SRC emacs-lisp
   (define-key custom-bindings-map (kbd "C-c m") 'magit-status)
   #+END_SRC
 
-  Bindings for [[http://company-mode.github.io/][company-mode]].
+** Bindings for [[http://company-mode.github.io/][company-mode]]
 
   #+BEGIN_SRC emacs-lisp
   (define-key company-active-map (kbd "C-d") 'company-show-doc-buffer)
@@ -1282,7 +1282,7 @@
   (define-key company-active-map (kbd "C-:") 'helm-company)
   #+END_SRC
 
-  Bindings for [[http://emacs-helm.github.io/helm/][Helm]].
+** Bindings for [[http://emacs-helm.github.io/helm/][Helm]]
 
   #+BEGIN_SRC emacs-lisp
   (define-key custom-bindings-map (kbd "C-c h")   'helm-command-prefix)
@@ -1300,21 +1300,26 @@
   (define-key helm-map (kbd "C-z")   'helm-select-action)
   #+END_SRC
 
-  Bind some native Emacs functions.
+** Bindings for built-ins
 
   #+BEGIN_SRC emacs-lisp
-  (define-key custom-bindings-map (kbd "M-u")      'upcase-dwim)
-  (define-key custom-bindings-map (kbd "M-c")      'capitalize-dwim)
-  (define-key custom-bindings-map (kbd "M-l")      'downcase-dwim)
-  (define-key custom-bindings-map (kbd "C-j")      'newline-and-indent)
-  (define-key custom-bindings-map (kbd "C-c s")    'ispell-word)
-  (define-key custom-bindings-map (kbd "C-c c")    'org-capture)
-  (define-key custom-bindings-map (kbd "C-x m")    'mu4e)
+  (define-key custom-bindings-map (kbd "M-u")         'upcase-dwim)
+  (define-key custom-bindings-map (kbd "M-c")         'capitalize-dwim)
+  (define-key custom-bindings-map (kbd "M-l")         'downcase-dwim)
+  (define-key custom-bindings-map (kbd "M-]")         'other-frame)
+  (define-key custom-bindings-map (kbd "C-j")         'newline-and-indent)
+  (define-key custom-bindings-map (kbd "C-c s")       'ispell-word)
+  (define-key custom-bindings-map (kbd "C-c c")       'org-capture)
+  (define-key custom-bindings-map (kbd "C-x m")       'mu4e)
+  (define-key custom-bindings-map (kbd "C-c <up>")    'windmove-up)
+  (define-key custom-bindings-map (kbd "C-c <down>")  'windmove-down)
+  (define-key custom-bindings-map (kbd "C-c <left>")  'windmove-left)
+  (define-key custom-bindings-map (kbd "C-c <right>") 'windmove-right)
   (define-key custom-bindings-map (kbd "C-c t")
     (lambda () (interactive) (org-agenda nil "n")))
   #+END_SRC
 
-  Bind the functions defined [[sec:defuns][above]].
+** Bindings for functions defined [[sec:defuns][above]].
 
   #+BEGIN_SRC emacs-lisp
   (define-key global-map          (kbd "M-p")     'jump-to-previous-like-this)
@@ -1331,6 +1336,11 @@
   (define-key custom-bindings-map (kbd "C-c j")   'cycle-spacing-delete-newlines)
   (define-key custom-bindings-map (kbd "C-c d")   'duplicate-thing)
   (define-key custom-bindings-map (kbd "<C-tab>") 'tidy)
+  (define-key custom-bindings-map (kbd "C-c C-q")
+    '(lambda ()
+       (interactive)
+       (focus-mode 1)
+       (focus-read-only-mode 1)))
   (with-eval-after-load 'org
     (define-key org-mode-map (kbd "C-'") 'org-sync-pdf))
   #+END_SRC
