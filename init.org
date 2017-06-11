@@ -146,11 +146,8 @@
    archive and is well maintained.
 
    #+BEGIN_SRC emacs-lisp
-   (setq package-archives
-         '(("gnu" . "http://elpa.gnu.org/packages/")
-           ("org" . "http://orgmode.org/elpa/")
-           ("melpa" . "https://melpa.org/packages/")
-           ("melpa-stable" . "https://stable.melpa.org/packages/")))
+   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+   (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
 
    (add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
    #+END_SRC
@@ -159,13 +156,16 @@
    installed. To ensure we install missing packages if they are missing.
 
    #+BEGIN_SRC emacs-lisp
-   (let* ((packages
+   (let* ((package--builtins nil)
+          (packages
            '(auto-compile         ; automatically compile Emacs Lisp libraries
              cider                ; Clojure Interactive Development Environment
+             clj-refactor         ; A collection of clojure refactoring functions
              company              ; Modular text completion framework
              define-word          ; display the definition of word at point
              diminish             ; Diminished modes from modeline
              drag-stuff           ; Drag stuff around in Emacs
+             erlang               ; Erlang major mode
              expand-region        ; Increase selected region by semantic units
              focus                ; Dim color of text in surrounding sections
              idle-require         ; load elisp libraries while Emacs is idle
@@ -174,7 +174,9 @@
              golden-ratio         ; Automatic resizing windows to golden ratio
              haskell-mode         ; A Haskell editing mode
              helm                 ; Incremental and narrowing framework
+             helm-ag              ; the silver searcher with helm interface
              helm-company         ; Helm interface for company-mode
+             helm-dash            ; Offline documentation using Dash docsets.
              helm-projectile      ; Helm integration for Projectile
              helm-swoop           ; Efficiently hopping squeezed lines
              jedi                 ; Python auto-completion for Emacs
@@ -187,19 +189,22 @@
              multiple-cursors     ; Multiple cursors for Emacs
              olivetti             ; Minor mode for a nice writing environment
              org                  ; Outline-based notes management and organizer
+             org-ref              ; citations bibliographies in org-mode
              paredit              ; minor mode for editing parentheses
              pdf-tools            ; Emacs support library for PDF files
              projectile           ; Manage and navigate projects in Emacs easily
              slime                ; Superior Lisp Interaction Mode for Emacs
-             try))                ; Try out Emacs packages
-          ;; Remove all packages already installed
-          (packages (remove-if 'package-installed-p packages)))
-     (when packages
-       (ignore-errors (package-refresh-contents)
-                      (mapcar 'package-install packages)
-                      ;; This package is only relevant for Mac OS X.
-                      (when (memq window-system '(mac ns))
-                        (package-install 'exec-path-from-shell)))))
+             try                  ; Try out Emacs packages
+             which-key)))         ; Display available keybindings in popup
+     (ignore-errors ;; This package is only relevant for Mac OS X.
+       (when (memq window-system '(mac ns))
+         (add-to-list 'packages 'exec-path-from-shell)
+         (add-to-list 'packages 'reveal-in-osx-finder 'exec-path-from-shell))
+       (let ((packages (remove-if 'package-installed-p packages)))
+         (when packages
+           ;; Install uninstalled packages
+           (package-refresh-contents)
+           (mapc 'package-install packages)))))
    #+END_SRC
 
 ** Mac OS X
