@@ -222,7 +222,9 @@
            mac-option-modifier nil
            mac-command-modifier 'meta
            x-select-enable-clipboard t)
-     (exec-path-from-shell-initialize))
+     (exec-path-from-shell-initialize)
+     (when (fboundp 'mac-auto-operator-composition-mode)
+       (mac-auto-operator-composition-mode 1)))'
    #+END_SRC
 
 ** Require
