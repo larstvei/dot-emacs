@@ -531,6 +531,22 @@
    (helm-adaptive-mode 1)
    #+END_SRC
 
+*** Helm dash
+
+    #+BEGIN_SRC emacs-lisp
+    (setq helm-dash-browser-func 'eww)
+    (add-hook 'emacs-lisp-mode-hook
+              (lambda () (setq-local helm-dash-docsets '("Emacs Lisp"))))
+    (add-hook 'erlang-mode-hook
+              (lambda () (setq-local helm-dash-docsets '("Erlang"))))
+    (add-hook 'java-mode-hook
+              (lambda () (setq-local helm-dash-docsets '("Java"))))
+    (add-hook 'haskell-mode-hook
+              (lambda () (setq-local helm-dash-docsets '("Haskell"))))
+    (add-hook 'clojure-mode-hook
+              (lambda () (setq-local helm-dash-docsets '("Clojure"))))
+    #+END_SRC
+
 ** Calendar
 
    Define a function to display week numbers in =calender-mode=. The snippet
@@ -1310,6 +1326,7 @@
   (define-key custom-bindings-map (kbd "M-y")     'helm-show-kill-ring)
   (define-key custom-bindings-map (kbd "C-x b")   'helm-mini)
   (define-key custom-bindings-map (kbd "C-x C-f") 'helm-find-files)
+  (define-key custom-bindings-map (kbd "C-c h d") 'helm-dash-at-point)
   (define-key custom-bindings-map (kbd "C-c h o") 'helm-occur)
   (define-key custom-bindings-map (kbd "C-c h g") 'helm-google-suggest)
   (define-key custom-bindings-map (kbd "M-i")     'helm-swoop)
