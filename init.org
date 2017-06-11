@@ -372,16 +372,15 @@
               global-company-mode          ; Auto-completion everywhere
               global-git-gutter-mode       ; Show changes latest commit
               global-prettify-symbols-mode ; Greek letters should look greek
-              golden-ratio-mode            ; Automatic resizing of windows
               projectile-global-mode       ; Manage and navigate projects
               recentf-mode                 ; Recently opened files
-              show-paren-mode))            ; Highlight matching parentheses
+              show-paren-mode              ; Highlight matching parentheses
+              which-key-mode))             ; Available keybindings in popup
      (funcall mode 1))
 
    (when (version< emacs-version "24.4")
      (eval-after-load 'auto-compile
        '((auto-compile-on-save-mode 1))))  ; compile .el files on save
-
    #+END_SRC
 
 ** Visual
