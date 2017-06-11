@@ -283,7 +283,8 @@
    (setq-default fill-column 79                    ; Maximum line width
                  truncate-lines t                  ; Don't fold lines
                  indent-tabs-mode nil              ; Use spaces instead of tabs
-                 split-width-threshold 100         ; Split verticly by default
+                 split-width-threshold 160         ; Split verticly by default
+                 split-height-threshold nil        ; Split verticly by default
                  auto-fill-function 'do-auto-fill) ; Auto-fill-mode everywhere
    #+END_SRC
 
