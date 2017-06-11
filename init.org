@@ -408,8 +408,8 @@
    Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
 
    #+BEGIN_SRC emacs-lisp
-   (cond ((member "Source Code Pro" (font-family-list))
-          (set-face-attribute 'default nil :font "Source Code Pro-13"))
+   (cond ((member "Hasklig" (font-family-list))
+          (set-face-attribute 'default nil :font "Hasklig-14"))
          ((member "Inconsolata" (font-family-list))
           (set-face-attribute 'default nil :font "Inconsolata-14")))
    #+END_SRC
