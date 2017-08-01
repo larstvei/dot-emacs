@@ -957,19 +957,43 @@
 
 ** Shell
 
-   I use =shell= whenever i want to use access the command line in Emacs. I
-   keep a symlink between my =~/.bash_profile= (because I run OS X) and
-   =~/.emacs_bash=, to make the transition between my standard terminal and
-   the shell as small as possible. To be able to quickly switch back and
-   forth between a shell I make use of this little function.
+   Inspired by [[https://github.com/torenord/.emacs.d][torenord]], I maintain quick access to shell buffers with bindings
+   ~M-1~ to ~M-9~. In addition, the ~M-§~ (on an international English
+   keyboard) is bound toggle between the last visited shell, and the last
+   visited non-shell buffer. The following functions facilitate this, and are
+   bound in the [[Key bindings]] section.
 
    #+BEGIN_SRC emacs-lisp
-   (defun toggle-shell ()
-     "Jumps to eshell or back."
-     (interactive)
-     (if (string= (buffer-name) "*shell*")
-         (switch-to-prev-buffer)
-       (shell)))
+   (lexical-let ((last-shell ""))
+     (defun toggle-shell ()
+       (interactive)
+       (cond ((string-match-p "^\\*shell<[1-9][0-9]*>\\*$" (buffer-name))
+              (goto-non-shell-buffer))
+             ((get-buffer last-shell) (switch-to-buffer last-shell))
+             (t (shell (setq last-shell "*shell<1>*")))))
+
+     (defun switch-shell (n)
+       (let ((buffer-name (format "*shell<%d>*" n)))
+         (setq last-shell buffer-name)
+         (cond ((get-buffer buffer-name)
+                (switch-to-buffer buffer-name))
+               (t (shell buffer-name)
+                  (rename-buffer buffer-name)))))
+
+     (defun goto-non-shell-buffer ()
+       (let* ((r "^\\*shell<[1-9][0-9]*>\\*$")
+              (shell-buffer-p (lambda (b) (string-match-p r (buffer-name b))))
+              (non-shells (cl-remove-if shell-buffer-p (buffer-list))))
+         (when non-shells
+           (switch-to-buffer (first non-shells))))))
+   #+END_SRC
+
+   Don't query whether or not the ~shell~-buffer should be killed, just kill
+   it.
+
+   #+BEGIN_SRC emacs-lisp
+   (defadvice shell (after kill-with-no-query nil activate)
+     (set-process-query-on-exit-flag (get-buffer-process ad-return-value) nil))
    #+END_SRC
 
    I'd like the =C-l= to work more like the standard terminal (which works
@@ -988,9 +1012,8 @@
        (comint-truncate-buffer)))
    #+END_SRC
 
-   Lastly we should bind our functions. The =toggle-shell= should be a
-   global binding (because we want to be able to switch to a shell from any
-   buffer), but the =clear-shell= should only affect =shell-mode=.
+   The =clear-shell= should only be bound in =comint-mode=, which is a mode
+   most shell and REPL's is derived from.
 
    #+BEGIN_SRC emacs-lisp
    (add-hook 'comint-mode-hook (lambda () (local-set-key (kbd "C-l") 'clear-comint)))
@@ -1387,10 +1410,13 @@
   (define-key custom-bindings-map (kbd "C-c C-=") 'global-scale-up)
   (define-key custom-bindings-map (kbd "C-c C-+") 'global-scale-up)
   (define-key custom-bindings-map (kbd "C-c C--") 'global-scale-down)
-  (define-key custom-bindings-map (kbd "C-x t")   'toggle-shell)
   (define-key custom-bindings-map (kbd "C-c j")   'cycle-spacing-delete-newlines)
   (define-key custom-bindings-map (kbd "C-c d")   'duplicate-thing)
   (define-key custom-bindings-map (kbd "<C-tab>") 'tidy)
+  (define-key custom-bindings-map (kbd "M-§")     'toggle-shell)
+  (dolist (n (number-sequence 1 9))
+    (global-set-key (kbd (concat "M-" (int-to-string n)))
+                    (lambda () (interactive) (switch-shell n))))
   (define-key custom-bindings-map (kbd "C-c C-q")
     '(lambda ()
        (interactive)
