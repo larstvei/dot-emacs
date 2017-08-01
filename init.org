@@ -1268,21 +1268,6 @@
                (local-set-key (kbd "C-c b") 'insert-markdown-inline-math-block)) t)
    #+END_SRC
 
-** Python
-
-   # [[http://tkf.github.io/emacs-jedi/released/][Jedi]] offers very nice auto completion for =python-mode=. Mind that it is
-   # dependent on some python programs as well, so make sure you follow the
-   # instructions from the site.
-
-   # #+BEGIN_SRC emacs-lisp
-   # ;; (setq jedi:server-command
-   # ;;       (cons "python3" (cdr jedi:server-command))
-   # ;;       python-shell-interpreter "python3")
-   # (add-hook 'python-mode-hook 'jedi:setup)
-   # (setq jedi:complete-on-dot t)
-   # (add-hook 'python-mode-hook 'jedi:ac-setup)
-   # #+END_SRC
-
 ** Haskell
 
    =haskell-doc-mode= is similar to =eldoc=, it displays documentation in
