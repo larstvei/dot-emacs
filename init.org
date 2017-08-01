@@ -93,6 +93,13 @@
    git update-index --no-assume-unchanged init.el
    #+END_SRC
 
+   I want lexical scoping for the init-file, which can be specified in the
+   header. The first line of the configuration is as follows:
+
+   #+BEGIN_SRC emacs-lisp
+   ;;; -*- lexical-binding: t -*-
+   #+END_SRC
+
    The =init.el= should (after the first run) mirror the source blocks in
    the =init.org=. We can use =C-c C-v t= to run =org-babel-tangle=, which
    extracts the code blocks from the current file into a source-specific
@@ -198,8 +205,8 @@
              which-key)))         ; Display available keybindings in popup
      (ignore-errors ;; This package is only relevant for Mac OS X.
        (when (memq window-system '(mac ns))
-         (add-to-list 'packages 'exec-path-from-shell)
-         (add-to-list 'packages 'reveal-in-osx-finder 'exec-path-from-shell))
+         (push 'exec-path-from-shell packages)
+         (push 'reveal-in-osx-finder packages))
        (let ((packages (remove-if 'package-installed-p packages)))
          (when packages
            ;; Install uninstalled packages
