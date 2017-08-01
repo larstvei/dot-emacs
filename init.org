@@ -944,6 +944,17 @@
    #+END_SRC
 
 * Mode specific
+** Compilation
+
+   I often run ~latexmk -pdf -pvc~ in a compilation buffer, which recompiles
+   the latex-file whenever it is changed. This often results in annoyingly
+   large compilation buffers; the following snippet limits the buffer size in
+   accordance with ~comint-buffer-maximum-size~, which defaults to 1024 lines.
+
+   #+BEGIN_SRC emacs-lisp
+   (add-hook 'compilation-filter-hook 'comint-truncate-buffer)
+   #+END_SRC
+
 ** Shell
 
    I use =shell= whenever i want to use access the command line in Emacs. I
