@@ -132,7 +132,9 @@
     (lambda ()
       (let ((private-file (concat user-emacs-directory "private.el")))
         (when (file-exists-p private-file)
-          (load-file private-file)))))
+          (load-file private-file))
+        (server-start))))
+   #+END_SRC
    #+END_SRC
 
 ** Packages
