@@ -926,19 +926,6 @@
     (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
     #+END_SRC
 
-*** Clojure
-
-    #+BEGIN_SRC emacs-lisp
-    (add-hook 'cider-repl-mode-hook (lambda () (local-set-key (kbd "C-l") 'cider-repl-clear-buffer)))
-    #+END_SRC
-
-    #+BEGIN_SRC emacs-lisp
-    (setq cider-cljs-lein-repl
-          "(do (require 'figwheel-sidecar.repl-api)
-               (figwheel-sidecar.repl-api/start-figwheel!)
-               (figwheel-sidecar.repl-api/cljs-repl))")
-    #+END_SRC
-
 *** Common lisp
 
     I use [[http://www.common-lisp.net/project/slime/][Slime]] along with =lisp-mode= to edit Common Lisp code. Slime
@@ -1302,6 +1289,13 @@
 
    #+BEGIN_SRC emacs-lisp
    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+   #+END_SRC
+
+** Bindings for [[https://github.com/clojure-emacs/cider][Cider]]
+
+   #+BEGIN_SRC emacs-lisp
+   (with-eval-after-load 'cider
+    (define-key cider-repl-mode-map (kbd "C-l") 'cider-repl-clear-buffer))
    #+END_SRC
 
 ** Bindings for built-ins
