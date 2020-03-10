@@ -953,9 +953,9 @@
         (load (expand-file-name "~/.quicklisp/slime-helper.el"))
         (define-key slime-repl-mode-map (kbd "C-l")
           'slime-repl-clear-buffer))
-      (remove-hook 'lisp-mode-hook #'activate-slime-helper))
+      (remove-hook 'common-lisp-mode-hook #'activate-slime-helper))
 
-    (add-hook 'lisp-mode-hook #'activate-slime-helper)
+    (add-hook 'common-lisp-mode-hook #'activate-slime-helper)
     #+END_SRC
 
     We can specify what Common Lisp program Slime should use (I use SBCL).
