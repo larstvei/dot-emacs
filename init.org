@@ -551,45 +551,7 @@
               (lambda () (setq-local helm-dash-docsets '("Clojure"))))
     #+END_SRC
 
-** Calendar
-
-   Define a function to display week numbers in =calender-mode=. The snippet
-   is from [[http://www.emacswiki.org/emacs/CalendarWeekNumbers][EmacsWiki]].
-
-   #+BEGIN_SRC emacs-lisp
-   (defun calendar-show-week (arg)
-     "Displaying week number in calendar-mode."
-     (interactive "P")
-     (copy-face font-lock-constant-face 'calendar-iso-week-face)
-     (set-face-attribute
-      'calendar-iso-week-face nil :height 0.7)
-     (setq calendar-intermonth-text
-           (and arg
-                '(propertize
-                  (format
-                   "%2d"
-                   (car (calendar-iso-from-absolute
-                         (calendar-absolute-from-gregorian
-                          (list month day year)))))
-                  'font-lock-face 'calendar-iso-week-face))))
-   #+END_SRC
-
-   Evaluate the =calendar-show-week= function.
-
-   #+BEGIN_SRC emacs-lisp
-   (calendar-show-week t)
-   #+END_SRC
-
-   Set Monday as the first day of the week, and set my location.
-
-   #+BEGIN_SRC emacs-lisp
-   (setq calendar-week-start-day 1
-         calendar-latitude 60.0
-         calendar-longitude 10.7
-         calendar-location-name "Oslo, Norway")
-   #+END_SRC
-
-** Flyspell
+** Spelling
 
    Flyspell offers on-the-fly spell checking. We can enable flyspell for all
    text-modes with this snippet.
