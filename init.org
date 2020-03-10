@@ -191,7 +191,6 @@
              erlang               ; Erlang major mode
              expand-region        ; Increase selected region by semantic units
              focus                ; Dim color of text in surrounding sections
-             idle-require         ; load elisp libraries while Emacs is idle
              geiser               ; GNU Emacs and Scheme talk to each other
              git-gutter-fringe    ; Fringe version of git-gutter.el
              golden-ratio         ; Automatic resizing windows to golden ratio
@@ -247,34 +246,7 @@
            x-select-enable-clipboard t)
      (exec-path-from-shell-initialize)
      (when (fboundp 'mac-auto-operator-composition-mode)
-       (mac-auto-operator-composition-mode 1)))'
-   #+END_SRC
-
-** Require
-
-   Some features are not loaded by default to minimize initialization time,
-   so they have to be required (or loaded, if you will). =require=-calls
-   tends to lead to the largest bottleneck's in a
-   configuration. =idle-require= delays the =require=-calls to a time where
-   Emacs is in idle. So this is great for stuff you eventually want to load,
-   but is not a high priority.
-
-   #+BEGIN_SRC emacs-lisp
-   (require 'idle-require)             ; Need in order to use idle-require
-
-   (dolist (feature
-            '(auto-compile             ; auto-compile .el files
-              jedi                     ; auto-completion for python
-              matlab                   ; matlab-mode
-              ob-matlab                ; org-babel matlab
-              ox-latex                 ; the latex-exporter (from org)
-              ox-md                    ; Markdown exporter (from org)
-              recentf                  ; recently opened files
-              tex-mode))               ; TeX, LaTeX, and SliTeX mode commands
-     (idle-require feature))
-
-   (setq idle-require-idle-delay 5)
-   (idle-require-mode 1)
+       (mac-auto-operator-composition-mode 1)))
    #+END_SRC
 
 ** Sane defaults
