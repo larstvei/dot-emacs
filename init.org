@@ -948,7 +948,6 @@
    (dolist (mode '(cider-repl-mode
                    clojure-mode
                    ielm-mode
-                   geiser-repl-mode
                    slime-repl-mode
                    lisp-mode
                    emacs-lisp-mode
@@ -1014,20 +1013,7 @@
           lisp-loop-keyword-indentation 6)
     #+END_SRC
 
-    #+BEGIN_SRC emacs-lisp
 
-    #+END_SRC
-
-*** Scheme
-
-    [[http://www.nongnu.org/geiser/][Geiser]] provides features similar to Slime for Scheme editing. Everything
-    works pretty much out of the box, we only need to add auto completion,
-    and specify which scheme-interpreter we prefer.
-
-    #+BEGIN_SRC emacs-lisp
-    (eval-after-load "geiser"
-      '(setq geiser-active-implementations '(guile)))
-    #+END_SRC
 
 ** Java and C
 
