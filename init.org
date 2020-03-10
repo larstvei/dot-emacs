@@ -440,13 +440,12 @@
    I smuggled some configurations from [[https://github.com/torenord/.emacs.d/][torenord]], providing a cleaner look.
 
    #+BEGIN_SRC emacs-lisp
-   (require 'git-gutter-fringe)
-
-   (dolist (p '((git-gutter:added    . "#0c0")
-                (git-gutter:deleted  . "#c00")
-                (git-gutter:modified . "#c0c")))
-     (set-face-foreground (car p) (cdr p))
-     (set-face-background (car p) (cdr p)))
+   (with-eval-after-load 'git-gutter-fringe
+     (dolist (p '((git-gutter:added    . "#0c0")
+                  (git-gutter:deleted  . "#c00")
+                  (git-gutter:modified . "#c0c")))
+       (set-face-foreground (car p) (cdr p))
+       (set-face-background (car p) (cdr p))))
    #+END_SRC
 
    New in Emacs 24.4 is the =prettify-symbols-mode=! It's neat.
@@ -505,27 +504,30 @@
    near the end of the configuration).
 
    #+BEGIN_SRC emacs-lisp
-   (require 'helm)
    (require 'helm-config)
+   (with-eval-after-load 'helm
+     (setq helm-split-window-in-side-p t
+           helm-M-x-fuzzy-match t
+           helm-buffers-fuzzy-matching t
+           helm-recentf-fuzzy-match t
+           helm-move-to-line-cycle-in-source t
+           projectile-completion-system 'helm
+           helm-mini-default-sources '(helm-source-buffers-list
+                                       helm-source-recentf
+                                       helm-source-bookmarks
+                                       helm-source-buffer-not-found))
 
-   (setq helm-split-window-in-side-p t
-         helm-M-x-fuzzy-match t
-         helm-buffers-fuzzy-matching t
-         helm-recentf-fuzzy-match t
-         helm-move-to-line-cycle-in-source t
-         projectile-completion-system 'helm)
+     (when (executable-find "ack")
+       (setq helm-grep-default-command
+             "ack -Hn --no-group --no-color %e %p %f"
+             helm-grep-default-recurse-command
+             "ack -H --no-group --no-color %e %p %f"))
 
-   (when (executable-find "ack")
-     (setq helm-grep-default-command
-           "ack -Hn --no-group --no-color %e %p %f"
-           helm-grep-default-recurse-command
-           "ack -H --no-group --no-color %e %p %f"))
+     (set-face-attribute 'helm-selection nil :background "cyan")
 
-   (set-face-attribute 'helm-selection nil :background "cyan")
-
-   (helm-mode 1)
-   (helm-projectile-on)
-   (helm-adaptive-mode 1)
+     (helm-mode 1)
+     (helm-projectile-on)
+     (helm-adaptive-mode 1))
    #+END_SRC
 
 *** Helm dash
@@ -1355,9 +1357,10 @@
   (define-key custom-bindings-map (kbd "M-i")     'helm-swoop)
   (define-key custom-bindings-map (kbd "M-I")     'helm-multi-swoop-all)
 
-  (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
-  (define-key helm-map (kbd "C-i")   'helm-execute-persistent-action)
-  (define-key helm-map (kbd "C-z")   'helm-select-action)
+  (with-eval-after-load 'helm
+    (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
+    (define-key helm-map (kbd "C-i")   'helm-execute-persistent-action)
+    (define-key helm-map (kbd "C-z")   'helm-select-action))
   #+END_SRC
 
 ** Bindings for built-ins
