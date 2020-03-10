@@ -183,16 +183,14 @@
           (packages
            '(auto-compile         ; automatically compile Emacs Lisp libraries
              cider                ; Clojure Interactive Development Environment
-             clj-refactor         ; A collection of clojure refactoring functions
+             clj-refactor         ; Commands for refactoring Clojure code
              company              ; Modular text completion framework
              define-word          ; display the definition of word at point
              diminish             ; Diminished modes from modeline
-             drag-stuff           ; Drag stuff around in Emacs
              doom-themes          ; An opinionated pack of modern color-themes
              erlang               ; Erlang major mode
              expand-region        ; Increase selected region by semantic units
              focus                ; Dim color of text in surrounding sections
-             geiser               ; GNU Emacs and Scheme talk to each other
              git-gutter-fringe    ; Fringe version of git-gutter.el
              golden-ratio         ; Automatic resizing windows to golden ratio
              haskell-mode         ; A Haskell editing mode
@@ -206,7 +204,6 @@
              js2-mode             ; Improved JavaScript editing mode
              magit                ; control Git from Emacs
              markdown-mode        ; Emacs Major mode for Markdown-formatted files
-             matlab-mode          ; MATLAB integration with Emacs
              maude-mode           ; Emacs mode for the programming language Maude
              multiple-cursors     ; Multiple cursors for Emacs
              olivetti             ; Minor mode for a nice writing environment
@@ -366,7 +363,6 @@
               column-number-mode           ; Show column number in mode line
               delete-selection-mode        ; Replace selected text
               dirtrack-mode                ; directory tracking in *shell*
-              drag-stuff-global-mode       ; Drag stuff around
               global-company-mode          ; Auto-completion everywhere
               global-git-gutter-mode       ; Show changes latest commit
               global-prettify-symbols-mode ; Greek letters should look greek
