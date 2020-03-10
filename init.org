@@ -185,6 +185,7 @@
              cider                ; Clojure Interactive Development Environment
              clj-refactor         ; Commands for refactoring Clojure code
              company              ; Modular text completion framework
+             company-coq          ; A collection of extensions PG's Coq mode
              define-word          ; display the definition of word at point
              diminish             ; Diminished modes from modeline
              doom-themes          ; An opinionated pack of modern color-themes
@@ -205,6 +206,7 @@
              magit                ; control Git from Emacs
              markdown-mode        ; Emacs Major mode for Markdown-formatted files
              maude-mode           ; Emacs mode for the programming language Maude
+             minizinc-mode        ; Major mode for MiniZinc code
              multiple-cursors     ; Multiple cursors for Emacs
              olivetti             ; Minor mode for a nice writing environment
              org                  ; Outline-based notes management and organizer
@@ -213,6 +215,8 @@
              paredit              ; minor mode for editing parentheses
              pdf-tools            ; Emacs support library for PDF files
              projectile           ; Manage and navigate projects in Emacs easily
+             proof-general        ; A generic Emacs interface for proof assistants
+             racket-mode          ; Major mode for Racket language
              slime                ; Superior Lisp Interaction Mode for Emacs
              try                  ; Try out Emacs packages
              which-key)))         ; Display available keybindings in popup
@@ -953,6 +957,8 @@
    (dolist (mode '(cider-repl-mode
                    clojure-mode
                    ielm-mode
+                   racket-mode
+                   racket-repl-mode
                    slime-repl-mode
                    lisp-mode
                    emacs-lisp-mode
@@ -1210,6 +1216,26 @@
    (eval-after-load 'matlab
      '(add-to-list 'matlab-shell-command-switches "-nosplash"))
    #+END_SRC
+** Minizinc
+
+   #+BEGIN_SRC emacs-lisp
+   (add-to-list 'auto-mode-alist '("\\.mzn\\'" . minizinc-mode))
+
+   (defun minizinc-setup ()
+     (let ((command (concat "minizinc " (buffer-file-name) " "))
+           (f (concat (file-name-base (buffer-file-name)) ".dzn")))
+       (local-set-key (kbd "C-c C-c") 'recompile)
+       (setq-local compile-command (concat command (if (file-exists-p f) f "")))))
+
+   (add-hook 'minizinc-mode-hook 'minizinc-setup)
+   #+END_SRC
+
+** Coq
+
+   #+BEGIN_SRC emacs-lisp
+   (add-hook 'coq-mode-hook #'company-coq-mode)
+   #+END_SRC
+
 * Key bindings
 
   Inspired by [[http://stackoverflow.com/questions/683425/globally-override-key-binding-in-emacs][this StackOverflow post]] I keep a =custom-bindings-map= that
