@@ -1340,7 +1340,7 @@
   (define-key custom-bindings-map (kbd "C-c j")   'cycle-spacing-delete-newlines)
   (define-key custom-bindings-map (kbd "C-c d")   'duplicate-thing)
   (define-key custom-bindings-map (kbd "<C-tab>") 'tidy)
-  (define-key custom-bindings-map (kbd "M-§")     'toggle-shell)
+  (define-key custom-bindings-map (kbd "M-`")     'toggle-shell)
   (dolist (n (number-sequence 1 9))
     (global-set-key (kbd (concat "M-" (int-to-string n)))
                     (lambda () (interactive) (switch-shell n))))
