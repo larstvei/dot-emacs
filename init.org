@@ -885,9 +885,9 @@
 
    Inspired by [[https://github.com/torenord/.emacs.d][torenord]], I maintain quick access to shell buffers with bindings
    ~M-1~ to ~M-9~. In addition, the ~M-§~ (on an international English
-   keyboard) is bound toggle between the last visited shell, and the last
-   visited non-shell buffer. The following functions facilitate this, and are
-   bound in the [[Key bindings]] section.
+   keyboard) toggles between the last visited shell, and the last visited
+   non-shell buffer. The following functions facilitate this, and are bound in
+   the [[Key bindings]] section.
 
    #+BEGIN_SRC emacs-lisp
    (lexical-let ((last-shell ""))
