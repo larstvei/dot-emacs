@@ -165,10 +165,14 @@
    archive and is well maintained.
 
    #+BEGIN_SRC emacs-lisp
-   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-   (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
-
-   (add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
+   (setq package-archives
+     '(("gnu" . "https://elpa.gnu.org/packages/")
+       ("MELPA Stable" . "https://stable.melpa.org/packages/")
+       ("MELPA"        . "https://melpa.org/packages/"))
+     package-archive-priorities
+     '(("MELPA Stable" . 10)
+       ("gnu"          . 5)
+       ("MELPA"        . 0)))
    #+END_SRC
 
    The configuration assumes that the packages listed below are
