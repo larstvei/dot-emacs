@@ -263,6 +263,7 @@
          initial-scratch-message nil       ; Clean scratch buffer
          recentf-max-saved-items 100       ; Show more recent files
          ring-bell-function 'ignore        ; Quiet
+         scroll-margin 1                   ; Space between cursor and top/bottom
          sentence-end-double-space nil)    ; No double space
    ;; Some mac-bindings interfere with Emacs bindings.
    (when (boundp 'mac-pass-command-to-system)
