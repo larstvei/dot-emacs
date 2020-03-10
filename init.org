@@ -467,6 +467,11 @@
    (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
    #+END_SRC
 
+   #+BEGIN_SRC emacs-lisp
+   (add-hook 'pdf-view-mode-hook
+             (lambda () (setq mode-line-format nil)))
+   #+END_SRC
+
 ** Completion
 
    [[https://github.com/auto-complete/auto-complete][Auto-Complete]] has been a part of my config for years, but I want to try
