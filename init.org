@@ -766,7 +766,8 @@
      (interactive "P")
      (save-excursion
        (let ((start (if (region-active-p) (region-beginning) (point-at-bol)))
-             (end   (if (region-active-p) (region-end) (point-at-eol))))
+             (end   (if (region-active-p) (region-end) (point-at-eol)))
+             (fill-column most-positive-fixnum))
          (goto-char end)
          (unless (region-active-p)
            (newline))
