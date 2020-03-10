@@ -672,11 +672,10 @@
    ="this string"=, because the quotation marks causes problems.
 
    #+BEGIN_SRC emacs-lisp
-   ;;(require 'org)
-   (eval-after-load "org"
-     '(progn
-        (setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
-        (custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))))
+   (with-eval-after-load 'org
+     (setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
+     (custom-set-variables `(org-emphasis-alist ',org-emphasis-alist)))
+   #+END_SRC
 
    Enable org-bullets when opening org-files.
 
