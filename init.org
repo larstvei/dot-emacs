@@ -972,7 +972,13 @@
           lisp-loop-keyword-indentation 6)
     #+END_SRC
 
+** Python
 
+   #+BEGIN_SRC emacs-lisp
+   (setq python-shell-interpreter "python3")
+   (add-hook 'python-mode-hook
+             (lambda () (setq forward-sexp-function nil)))
+   #+END_SRC
 
 ** Java and C
 
