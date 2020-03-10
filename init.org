@@ -366,7 +366,7 @@
               global-company-mode          ; Auto-completion everywhere
               global-git-gutter-mode       ; Show changes latest commit
               global-prettify-symbols-mode ; Greek letters should look greek
-              projectile-global-mode       ; Manage and navigate projects
+              projectile-mode              ; Manage and navigate projects
               recentf-mode                 ; Recently opened files
               show-paren-mode              ; Highlight matching parentheses
               which-key-mode))             ; Available keybindings in popup
@@ -1291,6 +1291,12 @@
     (define-key helm-map (kbd "C-i")   'helm-execute-persistent-action)
     (define-key helm-map (kbd "C-z")   'helm-select-action))
   #+END_SRC
+
+** Bindings for [[https://github.com/bbatsov/projectile][Projectile]]
+
+   #+BEGIN_SRC emacs-lisp
+   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+   #+END_SRC
 
 ** Bindings for built-ins
 
