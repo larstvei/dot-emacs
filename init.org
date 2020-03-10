@@ -1037,6 +1037,21 @@
    (add-to-list 'auto-mode-alist '("\\.tex\\'" . latex-mode))
    #+END_SRC
 
+   Use [[http://mg.readthedocs.io/latexmk.html][latexmk]] for compilation by default.
+
+   #+BEGIN_SRC emacs-lisp
+   (add-hook 'LaTeX-mode-hook
+             (lambda ()
+               (add-hook 'hack-local-variables-hook
+                         (lambda ()
+                          (setq-local compile-command
+                                      (concat "latexmk -pdf -pvc "
+                                              (if (eq TeX-master t)
+                                                  (file-name-base (buffer-name))
+                                                TeX-master))))
+                         t t)))
+   #+END_SRC
+
    Use ~biblatex~ for bibliography.
 
    #+BEGIN_SRC emacs-lisp
