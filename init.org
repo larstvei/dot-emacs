@@ -188,6 +188,7 @@
              define-word          ; display the definition of word at point
              diminish             ; Diminished modes from modeline
              drag-stuff           ; Drag stuff around in Emacs
+             doom-themes          ; An opinionated pack of modern color-themes
              erlang               ; Erlang major mode
              expand-region        ; Increase selected region by semantic units
              focus                ; Dim color of text in surrounding sections
@@ -205,7 +206,6 @@
              js2-mode             ; Improved JavaScript editing mode
              magit                ; control Git from Emacs
              markdown-mode        ; Emacs Major mode for Markdown-formatted files
-             material-theme       ; A Theme based on Google Material Design
              matlab-mode          ; MATLAB integration with Emacs
              maude-mode           ; Emacs mode for the programming language Maude
              multiple-cursors     ; Multiple cursors for Emacs
@@ -385,7 +385,7 @@
    Change the color-theme to =leuven=.
 
    #+BEGIN_SRC emacs-lisp
-   (load-theme 'leuven t)
+   (load-theme 'doom-one-light t)
    #+END_SRC
 
    =leuven= is my preferred light theme, but =monokai= makes a very nice
@@ -394,11 +394,12 @@
    #+BEGIN_SRC emacs-lisp
    (defun cycle-themes ()
      "Returns a function that lets you cycle your themes."
-     (lexical-let ((themes '#1=(leuven material . #1#)))
+     (lexical-let ((themes '#1=(doom-one-light doom-one . #1#)))
        (lambda ()
          (interactive)
          ;; Rotates the thme cycle and changes the current theme.
-         (load-theme (car (setq themes (cdr themes))) t))))
+         (load-theme (car (setq themes (cdr themes))) t)
+         (message (concat "Switched to " (symbol-name (car themes)))))))
    #+END_SRC
 
    Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
