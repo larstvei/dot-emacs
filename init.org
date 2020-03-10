@@ -135,6 +135,16 @@
           (load-file private-file))
         (server-start))))
    #+END_SRC
+
+   A common optimization is to temporarily disable garbage collection during
+   initialization. Here, we set the ~gc-cons-threshold~ to a ridiculously large
+   number, and restore the default value after initialization.
+
+   #+BEGIN_SRC emacs-lisp
+   (lexical-let ((old-gc-treshold gc-cons-threshold))
+     (setq gc-cons-threshold most-positive-fixnum)
+     (add-hook 'after-init-hook
+               (lambda () (setq gc-cons-threshold old-gc-treshold))))
    #+END_SRC
 
 ** Packages
