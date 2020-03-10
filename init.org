@@ -464,7 +464,6 @@
    it's only slow on the first run!
 
    #+BEGIN_SRC emacs-lisp
-   (add-hook 'pdf-tools-enabled-hook 'auto-revert-mode)
    (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
    #+END_SRC
 
