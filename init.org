@@ -990,7 +990,7 @@
    (defun c-setup ()
      (local-set-key (kbd "C-c C-c") 'compile))
 
-   (add-hook 'c-mode-common-hook 'c-setup)
+   (add-hook 'c-mode-hook 'c-setup)
    #+END_SRC
 
    Some statements in Java appear often, and become tedious to write
