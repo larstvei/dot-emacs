@@ -275,7 +275,8 @@
    buffer-local variable's default value.
 
    #+BEGIN_SRC emacs-lisp
-   (setq-default fill-column 79                    ; Maximum line width
+   (setq-default tab-width 4                       ; Smaller tabs
+                 fill-column 79                    ; Maximum line width
                  truncate-lines t                  ; Don't fold lines
                  indent-tabs-mode nil              ; Use spaces instead of tabs
                  split-width-threshold 160         ; Split verticly by default
