@@ -1205,6 +1205,9 @@
    (add-hook 'maude-mode-hook
              (lambda ()
                (setq-local comment-start "---")))
+
+   (with-eval-after-load 'maude-mode
+    (add-to-list 'maude-command-options "-no-wrap"))
    #+END_SRC
 
 ** Matlab
