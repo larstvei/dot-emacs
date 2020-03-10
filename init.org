@@ -1102,6 +1102,13 @@
        (custom-set-variables '(org-export-allow-bind-keywords t))))
    #+END_SRC
 
+   Use Emacs for opening the PDF file, when invoking ~C-c C-e l o~.
+
+   #+BEGIN_SRC emacs-lisp
+   (require 'org)
+   (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))
+   #+END_SRC
+
 ** Markdown
 
    This makes =.md=-files open in =markdown-mode=.
