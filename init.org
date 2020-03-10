@@ -890,13 +890,6 @@
        (comint-truncate-buffer)))
    #+END_SRC
 
-   The =clear-shell= should only be bound in =comint-mode=, which is a mode
-   most shell and REPL's is derived from.
-
-   #+BEGIN_SRC emacs-lisp
-   (add-hook 'comint-mode-hook (lambda () (local-set-key (kbd "C-l") 'clear-comint)))
-   #+END_SRC
-
 ** Lisp
 
    I use =Paredit= when editing lisp code, we enable this for all lisp-modes.
@@ -1314,14 +1307,7 @@
   (define-key custom-bindings-map (kbd "M-]")         'other-frame)
   (define-key custom-bindings-map (kbd "C-j")         'newline-and-indent)
   (define-key custom-bindings-map (kbd "C-c s")       'ispell-word)
-  (define-key custom-bindings-map (kbd "C-c c")       'org-capture)
-  (define-key custom-bindings-map (kbd "C-x m")       'mu4e)
-  (define-key custom-bindings-map (kbd "C-c <up>")    'windmove-up)
-  (define-key custom-bindings-map (kbd "C-c <down>")  'windmove-down)
-  (define-key custom-bindings-map (kbd "C-c <left>")  'windmove-left)
-  (define-key custom-bindings-map (kbd "C-c <right>") 'windmove-right)
-  (define-key custom-bindings-map (kbd "C-c t")
-    (lambda () (interactive) (org-agenda nil "n")))
+  (define-key comint-mode-map     (kbd "C-l")         'clear-comint)
   #+END_SRC
 
 ** Bindings for functions defined [[sec:defuns][above]].
