@@ -1259,21 +1259,22 @@
 ** Bindings for [[http://emacs-helm.github.io/helm/][Helm]]
 
   #+BEGIN_SRC emacs-lisp
-  (define-key custom-bindings-map (kbd "C-c h")   'helm-command-prefix)
-  (define-key custom-bindings-map (kbd "M-x")     'helm-M-x)
-  (define-key custom-bindings-map (kbd "M-y")     'helm-show-kill-ring)
-  (define-key custom-bindings-map (kbd "C-x b")   'helm-mini)
-  (define-key custom-bindings-map (kbd "C-x C-f") 'helm-find-files)
-  (define-key custom-bindings-map (kbd "C-c h d") 'helm-dash-at-point)
-  (define-key custom-bindings-map (kbd "C-c h o") 'helm-occur)
-  (define-key custom-bindings-map (kbd "C-c h g") 'helm-google-suggest)
-  (define-key custom-bindings-map (kbd "M-i")     'helm-swoop)
-  (define-key custom-bindings-map (kbd "M-I")     'helm-multi-swoop-all)
-
   (with-eval-after-load 'helm
-    (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
-    (define-key helm-map (kbd "C-i")   'helm-execute-persistent-action)
-    (define-key helm-map (kbd "C-z")   'helm-select-action))
+    (define-key helm-map            (kbd "<tab>")   'helm-execute-persistent-action)
+    (define-key helm-map            (kbd "C-i")     'helm-execute-persistent-action)
+    (define-key helm-map            (kbd "C-z")     'helm-select-action)
+    (define-key helm-map            (kbd "<left>")  'helm-previous-source)
+    (define-key helm-map            (kbd "<right>") 'helm-next-source)
+    (define-key custom-bindings-map (kbd "C-c h")   'helm-command-prefix)
+    (define-key custom-bindings-map (kbd "M-x")     'helm-M-x)
+    (define-key custom-bindings-map (kbd "M-y")     'helm-show-kill-ring)
+    (define-key custom-bindings-map (kbd "C-x b")   'helm-mini)
+    (define-key custom-bindings-map (kbd "C-x C-f") 'helm-find-files)
+    (define-key custom-bindings-map (kbd "C-c h d") 'helm-dash-at-point)
+    (define-key custom-bindings-map (kbd "C-c h o") 'helm-occur)
+    (define-key custom-bindings-map (kbd "C-c h g") 'helm-google-suggest)
+    (define-key custom-bindings-map (kbd "M-i")     'helm-swoop)
+    (define-key custom-bindings-map (kbd "M-I")     'helm-multi-swoop-all))
   #+END_SRC
 
 ** Bindings for [[https://github.com/bbatsov/projectile][Projectile]]
