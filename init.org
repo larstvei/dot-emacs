@@ -219,6 +219,7 @@
              racket-mode          ; Major mode for Racket language
              slime                ; Superior Lisp Interaction Mode for Emacs
              try                  ; Try out Emacs packages
+             vterm                ; A terminal via libvterm
              which-key)))         ; Display available keybindings in popup
      (when (memq window-system '(mac ns))
        (push 'exec-path-from-shell packages)
@@ -842,36 +843,42 @@
    the [[Key bindings]] section.
 
    #+BEGIN_SRC emacs-lisp
-   (lexical-let ((last-shell ""))
-     (defun toggle-shell ()
+   (let ((last-vterm ""))
+     (defun toggle-vterm ()
        (interactive)
-       (cond ((string-match-p "^\\*shell<[1-9][0-9]*>\\*$" (buffer-name))
-              (goto-non-shell-buffer))
-             ((get-buffer last-shell) (switch-to-buffer last-shell))
-             (t (shell (setq last-shell "*shell<1>*")))))
+       (cond ((string-match-p "^\\vterm<[1-9][0-9]*>$" (buffer-name))
+              (goto-non-vterm-buffer))
+             ((get-buffer last-vterm) (switch-to-buffer last-vterm))
+             (t (vterm (setq last-vterm "vterm<1>")))))
 
-     (defun switch-shell (n)
-       (let ((buffer-name (format "*shell<%d>*" n)))
-         (setq last-shell buffer-name)
+     (defun switch-vterm (n)
+       (let ((buffer-name (format "vterm<%d>" n)))
+         (setq last-vterm buffer-name)
          (cond ((get-buffer buffer-name)
                 (switch-to-buffer buffer-name))
-               (t (shell buffer-name)
+               (t (vterm buffer-name)
                   (rename-buffer buffer-name)))))
 
-     (defun goto-non-shell-buffer ()
-       (let* ((r "^\\*shell<[1-9][0-9]*>\\*$")
-              (shell-buffer-p (lambda (b) (string-match-p r (buffer-name b))))
-              (non-shells (cl-remove-if shell-buffer-p (buffer-list))))
-         (when non-shells
-           (switch-to-buffer (first non-shells))))))
+     (defun goto-non-vterm-buffer ()
+       (let* ((r "^\\vterm<[1-9][0-9]*>$")
+              (vterm-buffer-p (lambda (b) (string-match-p r (buffer-name b))))
+              (non-vterms (cl-remove-if vterm-buffer-p (buffer-list))))
+         (when non-vterms
+           (switch-to-buffer (car non-vterms))))))
    #+END_SRC
 
    Don't query whether or not the ~shell~-buffer should be killed, just kill
    it.
 
    #+BEGIN_SRC emacs-lisp
-   (defadvice shell (after kill-with-no-query nil activate)
+   (defadvice vterm (after kill-with-no-query nil activate)
      (set-process-query-on-exit-flag (get-buffer-process ad-return-value) nil))
+   #+END_SRC
+
+   Use zsh:
+
+   #+BEGIN_SRC emacs-lisp
+   (setq vterm-shell "/usr/local/bin/zsh")
    #+END_SRC
 
    I'd like the =C-l= to work more like the standard terminal (which works
@@ -1317,10 +1324,10 @@
   (define-key custom-bindings-map (kbd "C-c j")   'cycle-spacing-delete-newlines)
   (define-key custom-bindings-map (kbd "C-c d")   'duplicate-thing)
   (define-key custom-bindings-map (kbd "<C-tab>") 'tidy)
-  (define-key custom-bindings-map (kbd "M-`")     'toggle-shell)
+  (define-key custom-bindings-map (kbd "M-`")     'toggle-vterm)
   (dolist (n (number-sequence 1 9))
     (global-set-key (kbd (concat "M-" (int-to-string n)))
-                    (lambda () (interactive) (switch-shell n))))
+                    (lambda () (interactive) (switch-vterm n))))
   (define-key custom-bindings-map (kbd "C-c C-q")
     '(lambda ()
        (interactive)
