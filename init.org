@@ -141,7 +141,7 @@
    number, and restore the default value after initialization.
 
    #+BEGIN_SRC emacs-lisp
-   (lexical-let ((old-gc-treshold gc-cons-threshold))
+   (let ((old-gc-treshold gc-cons-threshold))
      (setq gc-cons-threshold most-positive-fixnum)
      (add-hook 'after-init-hook
                (lambda () (setq gc-cons-threshold old-gc-treshold))))
@@ -395,7 +395,7 @@
    #+BEGIN_SRC emacs-lisp
    (defun cycle-themes ()
      "Returns a function that lets you cycle your themes."
-     (lexical-let ((themes '#1=(doom-one-light doom-one . #1#)))
+     (let ((themes '#1=(doom-one-light doom-one . #1#)))
        (lambda ()
          (interactive)
          ;; Rotates the thme cycle and changes the current theme.
@@ -579,7 +579,7 @@
      "Changes the ispell dictionary to the first element in
    ISPELL-LANGUAGES, and returns an interactive function that cycles
    the languages in ISPELL-LANGUAGES when invoked."
-     (lexical-let ((ispell-languages '#1=("american" "norsk" . #1#)))
+     (let ((ispell-languages '#1=("american" "norsk" . #1#)))
        (ispell-change-dictionary (car ispell-languages))
        (lambda ()
          (interactive)
@@ -795,7 +795,7 @@
    buffer, including the minibuffer and mode line.
 
    #+BEGIN_SRC emacs-lisp
-   (lexical-let* ((default (face-attribute 'default :height))
+   (let* ((default (face-attribute 'default :height))
                   (size default))
 
      (defun global-scale-default ()
