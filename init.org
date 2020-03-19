@@ -187,12 +187,12 @@
              company              ; Modular text completion framework
              company-coq          ; A collection of extensions PG's Coq mode
              define-word          ; display the definition of word at point
+             diff-hl              ; Highlight uncommitted changes using VC
              diminish             ; Diminished modes from modeline
              doom-themes          ; An opinionated pack of modern color-themes
              erlang               ; Erlang major mode
              expand-region        ; Increase selected region by semantic units
              focus                ; Dim color of text in surrounding sections
-             git-gutter-fringe    ; Fringe version of git-gutter.el
              golden-ratio         ; Automatic resizing windows to golden ratio
              haskell-mode         ; A Haskell editing mode
              helm                 ; Incremental and narrowing framework
@@ -369,13 +369,14 @@
               delete-selection-mode        ; Replace selected text
               dirtrack-mode                ; directory tracking in *shell*
               global-company-mode          ; Auto-completion everywhere
-              global-git-gutter-mode       ; Show changes latest commit
               global-prettify-symbols-mode ; Greek letters should look greek
               projectile-mode              ; Manage and navigate projects
               recentf-mode                 ; Recently opened files
               show-paren-mode              ; Highlight matching parentheses
               which-key-mode))             ; Available keybindings in popup
      (funcall mode 1))
+
+   (global-diff-hl-mode)
 
    (when (version< emacs-version "24.4")
      (eval-after-load 'auto-compile
@@ -432,22 +433,6 @@
    (safe-diminish "helm-mode" 'helm-mode)
    (safe-diminish "projectile" 'projectile-mode)
    (safe-diminish "paredit" 'paredit-mode "()")
-   #+END_SRC
-
-   [[https://github.com/syohex/emacs-git-gutter-fringe][git-gutter-fringe]] gives a great visual indication of where you've made
-   changes since your last commit. There are several packages that performs
-   this task; the reason I've ended up with =git-gutter-fringe= is that it
-   reuses the (already present) fringe, saving a tiny bit of screen-estate.
-
-   I smuggled some configurations from [[https://github.com/torenord/.emacs.d/][torenord]], providing a cleaner look.
-
-   #+BEGIN_SRC emacs-lisp
-   (with-eval-after-load 'git-gutter-fringe
-     (dolist (p '((git-gutter:added    . "#0c0")
-                  (git-gutter:deleted  . "#c00")
-                  (git-gutter:modified . "#c0c")))
-       (set-face-foreground (car p) (cdr p))
-       (set-face-background (car p) (cdr p))))
    #+END_SRC
 
    New in Emacs 24.4 is the =prettify-symbols-mode=! It's neat.
