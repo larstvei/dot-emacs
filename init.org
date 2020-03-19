@@ -133,6 +133,8 @@
       (let ((private-file (concat user-emacs-directory "private.el")))
         (when (file-exists-p private-file)
           (load-file private-file))
+        (when custom-file
+          (load-file custom-file))
         (server-start))))
    #+END_SRC
 
@@ -259,7 +261,6 @@
 
    #+BEGIN_SRC emacs-lisp
    (setq auto-revert-interval 1            ; Refresh buffers fast
-         custom-file (make-temp-file "")   ; Discard customization's
          default-input-method "TeX"        ; Use TeX when toggling input method
          echo-keystrokes 0.1               ; Show keystrokes asap
          inhibit-startup-screen t          ; No splash screen please
@@ -267,7 +268,9 @@
          recentf-max-saved-items 100       ; Show more recent files
          ring-bell-function 'ignore        ; Quiet
          scroll-margin 1                   ; Space between cursor and top/bottom
-         sentence-end-double-space nil)    ; No double space
+         sentence-end-double-space nil     ; No double space
+         custom-file                       ; Customizations in a separate file
+         (concat user-emacs-directory "custom.el"))
    ;; Some mac-bindings interfere with Emacs bindings.
    (when (boundp 'mac-pass-command-to-system)
      (setq mac-pass-command-to-system nil))
