@@ -205,7 +205,6 @@
              olivetti             ; Minor mode for a nice writing environment
              org                  ; Outline-based notes management and organizer
              org-bullets          ; Show bullets in org-mode as UTF-8 characters
-             org-ref              ; citations bibliographies in org-mode
              paredit              ; minor mode for editing parentheses
              pdf-tools            ; Emacs support library for PDF files
              projectile           ; Manage and navigate projects in Emacs easily
