@@ -1105,46 +1105,6 @@
    (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))
    #+END_SRC
 
-** Markdown
-
-   This makes =.md=-files open in =markdown-mode=.
-
-   #+BEGIN_SRC emacs-lisp
-   (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-   #+END_SRC
-
-   I sometimes use a specialized markdown format, where inline math-blocks
-   can be achieved by surrounding a LaTeX formula with =$math$= and
-   =$/math$=. Writing these out became tedious, so I wrote a small function.
-
-   #+BEGIN_SRC emacs-lisp
-   (defun insert-markdown-inline-math-block ()
-     "Inserts an empty math-block if no region is active, otherwise wrap a
-   math-block around the region."
-     (interactive)
-     (let* ((beg (region-beginning))
-            (end (region-end))
-            (body (if (region-active-p) (buffer-substring beg end) "")))
-       (when (region-active-p)
-         (delete-region beg end))
-       (insert (concat "$math$ " body " $/math$"))
-       (search-backward " $/math$")))
-   #+END_SRC
-
-   Most of my writing in this markup is in Norwegian, so the dictionary is
-   set accordingly. The markup is also sensitive to line breaks, so
-   =auto-fill-mode= is disabled. Of course we want to bind our lovely
-   function to a key!
-
-   #+BEGIN_SRC emacs-lisp
-   (add-hook 'markdown-mode-hook
-             (lambda ()
-               (auto-fill-mode 0)
-               (visual-line-mode 1)
-               (ispell-change-dictionary "norsk")
-               (local-set-key (kbd "C-c b") 'insert-markdown-inline-math-block)) t)
-   #+END_SRC
-
 ** Haskell
 
    =haskell-doc-mode= is similar to =eldoc=, it displays documentation in
