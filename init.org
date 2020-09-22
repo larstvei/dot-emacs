@@ -221,7 +221,8 @@
              slime                ; Superior Lisp Interaction Mode for Emacs
              try                  ; Try out Emacs packages
              vterm                ; A terminal via libvterm
-             which-key)))         ; Display available keybindings in popup
+             which-key            ; Display available keybindings in popup
+             z3-mode)))           ; z3/SMTLIBv2 interactive development
      (when (memq window-system '(mac ns))
        (push 'exec-path-from-shell packages)
        (push 'reveal-in-osx-finder packages))
