@@ -203,6 +203,8 @@
              helm-swoop           ; Efficiently hopping squeezed lines
              jedi                 ; Python auto-completion for Emacs
              js2-mode             ; Improved JavaScript editing mode
+             lsp-mode             ; LSP mode
+             lsp-java             ; Java support for lsp-mode
              magit                ; control Git from Emacs
              markdown-mode        ; Emacs Major mode for Markdown-formatted files
              maude-mode           ; Emacs mode for the programming language Maude
@@ -809,6 +811,17 @@
    #+END_SRC
 
 * Mode specific
+** LSP
+
+   LSP mode works really well, especially with languages like Java, which
+   traditionally has had quite poor Emacs support.
+
+   #+BEGIN_SRC emacs-lisp
+   (with-eval-after-load 'lsp-mode
+     (define-key lsp-mode-map (kbd "C-c f") lsp-command-map)
+     (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration))
+   #+END_SRC
+
 ** Compilation
 
    I often run ~latexmk -pdf -pvc~ in a compilation buffer, which recompiles
@@ -980,11 +993,8 @@
    activated.
 
    #+BEGIN_SRC emacs-lisp
-   (defun java-setup ()
-     (abbrev-mode t)
-     (setq-local compile-command (concat "javac " (buffer-name))))
-
-   (add-hook 'java-mode-hook 'java-setup)
+   (add-hook 'java-mode-hook 'lsp)
+   (add-hook 'java-mode-hook 'yas-minor-mode)
    #+END_SRC
 
 ** Assembler
