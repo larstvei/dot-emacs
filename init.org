@@ -169,11 +169,9 @@
    #+BEGIN_SRC emacs-lisp
    (setq package-archives
      '(("gnu" . "https://elpa.gnu.org/packages/")
-       ("MELPA Stable" . "https://stable.melpa.org/packages/")
        ("MELPA"        . "https://melpa.org/packages/"))
      package-archive-priorities
-     '(("MELPA Stable" . 10)
-       ("gnu"          . 5)
+     '(("gnu"          . 5)
        ("MELPA"        . 0)))
    #+END_SRC
 
