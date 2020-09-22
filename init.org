@@ -460,6 +460,15 @@
                                           ("psi" . ?ψ)))
    #+END_SRC
 
+   [[https://github.com/rnkn/olivetti][Olivetti]] is a package that simply centers the text of a buffer. It is very
+   simple and beautiful. The default width is just a bit short.
+
+   #+BEGIN_SRC emacs-lisp
+   (with-eval-after-load 'olivetti
+     (setq-default olivetti-body-width 82)
+     (remove-hook 'olivetti-mode-on-hook 'visual-line-mode))
+   #+END_SRC
+
 ** PDF Tools
 
    [[https://github.com/politza/pdf-tools][PDF Tools]] makes a huge improvement on the built-in [[http://www.gnu.org/software/emacs/manual/html_node/emacs/Document-View.html][doc-view-mode]]; the only
@@ -1262,6 +1271,12 @@
    #+BEGIN_SRC emacs-lisp
    (with-eval-after-load 'cider
     (define-key cider-repl-mode-map (kbd "C-l") 'cider-repl-clear-buffer))
+   #+END_SRC
+
+** Bindings for [[https://github.com/rnkn/olivetti][Olivetti]]
+
+   #+BEGIN_SRC emacs-lisp
+   (define-key custom-bindings-map (kbd "C-c o") 'olivetti-mode)
    #+END_SRC
 
 ** Bindings for built-ins
