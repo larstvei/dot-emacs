@@ -286,6 +286,7 @@
                  indent-tabs-mode nil              ; Use spaces instead of tabs
                  split-width-threshold 160         ; Split verticly by default
                  split-height-threshold nil        ; Split verticly by default
+                 frame-resize-pixelwise t          ; Fine-grained frame resize
                  auto-fill-function 'do-auto-fill) ; Auto-fill-mode everywhere
    #+END_SRC
 
