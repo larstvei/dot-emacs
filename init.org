@@ -193,12 +193,6 @@
              focus                ; Dim color of text in surrounding sections
              golden-ratio         ; Automatic resizing windows to golden ratio
              haskell-mode         ; A Haskell editing mode
-             helm                 ; Incremental and narrowing framework
-             helm-ag              ; the silver searcher with helm interface
-             helm-company         ; Helm interface for company-mode
-             helm-dash            ; Offline documentation using Dash docsets.
-             helm-projectile      ; Helm integration for Projectile
-             helm-swoop           ; Efficiently hopping squeezed lines
              jedi                 ; Python auto-completion for Emacs
              js2-mode             ; Improved JavaScript editing mode
              lsp-mode             ; LSP mode
@@ -505,63 +499,6 @@
          company-transformers '(company-sort-by-occurrence
                                 company-sort-by-backend-importance))
    #+END_SRC
-
-** Helm
-
-   I've been a long time user of ~ido-mode~ along with ~ido-vertical-mode~, and
-   don't have any particular complaints. Though I've got a feeling I'm missing
-   out on something by not using [[https://github.com/emacs-helm/helm][helm]]. I will [[http://tuhdo.github.io/helm-intro.html][this excellent tutorial]] as a
-   starting point, along with some of the suggested configurations.
-
-   ~helm~ has a wonderful feature, being able to grep files by ~C-s~ anywhere,
-   which is useful. [[http://beyondgrep.com/][ack]] is a great ~grep~-replacement, and is designed to
-   search source code, so I want to use that if it's available.
-
-   Note that some changes in bindings are located in the key bindings (found
-   near the end of the configuration).
-
-   #+BEGIN_SRC emacs-lisp
-   (require 'helm)
-   (require 'helm-config)
-   (setq helm-split-window-in-side-p t
-         helm-M-x-fuzzy-match t
-         helm-buffers-fuzzy-matching t
-         helm-recentf-fuzzy-match t
-         helm-move-to-line-cycle-in-source t
-         projectile-completion-system 'helm
-         helm-mini-default-sources '(helm-source-buffers-list
-                                     helm-source-recentf
-                                     helm-source-bookmarks
-                                     helm-source-buffer-not-found))
-
-   (when (executable-find "ack")
-     (setq helm-grep-default-command
-           "ack -Hn --no-group --no-color %e %p %f"
-           helm-grep-default-recurse-command
-           "ack -H --no-group --no-color %e %p %f"))
-
-   (set-face-attribute 'helm-selection nil :background "cyan")
-
-   (helm-mode 1)
-   (helm-projectile-on)
-   (helm-adaptive-mode 1)
-   #+END_SRC
-
-*** Helm dash
-
-    #+BEGIN_SRC emacs-lisp
-    (setq helm-dash-browser-func 'eww)
-    (add-hook 'emacs-lisp-mode-hook
-              (lambda () (setq-local helm-dash-docsets '("Emacs Lisp"))))
-    (add-hook 'erlang-mode-hook
-              (lambda () (setq-local helm-dash-docsets '("Erlang"))))
-    (add-hook 'java-mode-hook
-              (lambda () (setq-local helm-dash-docsets '("Java"))))
-    (add-hook 'haskell-mode-hook
-              (lambda () (setq-local helm-dash-docsets '("Haskell"))))
-    (add-hook 'clojure-mode-hook
-              (lambda () (setq-local helm-dash-docsets '("Clojure"))))
-    #+END_SRC
 
 ** Spelling
 
@@ -1238,29 +1175,6 @@
   (define-key company-active-map (kbd "C-n") 'company-select-next)
   (define-key company-active-map (kbd "C-p") 'company-select-previous)
   (define-key company-active-map (kbd "<tab>") 'company-complete)
-
-  (define-key company-mode-map (kbd "C-:") 'helm-company)
-  (define-key company-active-map (kbd "C-:") 'helm-company)
-  #+END_SRC
-
-** Bindings for [[http://emacs-helm.github.io/helm/][Helm]]
-
-  #+BEGIN_SRC emacs-lisp
-  (define-key helm-map            (kbd "<tab>")   'helm-execute-persistent-action)
-  (define-key helm-map            (kbd "C-i")     'helm-execute-persistent-action)
-  (define-key helm-map            (kbd "C-z")     'helm-select-action)
-  (define-key helm-map            (kbd "<left>")  'helm-previous-source)
-  (define-key helm-map            (kbd "<right>") 'helm-next-source)
-  (define-key custom-bindings-map (kbd "C-c h")   'helm-command-prefix)
-  (define-key custom-bindings-map (kbd "M-x")     'helm-M-x)
-  (define-key custom-bindings-map (kbd "M-y")     'helm-show-kill-ring)
-  (define-key custom-bindings-map (kbd "C-x b")   'helm-mini)
-  (define-key custom-bindings-map (kbd "C-x C-f") 'helm-find-files)
-  (define-key custom-bindings-map (kbd "C-c h d") 'helm-dash-at-point)
-  (define-key custom-bindings-map (kbd "C-c h o") 'helm-occur)
-  (define-key custom-bindings-map (kbd "C-c h g") 'helm-google-suggest)
-  (define-key custom-bindings-map (kbd "M-i")     'helm-swoop)
-  (define-key custom-bindings-map (kbd "M-I")     'helm-multi-swoop-all)
   #+END_SRC
 
 ** Bindings for [[https://github.com/bbatsov/projectile][Projectile]]
