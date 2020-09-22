@@ -158,7 +158,6 @@
    loaded, along with =package=, which is obviously needed.
 
    #+BEGIN_SRC emacs-lisp
-   (require 'cl)
    (require 'package)
    (package-initialize)
    #+END_SRC
@@ -226,7 +225,8 @@
      (when (memq window-system '(mac ns))
        (push 'exec-path-from-shell packages)
        (push 'reveal-in-osx-finder packages))
-     (let ((packages (remove-if 'package-installed-p packages)))
+     (let ((packages (seq-remove 'package-installed-p packages)))
+       (print packages)
        (when packages
          ;; Install uninstalled packages
          (package-refresh-contents)
