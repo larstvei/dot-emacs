@@ -188,7 +188,6 @@
              company-coq          ; A collection of extensions PG's Coq mode
              define-word          ; display the definition of word at point
              diff-hl              ; Highlight uncommitted changes using VC
-             diminish             ; Diminished modes from modeline
              doom-themes          ; An opinionated pack of modern color-themes
              erlang               ; Erlang major mode
              expand-region        ; Increase selected region by semantic units
@@ -416,25 +415,39 @@
           (set-face-attribute 'default nil :font "Inconsolata-14")))
    #+END_SRC
 
-   [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] allows you to hide or abbreviate their presence in the
-   modeline. I rarely look at the modeline to find out what minor-modes are
-   enabled, so I disable every global minor-mode, and some for lisp editing.
-
-   To ensure that the mode is loaded before diminish it, we should use
-   ~with-eval-after-load~. To avoid typing this multiple times a small macro
-   is provided.
+   Let's pick out the my favorite elements from [[https://github.com/rougier/elegant-emacs][elegant emacs]]! It looks really
+   nice.
 
    #+BEGIN_SRC emacs-lisp
-   (defmacro safe-diminish (file mode &optional new-name)
-     `(with-eval-after-load ,file
-        (diminish ,mode ,new-name)))
+   (add-to-list 'default-frame-alist '(internal-border-width . 24))
 
-   (diminish 'auto-fill-function)
-   (safe-diminish "eldoc" 'eldoc-mode)
-   (safe-diminish "flyspell" 'flyspell-mode)
-   (safe-diminish "helm-mode" 'helm-mode)
-   (safe-diminish "projectile" 'projectile-mode)
-   (safe-diminish "paredit" 'paredit-mode "()")
+   ;; simplified mode line
+   (define-key mode-line-major-mode-keymap [header-line]
+     (lookup-key mode-line-major-mode-keymap [mode-line]))
+
+   (defun mode-line-render (left right)
+     (let* ((available-width (- (window-total-width) (length left))))
+       (format (format "%%s %%%ds" available-width) left right)))
+
+   (setq-default
+    header-line-format
+    '((:eval
+       (propertize
+        (mode-line-render
+         (format-mode-line
+          (list (propertize "☰" 'face `(:inherit mode-line-buffer-id)
+                            'help-echo "Mode(s) menu"
+                            'mouse-face 'mode-line-highlight
+                            'local-map   mode-line-major-mode-keymap)
+                " %b "
+                (if (and buffer-file-name (buffer-modified-p))
+                    (propertize "(modified)" 'face `(:inherit font-lock-comment-face)))))
+         (format-mode-line
+          (propertize "%4l:%2c  " 'face
+                      `(:inherit font-lock-comment-face))))
+        'face `(:underline ,(face-foreground 'font-lock-comment-face))))))
+
+   (setq-default mode-line-format nil)
    #+END_SRC
 
    New in Emacs 24.4 is the =prettify-symbols-mode=! It's neat.
@@ -461,7 +474,7 @@
 
    #+BEGIN_SRC emacs-lisp
    (add-hook 'pdf-view-mode-hook
-             (lambda () (setq mode-line-format nil)))
+             (lambda () (setq header-line-format nil)))
    #+END_SRC
 
 ** Completion
