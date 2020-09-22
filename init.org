@@ -372,14 +372,13 @@
               delete-selection-mode        ; Replace selected text
               dirtrack-mode                ; directory tracking in *shell*
               global-company-mode          ; Auto-completion everywhere
-              global-prettify-symbols-mode ; Greek letters should look greek
+              global-diff-hl-mode          ; Highlight uncommitted changes
+              global-so-long-mode          ; Mitigate performance for long lines
               projectile-mode              ; Manage and navigate projects
               recentf-mode                 ; Recently opened files
               show-paren-mode              ; Highlight matching parentheses
               which-key-mode))             ; Available keybindings in popup
      (funcall mode 1))
-
-   (global-diff-hl-mode)
 
    (when (version< emacs-version "24.4")
      (eval-after-load 'auto-compile
