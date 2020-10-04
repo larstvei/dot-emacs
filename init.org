@@ -1176,7 +1176,7 @@
   (define-key custom-bindings-map (kbd "C-c n")  'mc/mark-next-like-this)
   #+END_SRC
 
-** Bindings for [[http://magit.github.io][Magit]]
+** Bindings for [[https://magit.vc/][Magit]]
 
   #+BEGIN_SRC emacs-lisp
   (define-key custom-bindings-map (kbd "C-c m") 'magit-status)
