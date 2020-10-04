@@ -185,6 +185,8 @@
              clj-refactor         ; Commands for refactoring Clojure code
              company              ; Modular text completion framework
              company-coq          ; A collection of extensions PG's Coq mode
+             counsel              ; Various completion functions using Ivy
+             counsel-projectile   ; Ivy integration for Projectile
              define-word          ; display the definition of word at point
              diff-hl              ; Highlight uncommitted changes using VC
              doom-themes          ; An opinionated pack of modern color-themes
@@ -211,6 +213,7 @@
              proof-general        ; A generic Emacs interface for proof assistants
              racket-mode          ; Major mode for Racket language
              slime                ; Superior Lisp Interaction Mode for Emacs
+             smex                 ; M-x interface with Ido-style fuzzy matching
              try                  ; Try out Emacs packages
              vterm                ; A terminal via libvterm
              which-key            ; Display available keybindings in popup
@@ -368,7 +371,7 @@
               global-company-mode          ; Auto-completion everywhere
               global-diff-hl-mode          ; Highlight uncommitted changes
               global-so-long-mode          ; Mitigate performance for long lines
-              projectile-mode              ; Manage and navigate projects
+              counsel-projectile-mode      ; Manage and navigate projects
               recentf-mode                 ; Recently opened files
               show-paren-mode              ; Highlight matching parentheses
               which-key-mode))             ; Available keybindings in popup
@@ -463,6 +466,19 @@
      (setq-default olivetti-body-width 82)
      (remove-hook 'olivetti-mode-on-hook 'visual-line-mode))
    #+END_SRC
+
+** Ivy
+
+   Let's try [[http://oremacs.com/swiper/][Ivy]] in favor of helm.
+
+   #+begin_src emacs-lisp
+   (setq ivy-wrap t
+         ivy-height 25
+         ivy-use-virtual-buffers t
+         ivy-count-format "(%d/%d) "
+         ivy-on-del-error-function 'ignore)
+   (ivy-mode 1)
+   #+end_src
 
 ** PDF Tools
 
@@ -1166,6 +1182,17 @@
   #+BEGIN_SRC emacs-lisp
   (define-key custom-bindings-map (kbd "C-c m") 'magit-status)
   #+END_SRC
+
+** Bindings for [[https://github.com/abo-abo/swiper][Counsel]]
+
+   #+begin_src emacs-lisp
+   (global-set-key (kbd "C-s")     'swiper-isearch)
+   (global-set-key (kbd "C-r")     'swiper-isearch-backward)
+   (global-set-key (kbd "M-x")     'counsel-M-x)
+   (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+   (global-set-key (kbd "M-y")     'counsel-yank-pop)
+   (global-set-key (kbd "C-x b")   'ivy-switch-buffer)
+   #+end_src
 
 ** Bindings for [[http://company-mode.github.io/][company-mode]]
 
