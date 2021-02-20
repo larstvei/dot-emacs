@@ -262,7 +262,7 @@
          echo-keystrokes 0.1               ; Show keystrokes asap
          inhibit-startup-screen t          ; No splash screen please
          initial-scratch-message nil       ; Clean scratch buffer
-         recentf-max-saved-items 100       ; Show more recent files
+         recentf-max-saved-items 10000     ; Show more recent files
          ring-bell-function 'ignore        ; Quiet
          scroll-margin 1                   ; Space between cursor and top/bottom
          sentence-end-double-space nil     ; No double space
@@ -470,14 +470,19 @@
 
 ** Ivy
 
-   Let's try [[http://oremacs.com/swiper/][Ivy]] in favor of helm.
+   [[http://oremacs.com/swiper/][Ivy]] is a completion system, giving you completions and fuzzy search whenever
+   you interact with the minibuffer. I transitioned to Ivy from [[https://emacs-helm.github.io/helm/][Helm]], mainly
+   due to it being aesthetically noisy, and that I didn't fully take advantage
+   of all its features (which are numerous). Here are some customization's that
+   made the transition a bit easier.
 
    #+begin_src emacs-lisp
-   (setq ivy-wrap t
-         ivy-height 25
-         ivy-use-virtual-buffers t
-         ivy-count-format "(%d/%d) "
-         ivy-on-del-error-function 'ignore)
+   (setq ivy-wrap t                          ; Easier access to the last candidate
+         ivy-height 25                       ; Give me more candidates to look at
+         ivy-use-virtual-buffers t           ; C-x b displays recents and bookmarks
+         ivy-count-format "(%d/%d) "         ; Display both the index and the count
+         ivy-on-del-error-function 'ignore   ; Lets me hold in backspace
+         ivy-virtual-abbreviate 'abbreviate) ; Disambiguate same file in different dirs
    (ivy-mode 1)
    #+end_src
 
