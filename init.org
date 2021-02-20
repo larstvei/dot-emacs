@@ -224,7 +224,6 @@
        (push 'exec-path-from-shell packages)
        (push 'reveal-in-osx-finder packages))
      (let ((packages (seq-remove 'package-installed-p packages)))
-       (print packages)
        (when packages
          ;; Install uninstalled packages
          (package-refresh-contents)
