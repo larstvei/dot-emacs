@@ -195,6 +195,7 @@
              focus                ; Dim color of text in surrounding sections
              golden-ratio         ; Automatic resizing windows to golden ratio
              haskell-mode         ; A Haskell editing mode
+             ivy-posframe         ; Using posframe to show Ivy
              jedi                 ; Python auto-completion for Emacs
              js2-mode             ; Improved JavaScript editing mode
              lsp-mode             ; LSP mode
@@ -482,8 +483,11 @@
          ivy-use-virtual-buffers t           ; C-x b displays recents and bookmarks
          ivy-count-format "(%d/%d) "         ; Display both the index and the count
          ivy-on-del-error-function 'ignore   ; Lets me hold in backspace
+         ivy-posframe-min-width 100          ; Keep ivy reasonably narrow
+         ivy-posframe-height ivy-height      ; Maintain the height given by ivy
          ivy-virtual-abbreviate 'abbreviate) ; Disambiguate same file in different dirs
    (ivy-mode 1)
+   (ivy-posframe-mode 1)
    #+end_src
 
 ** PDF Tools
