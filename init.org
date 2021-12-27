@@ -194,6 +194,7 @@
              expand-region        ; Increase selected region by semantic units
              focus                ; Dim color of text in surrounding sections
              golden-ratio         ; Automatic resizing windows to golden ratio
+             gnu-apl-mode         ; Integrate GNU APL with Emacs
              haskell-mode         ; A Haskell editing mode
              ivy-posframe         ; Using posframe to show Ivy
              jedi                 ; Python auto-completion for Emacs
@@ -1205,6 +1206,16 @@
    #+BEGIN_SRC emacs-lisp
    (add-hook 'coq-mode-hook #'company-coq-mode)
    #+END_SRC
+
+** APL
+
+   #+begin_src emacs-lisp
+   (with-eval-after-load 'gnu-apl-mode
+     (setq gnu-apl-key-prefix ?`)
+     (gnu-apl--initialize-key-prefix 'gnu-apl-key-prefix ?`)
+     (add-hook 'gnu-apl-mode-hook (lambda () (activate-input-method "APL-Z")))
+     (add-hook 'gnu-apl-interactive-mode-hook (lambda () (activate-input-method "APL-Z"))))
+   #+end_src
 
 * Key bindings
 
