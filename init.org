@@ -208,6 +208,8 @@
              maude-mode           ; Emacs mode for the programming language Maude
              minizinc-mode        ; Major mode for MiniZinc code
              multiple-cursors     ; Multiple cursors for Emacs
+             nano-modeline        ; N Λ N O modeline
+             nano-theme           ; N Λ N O theme
              olivetti             ; Minor mode for a nice writing environment
              org                  ; Outline-based notes management and organizer
              org-bullets          ; Show bullets in org-mode as UTF-8 characters
@@ -390,19 +392,26 @@
 
 ** Visual
 
-   Change the color-theme to =leuven=.
+   Let's set things with [[https://github.com/rougier/nano-emacs][rougier's N Λ N O Emacs]].
 
    #+BEGIN_SRC emacs-lisp
-   (load-theme 'doom-one-light t)
+   (setq nano-light-background "#fafafa")
+   (load-theme 'nano-light t)
+   (nano-modeline-mode 1)
    #+END_SRC
 
-   =leuven= is my preferred light theme, but =monokai= makes a very nice
-   dark theme. I want to be able to cycle between these.
+   It looks best if we add a small margin around the edges of the frame.
+
+   #+begin_src emacs-lisp
+   (add-to-list 'default-frame-alist '(internal-border-width . 24))
+   #+end_src
+
+   I want to be able to quickly switch between a light and a dark theme.
 
    #+BEGIN_SRC emacs-lisp
    (defun cycle-themes ()
      "Returns a function that lets you cycle your themes."
-     (let ((themes '#1=(doom-one-light doom-one . #1#)))
+     (let ((themes '#1=(nano-light nano-dark . #1#)))
        (lambda ()
          (interactive)
          ;; Rotates the thme cycle and changes the current theme.
@@ -410,48 +419,15 @@
          (message (concat "Switched to " (symbol-name (car themes)))))))
    #+END_SRC
 
-   Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
+   Pick the first of the following fonts that is installed on the system.
 
    #+BEGIN_SRC emacs-lisp
-   (cond ((member "Hasklig" (font-family-list))
-          (set-face-attribute 'default nil :font "Hasklig-14"))
+   (cond ((member "Roboto Mono" (font-family-list))
+          (set-face-attribute 'default nil :font "Roboto Mono-14"))
+         ((member "Fira Code" (font-family-list))
+          (set-face-attribute 'default nil :font "Fira Code-15"))
          ((member "Inconsolata" (font-family-list))
           (set-face-attribute 'default nil :font "Inconsolata-14")))
-   #+END_SRC
-
-   Let's pick out the my favorite elements from [[https://github.com/rougier/elegant-emacs][elegant emacs]]! It looks really
-   nice.
-
-   #+BEGIN_SRC emacs-lisp
-   (add-to-list 'default-frame-alist '(internal-border-width . 24))
-
-   ;; simplified mode line
-   (define-key mode-line-major-mode-keymap [header-line]
-     (lookup-key mode-line-major-mode-keymap [mode-line]))
-
-   (defun mode-line-render (left right)
-     (let* ((available-width (- (window-total-width) (length left))))
-       (format (format "%%s %%%ds" available-width) left right)))
-
-   (setq-default
-    header-line-format
-    '((:eval
-       (propertize
-        (mode-line-render
-         (format-mode-line
-          (list (propertize "☰" 'face `(:inherit mode-line-buffer-id)
-                            'help-echo "Mode(s) menu"
-                            'mouse-face 'mode-line-highlight
-                            'local-map   mode-line-major-mode-keymap)
-                " %b "
-                (if (and buffer-file-name (buffer-modified-p))
-                    (propertize "(modified)" 'face `(:inherit font-lock-comment-face)))))
-         (format-mode-line
-          (propertize "%4l:%2c  " 'face
-                      `(:inherit font-lock-comment-face))))
-        'face `(:underline ,(face-foreground 'font-lock-comment-face))))))
-
-   (setq-default mode-line-format nil)
    #+END_SRC
 
    New in Emacs 24.4 is the =prettify-symbols-mode=! It's neat.
