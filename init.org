@@ -1149,7 +1149,17 @@
    #+BEGIN_SRC emacs-lisp
    (require 'org)
    (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))
+   (setq org-adapt-indentation t)
    #+END_SRC
+
+   #+begin_src emacs-lisp
+   (setq org-babel-python-command "python3")
+   (org-babel-do-load-languages
+    'org-babel-load-languages
+    '((emacs-lisp . t)
+      (python . t)
+      (clojure . t)))
+   #+end_src
 
 ** Haskell
 
