@@ -522,6 +522,12 @@
    (add-hook 'prog-mode-hook 'flyspell-prog-mode)
    #+END_SRC
 
+   Tell Emacs what program is used for spell checking.
+
+   #+begin_src emacs-lisp
+   (setq ispell-program-name "aspell")
+   #+end_src
+
    When working with several languages, we should be able to cycle through
    the languages we most frequently use. Every buffer should have a separate
    cycle of languages, so that cycling in one buffer does not change the
