@@ -199,8 +199,9 @@
              ivy-posframe         ; Using posframe to show Ivy
              jedi                 ; Python auto-completion for Emacs
              js2-mode             ; Improved JavaScript editing mode
-             lsp-mode             ; LSP mode
              lsp-java             ; Java support for lsp-mode
+             lsp-mode             ; LSP mode
+             lsp-ui               ; UI modules for lsp-mode
              magit                ; control Git from Emacs
              markdown-mode        ; Emacs Major mode for Markdown-formatted files
              maude-mode           ; Emacs mode for the programming language Maude
@@ -850,7 +851,10 @@
    #+BEGIN_SRC emacs-lisp
    (with-eval-after-load 'lsp-mode
      (define-key lsp-mode-map (kbd "C-c f") lsp-command-map)
-     (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration))
+     (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
+     (add-hook 'lsp-mode-hook #'yas-minor-mode)
+     (add-hook 'lsp-mode-hook (lambda () (lsp-headerline-breadcrumb-mode 0)))
+     (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.hypothesis\\'"))
    #+END_SRC
 
 ** Compilation
@@ -1035,7 +1039,6 @@
 
    #+BEGIN_SRC emacs-lisp
    (add-hook 'java-mode-hook 'lsp)
-   (add-hook 'java-mode-hook 'yas-minor-mode)
    #+END_SRC
 
 ** Assembler
