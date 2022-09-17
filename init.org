@@ -719,6 +719,15 @@
                    :test 'string-equal)))))
    #+END_SRC
 
+   The opposite of fill paragraph (from [[https://www.emacswiki.org/emacs/UnfillParagraph][EmacsWiki]]),
+
+   #+begin_src emacs-lisp
+   (defun unfill-paragraph ()
+     (interactive)
+     (let ((fill-column most-positive-fixnum))
+       (fill-paragraph nil (region-active-p))))
+   #+end_src
+
 ** Advice
 
    An advice can be given to a function to make it behave differently. This
