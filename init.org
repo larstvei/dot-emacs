@@ -180,7 +180,8 @@
    #+BEGIN_SRC emacs-lisp
    (let* ((package--builtins nil)
           (packages
-           '(auto-compile         ; automatically compile Emacs Lisp libraries
+           '(auctex               ; Integrated environment for *TeX*
+             auto-compile         ; automatically compile Emacs Lisp libraries
              cider                ; Clojure Interactive Development Environment
              clj-refactor         ; Commands for refactoring Clojure code
              company              ; Modular text completion framework
