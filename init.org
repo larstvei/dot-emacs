@@ -817,10 +817,9 @@
 ** Shell
 
    Inspired by [[https://github.com/torenord/.emacs.d][torenord]], I maintain quick access to shell buffers with bindings
-   ~M-1~ to ~M-9~. In addition, the ~M-§~ (on an international English
-   keyboard) toggles between the last visited shell, and the last visited
-   non-shell buffer. The following functions facilitate this, and are bound in
-   the [[Key bindings]] section.
+   ~M-1~ to ~M-9~. In addition, the ~M-z~ toggles between the last visited
+   shell, and the last visited non-shell buffer. The following functions
+   facilitate this, and are bound in the [[Key bindings]] section.
 
    #+BEGIN_SRC emacs-lisp
    (let ((last-vterm ""))
