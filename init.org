@@ -956,7 +956,7 @@
              (lambda () (setq forward-sexp-function nil)))
    #+END_SRC
 
-** Java and C
+** C
 
    The =c-mode-common-hook= is a general hook that work on all C-like
    languages (C, C++, Java, etc...). I like being able to quickly compile
@@ -968,6 +968,8 @@
 
    (add-hook 'c-mode-hook 'c-setup)
    #+END_SRC
+
+** Java
 
    Some statements in Java appear often, and become tedious to write
    out. We can use abbrevs to speed this up.
