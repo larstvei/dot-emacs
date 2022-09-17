@@ -479,7 +479,7 @@
    it's only slow on the first run!
 
    #+BEGIN_SRC emacs-lisp
-   (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
+   (pdf-loader-install)
    #+END_SRC
 
    #+BEGIN_SRC emacs-lisp
