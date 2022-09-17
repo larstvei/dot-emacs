@@ -857,7 +857,7 @@
    Use zsh:
 
    #+BEGIN_SRC emacs-lisp
-   (setq vterm-shell "/usr/local/bin/zsh")
+   (setq vterm-shell "/opt/homebrew/bin/zsh")
    #+END_SRC
 
    I'd like the =C-l= to work more like the standard terminal (which works
