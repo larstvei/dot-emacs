@@ -850,12 +850,6 @@
      (set-process-query-on-exit-flag (get-buffer-process ad-return-value) nil))
    #+END_SRC
 
-   Use zsh:
-
-   #+BEGIN_SRC emacs-lisp
-   (setq vterm-shell "/opt/homebrew/bin/zsh")
-   #+END_SRC
-
    I'd like the =C-l= to work more like the standard terminal (which works
    like running =clear=), and resolve this by simply removing the
    buffer-content. Mind that this is not how =clear= works, it simply adds a
