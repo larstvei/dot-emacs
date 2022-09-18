@@ -210,6 +210,7 @@
              multiple-cursors     ; Multiple cursors for Emacs
              nano-modeline        ; N Λ N O modeline
              nano-theme           ; N Λ N O theme
+             nix-mode             ; Major mode for editing .nix files
              olivetti             ; Minor mode for a nice writing environment
              org                  ; Outline-based notes management and organizer
              org-bullets          ; Show bullets in org-mode as UTF-8 characters
