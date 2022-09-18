@@ -1,0 +1,11 @@
+.mc-lists.el
+auto-save-list/
+autosaves
+custom.el
+eln-cache/
+elpa
+init.elc
+projectile-bookmarks.eld
+recentf
+smex-items
+transient/
