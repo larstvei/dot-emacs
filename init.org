@@ -111,7 +111,7 @@
 
    #+BEGIN_SRC emacs-lisp
    (defun tangle-init ()
-     "If the current buffer is 'init.org' the code-blocks are
+     "If the current buffer is init.org the code-blocks are
    tangled, and the tangled file is compiled."
      (when (equal (buffer-file-name)
                   (expand-file-name (concat user-emacs-directory "init.org")))
@@ -248,8 +248,7 @@
    (when (memq window-system '(mac ns))
      (setq ns-pop-up-frames nil
            mac-option-modifier nil
-           mac-command-modifier 'meta
-           x-select-enable-clipboard t)
+           mac-command-modifier 'meta)
      (exec-path-from-shell-initialize)
      (when (fboundp 'mac-auto-operator-composition-mode)
        (mac-auto-operator-composition-mode 1)))
@@ -382,10 +381,6 @@
               show-paren-mode              ; Highlight matching parentheses
               which-key-mode))             ; Available keybindings in popup
      (funcall mode 1))
-
-   (when (version< emacs-version "24.4")
-     (eval-after-load 'auto-compile
-       '((auto-compile-on-save-mode 1))))  ; compile .el files on save
    #+END_SRC
 
 ** Visual
@@ -676,8 +671,8 @@
    given, the duplicated region will be commented out."
      (interactive "P")
      (save-excursion
-       (let ((start (if (region-active-p) (region-beginning) (point-at-bol)))
-             (end   (if (region-active-p) (region-end) (point-at-eol)))
+       (let ((start (if (region-active-p) (region-beginning) (line-beginning-position)))
+             (end   (if (region-active-p) (region-end) (line-end-position)))
              (fill-column most-positive-fixnum))
          (goto-char end)
          (unless (region-active-p)
