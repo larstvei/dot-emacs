@@ -190,6 +190,7 @@
              counsel-projectile   ; Ivy integration for Projectile
              define-word          ; display the definition of word at point
              diff-hl              ; Highlight uncommitted changes using VC
+             direnv               ; direnv integration (nix)
              doom-themes          ; An opinionated pack of modern color-themes
              erlang               ; Erlang major mode
              expand-region        ; Increase selected region by semantic units
@@ -373,6 +374,7 @@
             '(abbrev-mode                  ; E.g. sopl -> System.out.println
               column-number-mode           ; Show column number in mode line
               delete-selection-mode        ; Replace selected text
+              direnv-mode                  ; Use local nix environments
               dirtrack-mode                ; directory tracking in *shell*
               global-company-mode          ; Auto-completion everywhere
               global-diff-hl-mode          ; Highlight uncommitted changes
