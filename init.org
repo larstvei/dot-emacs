@@ -407,11 +407,12 @@
    #+BEGIN_SRC emacs-lisp
    (defun cycle-themes ()
      "Returns a function that lets you cycle your themes."
-     (let ((themes '#1=(nano-light nano-dark . #1#)))
+     (let ((themes '(nano-light nano-dark)))
        (lambda ()
          (interactive)
          ;; Rotates the thme cycle and changes the current theme.
-         (load-theme (car (setq themes (cdr themes))) t)
+         (let ((rotated (nconc (cdr themes) (list (car themes)))))
+           (load-theme (car (setq themes rotated)) t))
          (message (concat "Switched to " (symbol-name (car themes)))))))
    #+END_SRC
 
@@ -535,13 +536,13 @@
      "Changes the ispell dictionary to the first element in
    ISPELL-LANGUAGES, and returns an interactive function that cycles
    the languages in ISPELL-LANGUAGES when invoked."
-     (let ((ispell-languages '#1=("american" "norsk" . #1#)))
+     (let ((ispell-languages (list "american" "norsk")))
        (ispell-change-dictionary (car ispell-languages))
        (lambda ()
          (interactive)
          ;; Rotates the languages cycle and changes the ispell dictionary.
-         (ispell-change-dictionary
-          (car (setq ispell-languages (cdr ispell-languages)))))))
+         (let ((rotated (nconc (cdr ispell-languages) (list (car ispell-languages)))))
+           (ispell-change-dictionary (car (setq ispell-languages rotated)))))))
    #+END_SRC
 
    =flyspell= signals an error if there is no spell-checking tool is
