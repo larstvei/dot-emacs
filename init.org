@@ -1084,7 +1084,7 @@
    #+BEGIN_SRC emacs-lisp
    (eval-after-load 'ox-latex
      '(setq org-latex-pdf-process
-            '("latexmk -pdflatex='pdflatex -shell-escape -interaction nonstopmode' -pdf -f %f")))
+            '("latexmk -pdflatex='xelatex -shell-escape -interaction nonstopmode' -pdf -f %f")))
    #+END_SRC
 
    For my thesis, I need to use our university's LaTeX class, this snippet
