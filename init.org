@@ -159,7 +159,6 @@
 
    #+BEGIN_SRC emacs-lisp
    (require 'package)
-   (package-initialize)
    #+END_SRC
 
    Packages can be fetched from different mirrors, [[http://melpa.milkbox.net/#/][melpa]] is the largest
