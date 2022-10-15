@@ -896,22 +896,6 @@
      (set-process-query-on-exit-flag (get-buffer-process ad-return-value) nil))
    #+END_SRC
 
-   I'd like the =C-l= to work more like the standard terminal (which works
-   like running =clear=), and resolve this by simply removing the
-   buffer-content. Mind that this is not how =clear= works, it simply adds a
-   bunch of newlines, and puts the prompt at the top of the window, so it
-   does not remove anything. In Emacs removing stuff is less of a worry,
-   since we can always undo!
-
-   #+BEGIN_SRC emacs-lisp
-   (defun clear-comint ()
-     "Runs `comint-truncate-buffer' with the
-   `comint-buffer-maximum-size' set to zero."
-     (interactive)
-     (let ((comint-buffer-maximum-size 0))
-       (comint-truncate-buffer)))
-   #+END_SRC
-
 ** Lisp
 
    I use =Paredit= when editing lisp code, we enable this for all lisp-modes.
@@ -1297,7 +1281,7 @@
   (define-key custom-bindings-map (kbd "M-]")         'other-frame)
   (define-key custom-bindings-map (kbd "C-j")         'newline-and-indent)
   (define-key custom-bindings-map (kbd "C-c s")       'ispell-word)
-  (define-key comint-mode-map     (kbd "C-l")         'clear-comint)
+  (define-key comint-mode-map     (kbd "C-l")         'comint-clear-buffer)
   #+END_SRC
 
 ** Bindings for functions defined [[sec:defuns][above]].
