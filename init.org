@@ -1187,6 +1187,13 @@
      (add-hook 'gnu-apl-interactive-mode-hook (lambda () (activate-input-method "APL-Z"))))
    #+end_src
 
+** Rust
+
+   #+begin_src emacs-lisp
+   (setq lsp-rust-server 'rust-analyzer)
+   (setq lsp-rust-analyzer-cargo-watch-command "clippy")
+   #+end_src
+
 * Key bindings
 
   Inspired by [[http://stackoverflow.com/questions/683425/globally-override-key-binding-in-emacs][this StackOverflow post]] I keep a =custom-bindings-map= that
