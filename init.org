@@ -189,6 +189,7 @@
              company-coq          ; A collection of extensions PG's Coq mode
              counsel              ; Various completion functions using Ivy
              counsel-projectile   ; Ivy integration for Projectile
+             dashboard            ; A startup screen extracted from Spacemacs
              define-word          ; display the definition of word at point
              diff-hl              ; Highlight uncommitted changes using VC
              doom-themes          ; An opinionated pack of modern color-themes
@@ -445,6 +446,20 @@
      (setq-default olivetti-body-width (+ fill-column 3))
      (remove-hook 'olivetti-mode-on-hook 'visual-line-mode))
    #+END_SRC
+
+** Dashboard
+
+   #+begin_src emacs-lisp
+   (require 'dashboard)
+   (dashboard-setup-startup-hook)
+   (setq dashboard-banner-logo-title nil
+         dashboard-center-content t
+         dashboard-set-footer nil
+         dashboard-page-separator "\n\n\n"
+         dashboard-items '((projects . 15)
+                           (recents  . 15)
+                           (bookmarks . 5)))
+   #+end_src
 
 ** Ivy
 
