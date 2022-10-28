@@ -442,7 +442,7 @@
 
    #+BEGIN_SRC emacs-lisp
    (with-eval-after-load 'olivetti
-     (setq-default olivetti-body-width 82)
+     (setq-default olivetti-body-width (+ fill-column 3))
      (remove-hook 'olivetti-mode-on-hook 'visual-line-mode))
    #+END_SRC
 
