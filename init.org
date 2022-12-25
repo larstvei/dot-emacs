@@ -251,7 +251,8 @@
    (when (memq window-system '(mac ns))
      (setq ns-pop-up-frames nil
            mac-option-modifier nil
-           mac-command-modifier 'meta)
+           mac-command-modifier 'meta
+           native-comp-async-report-warnings-errors nil)
      (exec-path-from-shell-initialize)
      (when (fboundp 'mac-auto-operator-composition-mode)
        (mac-auto-operator-composition-mode 1)))
