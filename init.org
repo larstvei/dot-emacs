@@ -932,6 +932,14 @@
      (add-hook (intern (concat (symbol-name mode) "-hook")) 'paredit-mode))
    #+END_SRC
 
+   Paredit version 25 seems to interfere with REPL-modes. This is the proposed
+   fix:
+
+   #+begin_src emacs-lisp
+   (with-eval-after-load 'paredit
+     (define-key paredit-mode-map (kbd "RET") nil))
+   #+end_src
+
 *** Emacs Lisp
 
     In =emacs-lisp-mode= we can enable =eldoc-mode= to display information
