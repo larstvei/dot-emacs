@@ -216,6 +216,7 @@
              olivetti             ; Minor mode for a nice writing environment
              org                  ; Outline-based notes management and organizer
              org-bullets          ; Show bullets in org-mode as UTF-8 characters
+             org-msg              ; Org mode to send and reply to email in HTML
              paredit              ; minor mode for editing parentheses
              pdf-tools            ; Emacs support library for PDF files
              projectile           ; Manage and navigate projects in Emacs easily
@@ -628,13 +629,13 @@
    (when load-mail-setup
      (with-eval-after-load 'mu4e
        (setq
+        mail-user-agent 'mu4e-user-agent
         user-full-name "Lars Tveito"            ; Your full name
         user-mail-address "larstvei@ifi.uio.no" ; And email-address
 
-
         sendmail-program (executable-find "msmtp")
         send-mail-function 'smtpmail-send-it
-     
+
         message-sendmail-f-is-evil t
         message-sendmail-extra-arguments '("--read-envelope-from")
         message-send-mail-function 'message-send-mail-with-sendmail
@@ -649,7 +650,23 @@
         mu4e-trash-folder "/Deleted Items"
         mu4e-trash-folder "/Drafts"
 
-        mu4e-use-fancy-chars t))
+        mu4e-use-fancy-chars t)
+
+       (require 'org)
+       (require 'org-msg)
+
+       (add-to-list 'mu4e-compose-pre-hook 'org-msg-mode)
+       (setq org-msg-enforce-css (concat user-emacs-directory "email-style.css")
+             org-msg-options "html-postamble:nil toc:nil num:nil author:nil email:nil"
+             org-msg-default-alternatives '((new           . (text html))
+                                            (reply-to-html . (text html))
+                                            (reply-to-text . (text)))
+             org-msg-signature "#+begin_signature
+   ,#+begin_export html
+
+   - Lars
+   ,#+end_export
+   ,#+end_signature"))
      (autoload 'mu4e "mu4e" nil t))
    #+end_src
 
