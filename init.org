@@ -170,9 +170,9 @@
            ("MELPA Stable" . "https://stable.melpa.org/packages/")
            ("MELPA"        . "https://melpa.org/packages/"))
          package-archive-priorities
-         '(("MELPA Stable" . 10)
-           ("GNU ELPA"     . 5)
-           ("MELPA"        . 0)))
+         '(("GNU ELPA"     . 10)
+           ("MELPA"        . 5)
+           ("MELPA Stable" . 0)))
    #+END_SRC
 
    The configuration assumes that the packages listed below are
