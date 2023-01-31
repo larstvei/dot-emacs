@@ -661,12 +661,14 @@
              org-msg-default-alternatives '((new           . (text html))
                                             (reply-to-html . (text html))
                                             (reply-to-text . (text)))
-             org-msg-signature "#+begin_signature
+             org-msg-signature "
+
+   ,#+begin_signature
    ,#+begin_export html
 
    - Lars
    ,#+end_export
-   ,#+end_signature"))
+   ,#+end_signature\n"))
      (autoload 'mu4e "mu4e" nil t))
    #+end_src
 
