@@ -909,20 +909,20 @@
              ((get-buffer last-vterm) (switch-to-buffer last-vterm))
              (t (vterm (setq last-vterm "vterm<1>")))))
 
+     (defun goto-non-vterm-buffer ()
+       (let* ((r "^\\vterm<[1-9][0-9]*>$")
+              (vterm-buffer-p (lambda (b) (string-match-p r (buffer-name b))))
+              (non-vterms (cl-remove-if vterm-buffer-p (buffer-list))))
+         (when non-vterms
+           (switch-to-buffer (car non-vterms)))))
+
      (defun switch-vterm (n)
        (let ((buffer-name (format "vterm<%d>" n)))
          (setq last-vterm buffer-name)
          (cond ((get-buffer buffer-name)
                 (switch-to-buffer buffer-name))
                (t (vterm buffer-name)
-                  (rename-buffer buffer-name)))))
-
-     (defun goto-non-vterm-buffer ()
-       (let* ((r "^\\vterm<[1-9][0-9]*>$")
-              (vterm-buffer-p (lambda (b) (string-match-p r (buffer-name b))))
-              (non-vterms (cl-remove-if vterm-buffer-p (buffer-list))))
-         (when non-vterms
-           (switch-to-buffer (car non-vterms))))))
+                  (rename-buffer buffer-name))))))
    #+END_SRC
 
    Don't query whether or not the ~shell~-buffer should be killed, just kill
@@ -1337,14 +1337,20 @@
   (define-key custom-bindings-map (kbd "C-c d")   'duplicate-thing)
   (define-key custom-bindings-map (kbd "<C-tab>") 'tidy)
   (define-key custom-bindings-map (kbd "C-z")     'toggle-vterm)
+
   (dolist (n (number-sequence 1 9))
-    (global-set-key (kbd (concat "M-" (int-to-string n)))
-                    (lambda () (interactive) (switch-vterm n))))
+    (let ((key (concat "M-" (int-to-string n))))
+      (with-eval-after-load 'vterm
+        (define-key vterm-mode-map (kbd key) nil))
+      (define-key custom-bindings-map (kbd  key)
+                  (lambda () (interactive) (switch-vterm n)))))
+
   (define-key custom-bindings-map (kbd "C-c C-q")
-    '(lambda ()
-       (interactive)
-       (focus-mode 1)
-       (focus-read-only-mode 1)))
+              '(lambda ()
+                 (interactive)
+                 (focus-mode 1)
+                 (focus-read-only-mode 1)))
+
   (with-eval-after-load 'org
     (define-key org-mode-map (kbd "C-'") 'org-sync-pdf))
   #+END_SRC
