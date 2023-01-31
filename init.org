@@ -196,6 +196,7 @@
              erlang               ; Erlang major mode
              expand-region        ; Increase selected region by semantic units
              focus                ; Dim color of text in surrounding sections
+             go-mode              ; Major mode for the Go programming language
              golden-ratio         ; Automatic resizing windows to golden ratio
              gnu-apl-mode         ; Integrate GNU APL with Emacs
              haskell-mode         ; A Haskell editing mode
