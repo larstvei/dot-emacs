@@ -255,7 +255,9 @@
            native-comp-async-report-warnings-errors nil)
      (exec-path-from-shell-initialize)
      (when (fboundp 'mac-auto-operator-composition-mode)
-       (mac-auto-operator-composition-mode 1)))
+       (mac-auto-operator-composition-mode 1))
+     (require 'ls-lisp)
+     (setq ls-lisp-use-insert-directory-program nil))
    #+END_SRC
 
 ** Sane defaults
