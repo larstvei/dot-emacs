@@ -886,6 +886,15 @@
 
 * Mode specific
 
+** Eglot
+
+   I am using [[https://joaotavora.github.io/eglot/][eglot]], which is built in from [[https://git.savannah.gnu.org/cgit/emacs.git/tree/etc/NEWS?h=emacs-29#n3273][emacs 29.1]]. Some performance issues
+   led me to set =eglot-events-buffer-size= to 0.
+
+   #+begin_src emacs-lisp
+   (setq eglot-events-buffer-size 0)
+   #+end_src
+
 ** Compilation
 
    I often run ~latexmk -pdf -pvc~ in a compilation buffer, which recompiles
@@ -1231,6 +1240,39 @@
    #+begin_src emacs-lisp
    (add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
    (add-hook 'go-mode-hook 'eglot-ensure)
+   #+end_src
+
+** Webdev
+
+   My webdev setup isn't much, but with eglot, I don't find myself missing
+   much. It depends on [[https://tree-sitter.github.io/tree-sitter/][Tree-sitter]], which was added in [[https://git.savannah.gnu.org/cgit/emacs.git/tree/etc/NEWS?h=emacs-29#n36][emacs 29.1]].
+
+   The following is what I use for plain Javascript:
+
+   #+begin_src emacs-lisp
+   (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js-ts-mode))
+   (add-hook 'js-ts-mode-hook 'eglot-ensure)
+   #+end_src
+
+   Similarly for Typescript:
+
+   #+begin_src emacs-lisp
+   (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . tsx-ts-mode))
+   (add-hook 'tsx-ts-mode-hook 'eglot-ensure)
+   (setq typescript-ts-mode-indent-offset 4)
+   #+end_src
+
+   I am using [[https://svelte.dev][Svelte]] for some projects, where I find [[https://web-mode.org][web-mode]] along with the
+   [[https://github.com/sveltejs/language-tools][Svelte Language Server]] to work well.
+
+   #+begin_src emacs-lisp
+   (add-to-list 'auto-mode-alist '("\\.svelte\\'" . web-mode))
+   (add-hook 'web-mode-hook 'eglot-ensure)
+   (with-eval-after-load "web-mode"
+     (add-to-list 'web-mode-engines-alist '("svelte" . "\\.svelte\\'")))
+   (with-eval-after-load "eglot"
+     (add-to-list 'eglot-server-programs
+                  '(web-mode . ("svelteserver" "--stdio"))))
    #+end_src
 
 * Key bindings
