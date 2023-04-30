@@ -424,7 +424,9 @@
    Pick the first of the following fonts that is installed on the system.
 
    #+BEGIN_SRC emacs-lisp
-   (cond ((member "Roboto Mono" (font-family-list))
+   (cond ((member "Source Code Pro" (font-family-list))
+          (set-face-attribute 'default nil :font "Source Code Pro-15"))
+         ((member "Roboto Mono" (font-family-list))
           (set-face-attribute 'default nil :font "Roboto Mono-14"))
          ((member "Fira Code" (font-family-list))
           (set-face-attribute 'default nil :font "Fira Code-15"))
