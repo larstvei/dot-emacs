@@ -914,7 +914,7 @@
    (add-hook 'compilation-filter-hook 'comint-truncate-buffer)
    #+END_SRC
 
-** Shell
+** vterm
 
    Inspired by [[https://github.com/torenord/.emacs.d][torenord]], I maintain quick access to shell buffers with bindings
    ~M-1~ to ~M-9~. In addition, the ~M-z~ toggles between the last visited
