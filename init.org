@@ -180,6 +180,7 @@
           (packages
            '(auctex               ; Integrated environment for *TeX*
              auto-compile         ; automatically compile Emacs Lisp libraries
+             chatgpt-shell        ; Interaction mode for ChatGPT
              cider                ; Clojure Interactive Development Environment
              clj-refactor         ; Commands for refactoring Clojure code
              company              ; Modular text completion framework
@@ -211,6 +212,7 @@
              nano-modeline        ; N Λ N O modeline
              nano-theme           ; N Λ N O theme
              nix-mode             ; Major mode for editing .nix files
+             ob-chatgpt-shell     ; Org babel functions for ChatGPT evaluation
              olivetti             ; Minor mode for a nice writing environment
              org                  ; Outline-based notes management and organizer
              org-bullets          ; Show bullets in org-mode as UTF-8 characters
@@ -690,6 +692,13 @@
      (autoload 'mu4e "mu4e" nil t))
    #+end_src
 
+** ChatGPT
+
+   #+begin_src emacs-lisp
+   (setq chatgpt-shell-openai-key
+         (auth-source-pick-first-password :host "api.openai.com"))
+   #+end_src
+
 ** Interactive functions
    <<sec:defuns>>
 
@@ -885,7 +894,6 @@
    #+END_SRC
 
 * Mode specific
-
 ** Eglot
 
    I am using [[https://joaotavora.github.io/eglot/][eglot]], which is built in from [[https://git.savannah.gnu.org/cgit/emacs.git/tree/etc/NEWS?h=emacs-29#n3273][emacs 29.1]]. Some performance issues
