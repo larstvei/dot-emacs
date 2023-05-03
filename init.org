@@ -1240,7 +1240,7 @@
 ** Rust
 
    #+begin_src emacs-lisp
-   (add-hook 'rust-mode-hook 'eglot-ensure)
+   (setq rustic-lsp-client 'eglot)
    #+end_src
 
 ** Go
