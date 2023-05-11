@@ -901,6 +901,7 @@
 
    #+begin_src emacs-lisp
    (setq eglot-events-buffer-size 0)
+   (add-hook 'eglot-managed-mode-hook (lambda () (eglot-inlay-hints-mode -1)))
    #+end_src
 
 ** Compilation
