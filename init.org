@@ -694,6 +694,14 @@
 
 ** ChatGPT
 
+   I have a line like this:
+
+   #+begin_example
+   machine api.openai.com password OPEN-AI-KEY
+   #+end_example
+
+   in my ~.authinfo~ file. Then the ~chatgpt-shell-openai-key~ can by set by:
+
    #+begin_src emacs-lisp
    (setq chatgpt-shell-openai-key
          (auth-source-pick-first-password :host "api.openai.com"))
