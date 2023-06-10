@@ -409,10 +409,19 @@
     available, defaulting to a light theme.
 
     #+BEGIN_SRC emacs-lisp
-    (let* ((variant (if (boundp 'ns-system-appearance) ns-system-appearance 'light))
-           (theme (intern (concat "nano-" (symbol-name variant)))))
-      (load-theme theme t))
+    (defun load-nano-theme (variant)
+      (let ((theme (intern (concat "nano-" (symbol-name variant)))))
+        (load-theme theme t)))
+
+    (load-nano-theme (if (boundp 'ns-system-appearance) ns-system-appearance 'light))
     #+END_SRC
+
+    Let's have Emacs change theme when the system appearance changes as well.
+
+    #+BEGIN_SRC emacs-lisp
+    (when (boundp 'ns-system-appearance-change-functions)
+      (add-hook 'ns-system-appearance-change-functions 'load-nano-theme))
+    #+END_SRC    
 
     I want to be able to quickly switch between a light and a dark theme.
 
