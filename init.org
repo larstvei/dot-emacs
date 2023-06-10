@@ -395,104 +395,113 @@
 
 ** Visual
 
-   I am using a lot from [[https://github.com/rougier/nano-emacs][rougier's N Λ N O Emacs]], starting with the theme. For
-   the white theme, I keep the light background toned down a touch.
+   I am using a lot from [[https://github.com/rougier/nano-emacs][rougier's N Λ N O Emacs]], starting with the theme.
 
-   #+BEGIN_SRC emacs-lisp
-   (setq nano-light-background "#fafafa")
-   #+END_SRC
+*** Theme
 
-   The theme is set according to the system appearance (on macOS) if that is
-   available, defaulting to a light theme.
+    For the light theme, I keep the light background toned down a touch.
 
-   #+BEGIN_SRC emacs-lisp
-   (let* ((variant (if (boundp 'ns-system-appearance) ns-system-appearance 'light))
-          (theme (intern (concat "nano-" (symbol-name variant)))))
-     (load-theme theme t))
-   #+END_SRC
+    #+BEGIN_SRC emacs-lisp
+    (setq nano-light-background "#fafafa")
+    #+END_SRC
 
-   This is the default setup for [[https://github.com/rougier/nano-modeline][N Λ N O Modeline]] after version 1.0.0:
+    The theme is set according to the system appearance (on macOS) if that is
+    available, defaulting to a light theme.
 
-   #+BEGIN_SRC emacs-lisp
-   (require 'nano-modeline)
-   (add-hook 'prog-mode-hook            #'nano-modeline-prog-mode)
-   (add-hook 'text-mode-hook            #'nano-modeline-text-mode)
-   (add-hook 'org-mode-hook             #'nano-modeline-org-mode)
-   (add-hook 'pdf-view-mode-hook        #'nano-modeline-pdf-mode)
-   (add-hook 'mu4e-headers-mode-hook    #'nano-modeline-mu4e-headers-mode)
-   (add-hook 'mu4e-view-mode-hook       #'nano-modeline-mu4e-message-mode)
-   (add-hook 'elfeed-show-mode-hook     #'nano-modeline-elfeed-entry-mode)
-   (add-hook 'elfeed-search-mode-hook   #'nano-modeline-elfeed-search-mode)
-   (add-hook 'term-mode-hook            #'nano-modeline-term-mode)
-   (add-hook 'xwidget-webkit-mode-hook  #'nano-modeline-xwidget-mode)
-   (add-hook 'messages-buffer-mode-hook #'nano-modeline-message-mode)
-   (add-hook 'org-capture-mode-hook     #'nano-modeline-org-capture-mode)
-   (add-hook 'org-agenda-mode-hook      #'nano-modeline-org-agenda-mode)
-   #+END_SRC
+    #+BEGIN_SRC emacs-lisp
+    (let* ((variant (if (boundp 'ns-system-appearance) ns-system-appearance 'light))
+           (theme (intern (concat "nano-" (symbol-name variant)))))
+      (load-theme theme t))
+    #+END_SRC
 
-   We set the ~nano-modeline-text-mode~ as default with:
+    I want to be able to quickly switch between a light and a dark theme.
 
-   #+BEGIN_SRC emacs-lisp
-   (nano-modeline-text-mode 1)
-   #+END_SRC
+    #+BEGIN_SRC emacs-lisp
+    (defun cycle-themes ()
+      "Returns a function that lets you cycle your themes."
+      (let ((themes '(nano-light nano-dark)))
+        (lambda ()
+          (interactive)
+          ;; Rotates the thme cycle and changes the current theme.
+          (let ((rotated (nconc (cdr themes) (list (car themes)))))
+            (load-theme (car (setq themes rotated)) t))
+          (message (concat "Switched to " (symbol-name (car themes)))))))
+    #+END_SRC
 
-   And disable the default modeline.
+*** Mode line
 
-   #+BEGIN_SRC emacs-lisp
-   (setq-default mode-line-format nil)
-   #+END_SRC
+    This is the default setup for [[https://github.com/rougier/nano-modeline][N Λ N O Modeline]] after version 1.0.0:
 
-   It looks best if we add a small margin around the edges of the frame.
+    #+BEGIN_SRC emacs-lisp
+    (require 'nano-modeline)
+    (add-hook 'prog-mode-hook            #'nano-modeline-prog-mode)
+    (add-hook 'text-mode-hook            #'nano-modeline-text-mode)
+    (add-hook 'org-mode-hook             #'nano-modeline-org-mode)
+    (add-hook 'pdf-view-mode-hook        #'nano-modeline-pdf-mode)
+    (add-hook 'mu4e-headers-mode-hook    #'nano-modeline-mu4e-headers-mode)
+    (add-hook 'mu4e-view-mode-hook       #'nano-modeline-mu4e-message-mode)
+    (add-hook 'elfeed-show-mode-hook     #'nano-modeline-elfeed-entry-mode)
+    (add-hook 'elfeed-search-mode-hook   #'nano-modeline-elfeed-search-mode)
+    (add-hook 'term-mode-hook            #'nano-modeline-term-mode)
+    (add-hook 'xwidget-webkit-mode-hook  #'nano-modeline-xwidget-mode)
+    (add-hook 'messages-buffer-mode-hook #'nano-modeline-message-mode)
+    (add-hook 'org-capture-mode-hook     #'nano-modeline-org-capture-mode)
+    (add-hook 'org-agenda-mode-hook      #'nano-modeline-org-agenda-mode)
+    #+END_SRC
 
-   #+begin_src emacs-lisp
-   (add-to-list 'default-frame-alist '(internal-border-width . 24))
-   #+end_src
+    We set the ~nano-modeline-text-mode~ as default with:
 
-   I want to be able to quickly switch between a light and a dark theme.
+    #+BEGIN_SRC emacs-lisp
+    (nano-modeline-text-mode 1)
+    #+END_SRC
 
-   #+BEGIN_SRC emacs-lisp
-   (defun cycle-themes ()
-     "Returns a function that lets you cycle your themes."
-     (let ((themes '(nano-light nano-dark)))
-       (lambda ()
-         (interactive)
-         ;; Rotates the thme cycle and changes the current theme.
-         (let ((rotated (nconc (cdr themes) (list (car themes)))))
-           (load-theme (car (setq themes rotated)) t))
-         (message (concat "Switched to " (symbol-name (car themes)))))))
-   #+END_SRC
+    And disable the default modeline.
 
-   Pick the first of the following fonts that is installed on the system.
+    #+BEGIN_SRC emacs-lisp
+    (setq-default mode-line-format nil)
+    #+END_SRC
 
-   #+BEGIN_SRC emacs-lisp
-   (cond ((member "Source Code Pro" (font-family-list))
-          (set-face-attribute 'default nil :font "Source Code Pro-15"))
-         ((member "Roboto Mono" (font-family-list))
-          (set-face-attribute 'default nil :font "Roboto Mono-14"))
-         ((member "Fira Code" (font-family-list))
-          (set-face-attribute 'default nil :font "Fira Code-15"))
-         ((member "Inconsolata" (font-family-list))
-          (set-face-attribute 'default nil :font "Inconsolata-14")))
-   #+END_SRC
+    It looks best if we add a small margin around the edges of the frame.
 
-   New in Emacs 24.4 is the =prettify-symbols-mode=! It's neat.
+    #+begin_src emacs-lisp
+    (add-to-list 'default-frame-alist '(internal-border-width . 24))
+    #+end_src
 
-   #+BEGIN_SRC emacs-lisp
-   (setq-default prettify-symbols-alist '(("lambda" . ?λ)
-                                          ("delta" . ?Δ)
-                                          ("gamma" . ?Γ)
-                                          ("phi" . ?φ)
-                                          ("psi" . ?ψ)))
-   #+END_SRC
+*** Font
 
-   [[https://github.com/rnkn/olivetti][Olivetti]] is a package that simply centers the text of a buffer. It is very
-   simple and beautiful. The default width is just a bit short.
+    Pick the first of the following fonts that is installed on the system.
 
-   #+BEGIN_SRC emacs-lisp
-   (with-eval-after-load 'olivetti
-     (setq-default olivetti-body-width (+ fill-column 3))
-     (remove-hook 'olivetti-mode-on-hook 'visual-line-mode))
-   #+END_SRC
+    #+BEGIN_SRC emacs-lisp
+    (cond ((member "Source Code Pro" (font-family-list))
+           (set-face-attribute 'default nil :font "Source Code Pro-15"))
+          ((member "Roboto Mono" (font-family-list))
+           (set-face-attribute 'default nil :font "Roboto Mono-14"))
+          ((member "Fira Code" (font-family-list))
+           (set-face-attribute 'default nil :font "Fira Code-15"))
+          ((member "Inconsolata" (font-family-list))
+           (set-face-attribute 'default nil :font "Inconsolata-14")))
+    #+END_SRC
+
+    New in Emacs 24.4 is the =prettify-symbols-mode=! It's neat.
+
+    #+BEGIN_SRC emacs-lisp
+    (setq-default prettify-symbols-alist '(("lambda" . ?λ)
+                                           ("delta" . ?Δ)
+                                           ("gamma" . ?Γ)
+                                           ("phi" . ?φ)
+                                           ("psi" . ?ψ)))
+    #+END_SRC
+
+*** Centering with Olivetti
+
+    [[https://github.com/rnkn/olivetti][Olivetti]] is a package that simply centers the text of a buffer. It is very
+    simple and beautiful. The default width is just a bit short.
+
+    #+BEGIN_SRC emacs-lisp
+    (with-eval-after-load 'olivetti
+      (setq-default olivetti-body-width (+ fill-column 3))
+      (remove-hook 'olivetti-mode-on-hook 'visual-line-mode))
+    #+END_SRC
 
 ** Dashboard
 
@@ -1075,7 +1084,7 @@
 ** Python
 
    #+BEGIN_SRC emacs-lisp
-   (setq python-shell-interpreter "python3")
+   (setq python-shell-interpreter "python3.10")
    (add-hook 'python-mode-hook
              (lambda () (setq forward-sexp-function nil)))
    #+END_SRC
