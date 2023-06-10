@@ -395,11 +395,20 @@
 
 ** Visual
 
-   I am using a lot from [[https://github.com/rougier/nano-emacs][rougier's N Λ N O Emacs]], starting with the theme.
+   I am using a lot from [[https://github.com/rougier/nano-emacs][rougier's N Λ N O Emacs]], starting with the theme. For
+   the white theme, I keep the light background toned down a touch.
 
    #+BEGIN_SRC emacs-lisp
    (setq nano-light-background "#fafafa")
-   (load-theme 'nano-light t)
+   #+END_SRC
+
+   The theme is set according to the system appearance (on macOS) if that is
+   available, defaulting to a light theme.
+
+   #+BEGIN_SRC emacs-lisp
+   (let* ((variant (if (boundp 'ns-system-appearance) ns-system-appearance 'light))
+          (theme (intern (concat "nano-" (symbol-name variant)))))
+     (load-theme theme t))
    #+END_SRC
 
    This is the default setup for [[https://github.com/rougier/nano-modeline][N Λ N O Modeline]] after version 1.0.0:
