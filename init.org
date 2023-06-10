@@ -395,12 +395,42 @@
 
 ** Visual
 
-   Let's set things with [[https://github.com/rougier/nano-emacs][rougier's N Λ N O Emacs]].
+   I am using a lot from [[https://github.com/rougier/nano-emacs][rougier's N Λ N O Emacs]], starting with the theme.
 
    #+BEGIN_SRC emacs-lisp
    (setq nano-light-background "#fafafa")
    (load-theme 'nano-light t)
-   (nano-modeline-mode 1)
+   #+END_SRC
+
+   This is the default setup for [[https://github.com/rougier/nano-modeline][N Λ N O Modeline]] after version 1.0.0:
+
+   #+BEGIN_SRC emacs-lisp
+   (require 'nano-modeline)
+   (add-hook 'prog-mode-hook            #'nano-modeline-prog-mode)
+   (add-hook 'text-mode-hook            #'nano-modeline-text-mode)
+   (add-hook 'org-mode-hook             #'nano-modeline-org-mode)
+   (add-hook 'pdf-view-mode-hook        #'nano-modeline-pdf-mode)
+   (add-hook 'mu4e-headers-mode-hook    #'nano-modeline-mu4e-headers-mode)
+   (add-hook 'mu4e-view-mode-hook       #'nano-modeline-mu4e-message-mode)
+   (add-hook 'elfeed-show-mode-hook     #'nano-modeline-elfeed-entry-mode)
+   (add-hook 'elfeed-search-mode-hook   #'nano-modeline-elfeed-search-mode)
+   (add-hook 'term-mode-hook            #'nano-modeline-term-mode)
+   (add-hook 'xwidget-webkit-mode-hook  #'nano-modeline-xwidget-mode)
+   (add-hook 'messages-buffer-mode-hook #'nano-modeline-message-mode)
+   (add-hook 'org-capture-mode-hook     #'nano-modeline-org-capture-mode)
+   (add-hook 'org-agenda-mode-hook      #'nano-modeline-org-agenda-mode)
+   #+END_SRC
+
+   We set the ~nano-modeline-text-mode~ as default with:
+
+   #+BEGIN_SRC emacs-lisp
+   (nano-modeline-text-mode 1)
+   #+END_SRC
+
+   And disable the default modeline.
+
+   #+BEGIN_SRC emacs-lisp
+   (setq-default mode-line-format nil)
    #+END_SRC
 
    It looks best if we add a small margin around the edges of the frame.
