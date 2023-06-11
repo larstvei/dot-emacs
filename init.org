@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(dashboard            ; A startup screen extracted from Spacemacs
-            define-word          ; display the definition of word at point
+          '(define-word          ; display the definition of word at point
             diff-hl              ; Highlight uncommitted changes using VC
             direnv               ; direnv integration
             editorconfig         ; EditorConfig Emacs Plugin
@@ -568,15 +567,19 @@
 * Dashboard
 
   #+begin_src emacs-lisp
-  (require 'dashboard)
-  (dashboard-setup-startup-hook)
-  (setq dashboard-banner-logo-title nil
-        dashboard-center-content t
-        dashboard-set-footer nil
-        dashboard-page-separator "\n\n\n"
-        dashboard-items '((projects . 15)
-                          (recents  . 15)
-                          (bookmarks . 5)))
+
+  ;; A startup screen extracted from Spacemacs
+  (use-package dashboard
+    :config
+    (setq dashboard-banner-logo-title nil
+          dashboard-center-content t
+          dashboard-set-footer nil
+          dashboard-page-separator "\n\n\n"
+          dashboard-items '((projects . 15)
+                            (recents  . 15)
+                            (bookmarks . 5)))
+    (dashboard-setup-startup-hook))
+
   #+end_src
 
 * Projectile
