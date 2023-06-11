@@ -207,9 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(counsel              ; Various completion functions using Ivy
-            counsel-projectile   ; Ivy integration for Projectile
-            dashboard            ; A startup screen extracted from Spacemacs
+          '(dashboard            ; A startup screen extracted from Spacemacs
             define-word          ; display the definition of word at point
             diff-hl              ; Highlight uncommitted changes using VC
             direnv               ; direnv integration
@@ -219,7 +217,6 @@
             focus                ; Dim color of text in surrounding sections
             go-mode              ; Major mode for the Go programming language
             haskell-mode         ; A Haskell editing mode
-            ivy-posframe         ; Using posframe to show Ivy
             lua-mode             ; a major-mode for editing Lua scripts
             magit                ; control Git from Emacs
             markdown-mode        ; Emacs Major mode for Markdown-formatted files
@@ -236,12 +233,10 @@
             ox-gfm               ; Export Github Flavored Markdown from Org
             paredit              ; minor mode for editing parentheses
             pdf-tools            ; Emacs support library for PDF files
-            projectile           ; Manage and navigate projects in Emacs easily
             proof-general        ; A generic Emacs interface for proof assistants
             racket-mode          ; Major mode for Racket language
             rustic               ; Rust development environment
             slime                ; Superior Lisp Interaction Mode for Emacs
-            smex                 ; M-x interface with Ido-style fuzzy matching
             try                  ; Try out Emacs packages
             vterm                ; A terminal via libvterm
             which-key            ; Display available keybindings in popup
@@ -423,7 +418,6 @@
              editorconfig-mode            ; Use editorconfig
              global-diff-hl-mode          ; Highlight uncommitted changes
              global-so-long-mode          ; Mitigate performance for long lines
-             counsel-projectile-mode      ; Manage and navigate projects
              recentf-mode                 ; Recently opened files
              show-paren-mode              ; Highlight matching parentheses
              which-key-mode))             ; Available keybindings in popup
@@ -585,7 +579,17 @@
                           (bookmarks . 5)))
   #+end_src
 
-* Ivy
+* Projectile
+
+  #+begin_src emacs-lisp
+
+  ;; Manage and navigate projects in Emacs easily
+  (use-package projectile
+    :bind (("C-c p" . 'projectile-command-map)))
+
+  #+end_src
+
+* Ivy/Counsel
 
   [[http://oremacs.com/swiper/][Ivy]] is a completion system, giving you completions and fuzzy search whenever
   you interact with the minibuffer. I transitioned to Ivy from [[https://emacs-helm.github.io/helm/][Helm]], mainly due
@@ -595,16 +599,73 @@
 
   #+begin_src emacs-lisp
 
-  (setq ivy-wrap t                          ; Easier access to the last candidate
-        ivy-height 25                       ; Give me more candidates to look at
-        ivy-use-virtual-buffers t           ; C-x b displays recents and bookmarks
-        ivy-count-format "(%d/%d) "         ; Display both the index and the count
-        ivy-on-del-error-function 'ignore   ; Lets me hold in backspace
-        ivy-posframe-min-width 100          ; Keep ivy reasonably narrow
-        ivy-posframe-height ivy-height      ; Maintain the height given by ivy
-        ivy-virtual-abbreviate 'abbreviate) ; Disambiguate same file in different dirs
-  (ivy-mode 1)
-  (ivy-posframe-mode 1)
+  ;; Incremental Vertical completion
+  (use-package ivy
+    :bind (("C-x b" . 'ivy-switch-buffer))
+    :config
+    (setq ivy-wrap t                          ; Easier access to the last candidate
+          ivy-height 25                       ; Give me more candidates to look at
+          ivy-use-virtual-buffers t           ; C-x b displays recents and bookmarks
+          ivy-count-format "(%d/%d) "         ; Display both the index and the count
+          ivy-on-del-error-function 'ignore   ; Lets me hold in backspace
+          ivy-posframe-min-width 100          ; Keep ivy reasonably narrow
+          ivy-posframe-height ivy-height      ; Maintain the height given by ivy
+          ivy-virtual-abbreviate 'abbreviate) ; Disambiguate same file in different dirs
+    (ivy-mode 1))
+
+  #+end_src
+
+  The completions are centered in a posframe (a frame at point).
+
+  #+begin_src emacs-lisp
+
+  ;; Using posframe to show Ivy
+  (use-package ivy-posframe
+    :config
+    (ivy-posframe-mode 1))
+
+  #+end_src
+
+  Use counsel for =M-x=, yanking and finding files.
+
+  #+begin_src emacs-lisp
+
+  ;; Various completion functions using Ivy
+  (use-package counsel
+    :bind
+    (("M-x" . 'counsel-M-x)
+     ("M-y" . 'counsel-yank-pop)
+     ("C-x C-f" . 'counsel-find-file)))
+
+  #+end_src
+
+  Use swiper for fancy search.
+
+  #+begin_src emacs-lisp
+
+  ;; Isearch with an overview.  Oh, man!
+  (use-package swiper
+    :bind (("C-c i" . 'swiper-isearch)))
+
+  #+end_src
+
+  Have Ivy play with nice with Projectile.
+
+  #+begin_src emacs-lisp
+
+  ;; Ivy integration for Projectile
+  (use-package counsel-projectile
+    :config
+    (counsel-projectile-mode 1))
+
+  #+end_src
+
+  Use smex to prioritize frequently used commands.
+
+  #+begin_src emacs-lisp
+
+  ;; M-x interface with Ido-style fuzzy matching
+  (use-package smex)
 
   #+end_src
 
@@ -1581,23 +1642,11 @@
 
   #+end_src
 
-** Bindings for [[https://github.com/abo-abo/swiper][Counsel]]
-
-   #+begin_src emacs-lisp
-
-   (global-set-key (kbd "C-c i")     'swiper-isearch)
-   (global-set-key (kbd "M-x")     'counsel-M-x)
-   (global-set-key (kbd "C-x C-f") 'counsel-find-file)
-   (global-set-key (kbd "M-y")     'counsel-yank-pop)
-   (global-set-key (kbd "C-x b")   'ivy-switch-buffer)
-
-   #+end_src
-
 ** Bindings for [[https://github.com/bbatsov/projectile][Projectile]]
 
    #+begin_src emacs-lisp
 
-   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+
 
    #+end_src
 
