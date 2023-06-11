@@ -180,6 +180,7 @@
   #+begin_src emacs-lisp
 
   (require 'use-package)
+  (setq use-package-always-ensure t)
 
   #+end_src
 
@@ -1292,7 +1293,6 @@
 
    ;; Integrated environment for *TeX*
    (use-package auctex
-     :ensure t
      :defer t)
 
    #+end_src
