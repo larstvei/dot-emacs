@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(company-coq          ; A collection of extensions PG's Coq mode
-            counsel              ; Various completion functions using Ivy
+          '(counsel              ; Various completion functions using Ivy
             counsel-projectile   ; Ivy integration for Projectile
             dashboard            ; A startup screen extracted from Spacemacs
             define-word          ; display the definition of word at point
@@ -1470,7 +1469,9 @@
 
    #+begin_src emacs-lisp
 
-   (add-hook 'coq-mode-hook #'company-coq-mode)
+   ;; A collection of extensions PG's Coq mode
+   (use-package company-coq
+     :hook (coq-mode . company-coq-mode))
 
    #+end_src
 
