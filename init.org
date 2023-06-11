@@ -457,7 +457,8 @@
 
     #+begin_src emacs-lisp
 
-    (setq nano-light-background "#fafafa")
+    (setq nano-light-background "#fafafa"
+          nano-light-highlight "#f5f7f8")
 
     #+end_src
 
