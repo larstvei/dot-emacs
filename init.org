@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(define-word          ; display the definition of word at point
-            diff-hl              ; Highlight uncommitted changes using VC
+          '(diff-hl              ; Highlight uncommitted changes using VC
             direnv               ; direnv integration
             editorconfig         ; EditorConfig Emacs Plugin
             erlang               ; Erlang major mode
@@ -723,76 +722,91 @@
 
 * Spelling
 
-  Flyspell offers on-the-fly spell checking. We can enable flyspell for all
-  text-modes with this snippet.
+** Flyspell
 
-  #+begin_src emacs-lisp
+   Flyspell offers on-the-fly spell checking. We can enable flyspell for all
+   text-modes with this snippet.
 
-  (add-hook 'text-mode-hook 'turn-on-flyspell)
+   #+begin_src emacs-lisp
 
-  #+end_src
+   (add-hook 'text-mode-hook 'turn-on-flyspell)
 
-  To use flyspell for programming there is =flyspell-prog-mode=, that only
-  enables spell checking for comments and strings. We can enable it for all
-  programming modes using the =prog-mode-hook=.
+   #+end_src
 
-  #+begin_src emacs-lisp
+   To use flyspell for programming there is =flyspell-prog-mode=, that only
+   enables spell checking for comments and strings. We can enable it for all
+   programming modes using the =prog-mode-hook=.
 
-  (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+   #+begin_src emacs-lisp
 
-  #+end_src
+   (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 
-  Tell Emacs what program is used for spell checking.
+   #+end_src
 
-  #+begin_src emacs-lisp
-  (setq ispell-program-name "aspell")
-  #+end_src
+   Tell Emacs what program is used for spell checking.
 
-  When working with several languages, we should be able to cycle through the
-  languages we most frequently use. Every buffer should have a separate cycle
-  of languages, so that cycling in one buffer does not change the state in a
-  different buffer (this problem occurs if you only have one global cycle). We
-  can implement this by using a [[http://www.gnu.org/software/emacs/manual/html_node/elisp/Closures.html][closure]].
+   #+begin_src emacs-lisp
+   (setq ispell-program-name "aspell")
+   #+end_src
 
-  #+begin_src emacs-lisp
+   When working with several languages, we should be able to cycle through the
+   languages we most frequently use. Every buffer should have a separate cycle
+   of languages, so that cycling in one buffer does not change the state in a
+   different buffer (this problem occurs if you only have one global cycle). We
+   can implement this by using a [[http://www.gnu.org/software/emacs/manual/html_node/elisp/Closures.html][closure]].
 
-  (defun cycle-languages ()
-    "Changes the ispell dictionary to the first element in
-  ISPELL-LANGUAGES, and returns an interactive function that cycles
-  the languages in ISPELL-LANGUAGES when invoked."
-    (let ((ispell-languages (list "american" "norsk")))
-      (ispell-change-dictionary (car ispell-languages))
-      (lambda ()
-        (interactive)
-        ;; Rotates the languages cycle and changes the ispell dictionary.
-        (let ((rotated (nconc (cdr ispell-languages) (list (car ispell-languages)))))
-          (ispell-change-dictionary (car (setq ispell-languages rotated)))))))
+   #+begin_src emacs-lisp
 
-  #+end_src
+   (defun cycle-languages ()
+     "Changes the ispell dictionary to the first element in
+   ISPELL-LANGUAGES, and returns an interactive function that cycles
+   the languages in ISPELL-LANGUAGES when invoked."
+     (let ((ispell-languages (list "american" "norsk")))
+       (ispell-change-dictionary (car ispell-languages))
+       (lambda ()
+         (interactive)
+         ;; Rotates the languages cycle and changes the ispell dictionary.
+         (let ((rotated (nconc (cdr ispell-languages) (list (car ispell-languages)))))
+           (ispell-change-dictionary (car (setq ispell-languages rotated)))))))
 
-  =flyspell= signals an error if there is no spell-checking tool is installed.
-  We can advice =turn-on-flyspell= and =flyspell-prog-mode= to only try to
-  enable =flyspell= if a spell-checking tool is available. Also we want to
-  enable cycling the languages by typing =C-c l=, so we bind the function
-  returned from =cycle-languages=.
+   #+end_src
 
-  #+begin_src emacs-lisp
+   =flyspell= signals an error if there is no spell-checking tool is installed.
+   We can advice =turn-on-flyspell= and =flyspell-prog-mode= to only try to
+   enable =flyspell= if a spell-checking tool is available. Also we want to
+   enable cycling the languages by typing =C-c l=, so we bind the function
+   returned from =cycle-languages=.
 
-  (defadvice turn-on-flyspell (before check nil activate)
-    "Turns on flyspell only if a spell-checking tool is installed."
-    (when (executable-find ispell-program-name)
-      (local-set-key (kbd "C-c l") (cycle-languages))))
+   #+begin_src emacs-lisp
 
-  #+end_src
+   (defadvice turn-on-flyspell (before check nil activate)
+     "Turns on flyspell only if a spell-checking tool is installed."
+     (when (executable-find ispell-program-name)
+       (local-set-key (kbd "C-c l") (cycle-languages))))
 
-  #+begin_src emacs-lisp
+   #+end_src
 
-  (defadvice flyspell-prog-mode (before check nil activate)
-    "Turns on flyspell only if a spell-checking tool is installed."
-    (when (executable-find ispell-program-name)
-      (local-set-key (kbd "C-c l") (cycle-languages))))
+   #+begin_src emacs-lisp
 
-  #+end_src
+   (defadvice flyspell-prog-mode (before check nil activate)
+     "Turns on flyspell only if a spell-checking tool is installed."
+     (when (executable-find ispell-program-name)
+       (local-set-key (kbd "C-c l") (cycle-languages))))
+
+   #+end_src
+
+** Define word
+
+   This super neat package looks up the word at point. I use it a lot!
+
+   #+begin_src emacs-lisp
+
+   ;; display the definition of word at point
+   (use-package define-word
+     :defer t
+     :bind (("C-c D" . 'define-word-at-point)))
+
+   #+end_src
 
 * Org
 
