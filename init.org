@@ -721,33 +721,9 @@
   #+end_src
 
 * Spelling
-
 ** Flyspell
 
-   Flyspell offers on-the-fly spell checking. We can enable flyspell for all
-   text-modes with this snippet.
-
-   #+begin_src emacs-lisp
-
-   (add-hook 'text-mode-hook 'turn-on-flyspell)
-
-   #+end_src
-
-   To use flyspell for programming there is =flyspell-prog-mode=, that only
-   enables spell checking for comments and strings. We can enable it for all
-   programming modes using the =prog-mode-hook=.
-
-   #+begin_src emacs-lisp
-
-   (add-hook 'prog-mode-hook 'flyspell-prog-mode)
-
-   #+end_src
-
-   Tell Emacs what program is used for spell checking.
-
-   #+begin_src emacs-lisp
-   (setq ispell-program-name "aspell")
-   #+end_src
+   Flyspell offers on-the-fly spell checking.
 
    When working with several languages, we should be able to cycle through the
    languages we most frequently use. Every buffer should have a separate cycle
@@ -762,7 +738,6 @@
    ISPELL-LANGUAGES, and returns an interactive function that cycles
    the languages in ISPELL-LANGUAGES when invoked."
      (let ((ispell-languages (list "american" "norsk")))
-       (ispell-change-dictionary (car ispell-languages))
        (lambda ()
          (interactive)
          ;; Rotates the languages cycle and changes the ispell dictionary.
@@ -771,27 +746,24 @@
 
    #+end_src
 
-   =flyspell= signals an error if there is no spell-checking tool is installed.
-   We can advice =turn-on-flyspell= and =flyspell-prog-mode= to only try to
-   enable =flyspell= if a spell-checking tool is available. Also we want to
-   enable cycling the languages by typing =C-c l=, so we bind the function
-   returned from =cycle-languages=.
+   We enable =flyspell-mode= for all text-modes, and use =flyspell-prog-mode=
+   for spell checking comments and strings in all programming modes. We bind
+   =C-c l= to a function returned from =cycle-languages=, giving a language
+   switcher for every buffer where flyspell is enabled.
 
    #+begin_src emacs-lisp
 
-   (defadvice turn-on-flyspell (before check nil activate)
-     "Turns on flyspell only if a spell-checking tool is installed."
-     (when (executable-find ispell-program-name)
-       (local-set-key (kbd "C-c l") (cycle-languages))))
-
-   #+end_src
-
-   #+begin_src emacs-lisp
-
-   (defadvice flyspell-prog-mode (before check nil activate)
-     "Turns on flyspell only if a spell-checking tool is installed."
-     (when (executable-find ispell-program-name)
-       (local-set-key (kbd "C-c l") (cycle-languages))))
+   (use-package flyspell
+     :defer t
+     :if (executable-find "aspell")
+     :hook ((text-mode . flyspell-mode)
+            (prog-mode . flyspell-prog-mode)
+            (flyspell-mode . (lambda ()
+                               (local-set-key
+                                (kbd "C-c l")
+                                (cycle-languages)))))
+     :config
+     (ispell-change-dictionary "american" t))
 
    #+end_src
 
