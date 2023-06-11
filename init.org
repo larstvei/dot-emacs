@@ -51,7 +51,6 @@
   and you might have to restart your Emacs the first time. If you experience
   bugs, please let me know!
 
-* Configurations
 * Meta
 
   All changes to the configuration should be done in =init.org=, *not* in
@@ -173,16 +172,14 @@
   #+end_src
 
 * Packages
-
-  Managing extensions for Emacs is simplified using =package= which is built in
-  to Emacs 24 and newer. To load downloaded packages we need to initialize
-  =package=. =cl= is a library that contains many functions from Common Lisp,
-  and comes in handy quite often, so we want to make sure it's loaded, along
-  with =package=, which is obviously needed.
+  
+  John Wiegley's extremely popular [[https://github.com/jwiegley/use-package][use-package]] was included in [[https://lists.gnu.org/archive/html/emacs-devel/2022-12/msg00261.html][Emacs 29]]. It
+  provides a powerful macro for isolating package configuration. After ignoring
+  this for a decade, I'll budge and give it a whirl.
 
   #+begin_src emacs-lisp
 
-  (require 'package)
+  (require 'use-package)
 
   #+end_src
 
