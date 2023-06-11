@@ -206,8 +206,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(auctex               ; Integrated environment for *TeX*
-            chatgpt-shell        ; Interaction mode for ChatGPT
+          '(chatgpt-shell        ; Interaction mode for ChatGPT
             cider                ; Clojure Interactive Development Environment
             clj-refactor         ; Commands for refactoring Clojure code
             company              ; Modular text completion framework
@@ -1287,97 +1286,75 @@
 
    #+end_src
 
-** LaTeX and org-mode LaTeX export
-
-   =.tex=-files should be associated with =latex-mode= instead of =tex-mode=.
+** LaTeX
 
    #+begin_src emacs-lisp
 
-   (add-to-list 'auto-mode-alist '("\\.tex\\'" . latex-mode))
+   ;; Integrated environment for *TeX*
+   (use-package auctex
+     :ensure t
+     :defer t)
 
    #+end_src
 
-   Use [[http://mg.readthedocs.io/latexmk.html][latexmk]] for compilation by default.
+* Org-mode LaTeX export
 
-   #+begin_src emacs-lisp
+  I like using the [[https://code.google.com/p/minted/][Minted]] package for source blocks in LaTeX. To make org use
+  this we add the following snippet.
 
-   (add-hook 'LaTeX-mode-hook
-             (lambda ()
-               (add-hook 'hack-local-variables-hook
-                         (lambda ()
-                          (setq-local compile-command
-                                      (concat "latexmk -pdf -pvc "
-                                              (if (eq TeX-master t)
-                                                  (file-name-base (buffer-name))
-                                                TeX-master))))
-                         t t)))
+  #+begin_src emacs-lisp
 
-   #+end_src
+  (eval-after-load 'org
+    '(add-to-list 'org-latex-packages-alist '("" "minted")))
+  (setq org-latex-listings 'minted)
 
-   Use ~biblatex~ for bibliography.
+  #+end_src
 
-   #+begin_src emacs-lisp
+  Because [[https://code.google.com/p/minted/][Minted]] uses [[http://pygments.org][Pygments]] (an external process), we must add the
+  =-shell-escape= option to the =org-latex-pdf-process= commands. The
+  =tex-compile-commands= variable controls the default compile command for Tex-
+  and LaTeX-mode, we can add the flag with a rather dirty statement (if anyone
+  finds a nicer way to do this, please let me know).
 
-   (setq-default bibtex-dialect 'biblatex)
+  #+begin_src emacs-lisp
 
-   #+end_src
+  (eval-after-load 'tex-mode
+    '(setcar (cdr (cddaar tex-compile-commands)) " -shell-escape "))
 
-   I like using the [[https://code.google.com/p/minted/][Minted]] package for source blocks in LaTeX. To make org use
-   this we add the following snippet.
+  #+end_src
 
-   #+begin_src emacs-lisp
+  When exporting from Org to LaTeX, use ~latexmk~ for compilation.
 
-   (eval-after-load 'org
-     '(add-to-list 'org-latex-packages-alist '("" "minted")))
-   (setq org-latex-listings 'minted)
+  #+begin_src emacs-lisp
 
-   #+end_src
+  (eval-after-load 'ox-latex
+    '(setq org-latex-pdf-process
+           '("latexmk -pdflatex='xelatex -shell-escape -interaction nonstopmode' -pdf -f %f")))
 
-   Because [[https://code.google.com/p/minted/][Minted]] uses [[http://pygments.org][Pygments]] (an external process), we must add the
-   =-shell-escape= option to the =org-latex-pdf-process= commands. The
-   =tex-compile-commands= variable controls the default compile command for
-   Tex- and LaTeX-mode, we can add the flag with a rather dirty statement (if
-   anyone finds a nicer way to do this, please let me know).
+  #+end_src
 
-   #+begin_src emacs-lisp
+  For my thesis, I need to use our university's LaTeX class, this snippet makes
+  that class available.
 
-   (eval-after-load 'tex-mode
-     '(setcar (cdr (cddaar tex-compile-commands)) " -shell-escape "))
+  #+begin_src emacs-lisp
 
-   #+end_src
-
-   When exporting from Org to LaTeX, use ~latexmk~ for compilation.
-
-   #+begin_src emacs-lisp
-
-   (eval-after-load 'ox-latex
-     '(setq org-latex-pdf-process
-            '("latexmk -pdflatex='xelatex -shell-escape -interaction nonstopmode' -pdf -f %f")))
-
-   #+end_src
-
-   For my thesis, I need to use our university's LaTeX class, this snippet
-   makes that class available.
-
-   #+begin_src emacs-lisp
-
-   (eval-after-load "ox-latex"
-     '(progn
-        (add-to-list 'org-latex-classes
-                     '("ifimaster"
-                       "\\documentclass{ifimaster}
-   [DEFAULT-PACKAGES]
-   [PACKAGES]
-   [EXTRA]
-   \\usepackage{babel,csquotes,ifimasterforside,url,varioref}"
+  (eval-after-load "ox-latex"
+    '(progn
+       (add-to-list 'org-latex-classes
+                    '("ifimaster"
+                      "\\documentclass{ifimaster}
+  [DEFAULT-PACKAGES]
+  [PACKAGES]
+  [EXTRA]
+  \\usepackage{babel,csquotes,ifimasterforside,url,varioref}"
                       ("\\chapter{%s}" . "\\chapter*{%s}")
                       ("\\section{%s}" . "\\section*{%s}")
                       ("\\subsection{%s}" . "\\subsection*{%s}")
                       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                       ("\\paragraph{%s}" . "\\paragraph*{%s}")
                       ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-        (add-to-list 'org-latex-classes
-                     '("easychair" "\\documentclass{easychair}"
+       (add-to-list 'org-latex-classes
+                    '("easychair" "\\documentclass{easychair}"
                       ("\\section{%s}" . "\\section*{%s}")
                       ("\\subsection{%s}" . "\\subsection*{%s}")
                       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
@@ -1385,28 +1362,28 @@
                       ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
        (custom-set-variables '(org-export-allow-bind-keywords t))))
 
-   #+end_src
+  #+end_src
 
-   Use Emacs for opening the PDF file, when invoking ~C-c C-e l o~.
+  Use Emacs for opening the PDF file, when invoking ~C-c C-e l o~.
 
-   #+begin_src emacs-lisp
+  #+begin_src emacs-lisp
 
-   (require 'org)
-   (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))
-   (setq org-adapt-indentation t)
+  (require 'org)
+  (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))
+  (setq org-adapt-indentation t)
 
-   #+end_src
+  #+end_src
 
-   #+begin_src emacs-lisp
+  #+begin_src emacs-lisp
 
-   (setq org-babel-python-command "python3")
-   (org-babel-do-load-languages
-    'org-babel-load-languages
-    '((emacs-lisp . t)
-      (python . t)
-      (clojure . t)))
+  (setq org-babel-python-command "python3")
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (python . t)
+     (clojure . t)))
 
-   #+end_src
+  #+end_src
 
 ** Haskell
 
