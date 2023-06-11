@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(diff-hl              ; Highlight uncommitted changes using VC
-            direnv               ; direnv integration
+          '(direnv               ; direnv integration
             editorconfig         ; EditorConfig Emacs Plugin
             erlang               ; Erlang major mode
             expand-region        ; Increase selected region by semantic units
@@ -216,7 +215,6 @@
             go-mode              ; Major mode for the Go programming language
             haskell-mode         ; A Haskell editing mode
             lua-mode             ; a major-mode for editing Lua scripts
-            magit                ; control Git from Emacs
             markdown-mode        ; Emacs Major mode for Markdown-formatted files
             maude-mode           ; Emacs mode for the programming language Maude
             minizinc-mode        ; Major mode for MiniZinc code
@@ -414,7 +412,6 @@
              delete-selection-mode        ; Replace selected text
              dirtrack-mode                ; directory tracking in *shell*
              editorconfig-mode            ; Use editorconfig
-             global-diff-hl-mode          ; Highlight uncommitted changes
              global-so-long-mode          ; Mitigate performance for long lines
              recentf-mode                 ; Recently opened files
              show-paren-mode              ; Highlight matching parentheses
@@ -562,6 +559,29 @@
      (remove-hook 'olivetti-mode-on-hook 'visual-line-mode))
 
    #+end_src
+
+* Version control
+
+  Magit is the best.
+
+  #+begin_src emacs-lisp
+
+  ;; A Git porcelain inside Emacs.
+  (use-package magit
+    :bind (("C-c m" . magit-status)))
+
+  #+end_src
+
+  Have some visual indication where there are uncommitted changes.
+
+  #+begin_src emacs-lisp
+
+  ;; Highlight uncommitted changes using VC
+  (use-package diff-hl
+    :config
+    (global-diff-hl-mode 1))
+
+  #+end_src
 
 * Dashboard
 
@@ -1620,14 +1640,6 @@
   (define-key custom-bindings-map (kbd "C-c e")  'mc/edit-lines)
   (define-key custom-bindings-map (kbd "C-c a")  'mc/mark-all-like-this)
   (define-key custom-bindings-map (kbd "C-c n")  'mc/mark-next-like-this)
-
-  #+end_src
-
-** Bindings for [[https://magit.vc/][Magit]]
-
-  #+begin_src emacs-lisp
-
-  (define-key custom-bindings-map (kbd "C-c m") 'magit-status)
 
   #+end_src
 
