@@ -207,9 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(cider                ; Clojure Interactive Development Environment
-            clj-refactor         ; Commands for refactoring Clojure code
-            company              ; Modular text completion framework
+          '(company              ; Modular text completion framework
             company-coq          ; A collection of extensions PG's Coq mode
             counsel              ; Various completion functions using Ivy
             counsel-projectile   ; Ivy integration for Projectile
@@ -1195,6 +1193,27 @@
 
     #+end_src
 
+*** Clojure
+
+    A very simple setup for Clojure. Cider works pretty much out of the box!
+
+    #+begin_src emacs-lisp
+
+    ;; Clojure Interactive Development Environment
+    (use-package cider
+      :defer t
+      :bind (:map cider-repl-mode-map ("C-l" . cider-repl-clear-buffer)))
+
+    #+end_src
+
+    #+begin_src emacs-lisp
+
+    ;; Commands for refactoring Clojure code
+    (use-package clj-refactor
+      :defer t)
+
+    #+end_src
+
 *** Common lisp
 
     I use [[http://www.common-lisp.net/project/slime/][Slime]] along with =lisp-mode= to edit Common Lisp code. Slime provides
@@ -1583,15 +1602,6 @@
    #+begin_src emacs-lisp
 
    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-
-   #+end_src
-
-** Bindings for [[https://github.com/clojure-emacs/cider][Cider]]
-
-   #+begin_src emacs-lisp
-
-   (with-eval-after-load 'cider
-    (define-key cider-repl-mode-map (kbd "C-l") 'cider-repl-clear-buffer))
 
    #+end_src
 
