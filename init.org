@@ -210,7 +210,6 @@
   (let* ((package--builtins nil)
          (packages
           '(auctex               ; Integrated environment for *TeX*
-            auto-compile         ; automatically compile Emacs Lisp libraries
             chatgpt-shell        ; Interaction mode for ChatGPT
             cider                ; Clojure Interactive Development Environment
             clj-refactor         ; Commands for refactoring Clojure code
@@ -222,18 +221,13 @@
             define-word          ; display the definition of word at point
             diff-hl              ; Highlight uncommitted changes using VC
             direnv               ; direnv integration
-            doom-themes          ; An opinionated pack of modern color-themes
             editorconfig         ; EditorConfig Emacs Plugin
             erlang               ; Erlang major mode
             expand-region        ; Increase selected region by semantic units
             focus                ; Dim color of text in surrounding sections
             go-mode              ; Major mode for the Go programming language
-            golden-ratio         ; Automatic resizing windows to golden ratio
-            gnu-apl-mode         ; Integrate GNU APL with Emacs
             haskell-mode         ; A Haskell editing mode
             ivy-posframe         ; Using posframe to show Ivy
-            jedi                 ; Python auto-completion for Emacs
-            js2-mode             ; Improved JavaScript editing mode
             lua-mode             ; a major-mode for editing Lua scripts
             magit                ; control Git from Emacs
             markdown-mode        ; Emacs Major mode for Markdown-formatted files
@@ -1467,18 +1461,6 @@
    #+begin_src emacs-lisp
 
    (add-hook 'coq-mode-hook #'company-coq-mode)
-
-   #+end_src
-
-** APL
-
-   #+begin_src emacs-lisp
-
-   (with-eval-after-load 'gnu-apl-mode
-     (setq gnu-apl-key-prefix ?`)
-     (gnu-apl--initialize-key-prefix 'gnu-apl-key-prefix ?`)
-     (add-hook 'gnu-apl-mode-hook (lambda () (activate-input-method "APL-Z")))
-     (add-hook 'gnu-apl-interactive-mode-hook (lambda () (activate-input-method "APL-Z"))))
 
    #+end_src
 
