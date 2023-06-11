@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(chatgpt-shell        ; Interaction mode for ChatGPT
-            cider                ; Clojure Interactive Development Environment
+          '(cider                ; Clojure Interactive Development Environment
             clj-refactor         ; Commands for refactoring Clojure code
             company              ; Modular text completion framework
             company-coq          ; A collection of extensions PG's Coq mode
@@ -234,7 +233,6 @@
             nano-modeline        ; N Λ N O modeline
             nano-theme           ; N Λ N O theme
             nix-mode             ; Major mode for editing .nix files
-            ob-chatgpt-shell     ; Org babel functions for ChatGPT evaluation
             olivetti             ; Minor mode for a nice writing environment
             org                  ; Outline-based notes management and organizer
             org-bullets          ; Show bullets in org-mode as UTF-8 characters
@@ -857,8 +855,21 @@
 
   #+begin_src emacs-lisp
 
-  (setq chatgpt-shell-openai-key
-        (auth-source-pick-first-password :host "api.openai.com"))
+  ;; Interaction mode for ChatGPT
+  (use-package chatgpt-shell
+    :defer t
+    :config
+    (setq chatgpt-shell-openai-key
+          (auth-source-pick-first-password
+           :host "api.openai.com")))
+
+  #+end_src
+
+  #+begin_src emacs-lisp
+
+  ;; Org babel functions for ChatGPT evaluation
+  (use-package ob-chatgpt-shell
+    :defer t)
 
   #+end_src
 
