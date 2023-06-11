@@ -568,7 +568,7 @@
 
   ;; A Git porcelain inside Emacs.
   (use-package magit
-    :bind (("C-c m" . magit-status)))
+    :bind ("C-c m" . magit-status))
 
   #+end_src
 
@@ -607,7 +607,7 @@
 
   ;; Manage and navigate projects in Emacs easily
   (use-package projectile
-    :bind (("C-c p" . 'projectile-command-map)))
+    :bind ("C-c p" . projectile-command-map))
 
   #+end_src
 
@@ -623,7 +623,7 @@
 
   ;; Incremental Vertical completion
   (use-package ivy
-    :bind (("C-x b" . 'ivy-switch-buffer))
+    :bind ("C-x b" . ivy-switch-buffer)
     :config
     (setq ivy-wrap t                          ; Easier access to the last candidate
           ivy-height 25                       ; Give me more candidates to look at
@@ -655,9 +655,9 @@
   ;; Various completion functions using Ivy
   (use-package counsel
     :bind
-    (("M-x" . 'counsel-M-x)
-     ("M-y" . 'counsel-yank-pop)
-     ("C-x C-f" . 'counsel-find-file)))
+    (("M-x" . counsel-M-x)
+     ("M-y" . counsel-yank-pop)
+     ("C-x C-f" . counsel-find-file)))
 
   #+end_src
 
@@ -667,7 +667,7 @@
 
   ;; Isearch with an overview.  Oh, man!
   (use-package swiper
-    :bind (("C-c i" . 'swiper-isearch)))
+    :bind ("C-c i" . swiper-isearch))
 
   #+end_src
 
@@ -724,10 +724,11 @@
 
   ;; Modular text completion framework
   (use-package company
-    :bind (:map company-active-map
-                ("C-d" . 'company-show-doc-buffer)
-                ("C-n" . 'company-select-next)
-                ("C-p" . 'company-select-previous))
+    :bind (;; Note that a bug (probably) makes the quotes necessary here
+           :map company-active-map
+           ("C-d" . 'company-show-doc-buffer)
+           ("C-n" . 'company-select-next)
+           ("C-p" . 'company-select-previous))
     :config
     (setq company-idle-delay 0
           company-echo-delay 0
@@ -796,7 +797,7 @@
    ;; display the definition of word at point
    (use-package define-word
      :defer t
-     :bind (("C-c D" . 'define-word-at-point)))
+     :bind ("C-c D" . define-word-at-point))
 
    #+end_src
 
