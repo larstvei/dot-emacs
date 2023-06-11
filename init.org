@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(company              ; Modular text completion framework
-            company-coq          ; A collection of extensions PG's Coq mode
+          '(company-coq          ; A collection of extensions PG's Coq mode
             counsel              ; Various completion functions using Ivy
             counsel-projectile   ; Ivy integration for Projectile
             dashboard            ; A startup screen extracted from Spacemacs
@@ -423,7 +422,6 @@
              delete-selection-mode        ; Replace selected text
              dirtrack-mode                ; directory tracking in *shell*
              editorconfig-mode            ; Use editorconfig
-             global-company-mode          ; Auto-completion everywhere
              global-diff-hl-mode          ; Highlight uncommitted changes
              global-so-long-mode          ; Mitigate performance for long lines
              counsel-projectile-mode      ; Manage and navigate projects
@@ -642,13 +640,21 @@
 
   #+begin_src emacs-lisp
 
-  (setq company-idle-delay 0
-        company-echo-delay 0
-        company-dabbrev-downcase nil
-        company-minimum-prefix-length 2
-        company-selection-wrap-around t
-        company-transformers '(company-sort-by-occurrence
-                               company-sort-by-backend-importance))
+  ;; Modular text completion framework
+  (use-package company
+    :bind (:map company-active-map
+                ("C-d" . 'company-show-doc-buffer)
+                ("C-n" . 'company-select-next)
+                ("C-p" . 'company-select-previous))
+    :config
+    (setq company-idle-delay 0
+          company-echo-delay 0
+          company-dabbrev-downcase nil
+          company-minimum-prefix-length 2
+          company-selection-wrap-around t
+          company-transformers '(company-sort-by-occurrence
+                                 company-sort-by-backend-importance))
+    (global-company-mode 1))
 
   #+end_src
 
@@ -1585,17 +1591,6 @@
    (global-set-key (kbd "C-x b")   'ivy-switch-buffer)
 
    #+end_src
-
-** Bindings for [[http://company-mode.github.io/][company-mode]]
-
-  #+begin_src emacs-lisp
-
-  (define-key company-active-map (kbd "C-d") 'company-show-doc-buffer)
-  (define-key company-active-map (kbd "C-n") 'company-select-next)
-  (define-key company-active-map (kbd "C-p") 'company-select-previous)
-  (define-key company-active-map (kbd "<tab>") 'company-complete)
-
-  #+end_src
 
 ** Bindings for [[https://github.com/bbatsov/projectile][Projectile]]
 
