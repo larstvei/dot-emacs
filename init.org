@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(haskell-mode         ; A Haskell editing mode
-            lua-mode             ; a major-mode for editing Lua scripts
+          '(lua-mode             ; a major-mode for editing Lua scripts
             markdown-mode        ; Emacs Major mode for Markdown-formatted files
             maude-mode           ; Emacs mode for the programming language Maude
             minizinc-mode        ; Major mode for MiniZinc code
@@ -1555,9 +1554,12 @@
 
    #+begin_src emacs-lisp
 
-   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-   (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-   (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+   ;; A Haskell editing mode
+   (use-package haskell-mode
+     :defer t
+     :hook ((haskell-mode . interactive-haskell-mode)
+            (haskell-mode . turn-on-haskell-doc-mode)
+            (haskell-mode . turn-on-haskell-indent)))
 
    #+end_src
 
