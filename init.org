@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(markdown-mode        ; Emacs Major mode for Markdown-formatted files
-            maude-mode           ; Emacs mode for the programming language Maude
+          '(maude-mode           ; Emacs mode for the programming language Maude
             minizinc-mode        ; Major mode for MiniZinc code
             multiple-cursors     ; Multiple cursors for Emacs
             nano-modeline        ; N Λ N O modeline
@@ -856,6 +855,16 @@
   #+begin_src emacs-lisp
 
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+  #+end_src
+
+* Markdown
+
+  #+begin_src emacs-lisp
+
+  ;; Emacs Major mode for Markdown-formatted files
+  (use-package markdown-mode
+    :defer t)
 
   #+end_src
 
