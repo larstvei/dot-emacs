@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(expand-region        ; Increase selected region by semantic units
-            focus                ; Dim color of text in surrounding sections
+          '(focus                ; Dim color of text in surrounding sections
             go-mode              ; Major mode for the Go programming language
             haskell-mode         ; A Haskell editing mode
             lua-mode             ; a major-mode for editing Lua scripts
@@ -963,6 +962,19 @@
 
   #+end_src
 
+* Expand region
+
+  This is neat, and I use it way less than I should.
+
+  #+begin_src emacs-lisp
+
+  ;; Increase selected region by semantic units
+  (use-package expand-region
+    :defer t
+    :bind ("C-=" . er/expand-region))
+
+  #+end_src
+
 * Interactive functions
   <<sec:defuns>>
 
@@ -1650,15 +1662,6 @@
   #+begin_src emacs-lisp
 
   (define-key custom-bindings-map (kbd "C-c D") 'define-word-at-point)
-
-  #+end_src
-
-** Bindings for [[https://github.com/magnars/expand-region.el][expand-region]]
-
-  #+begin_src emacs-lisp
-
-  (define-key custom-bindings-map (kbd "C->")  'er/expand-region)
-  (define-key custom-bindings-map (kbd "C-<")  'er/contract-region)
 
   #+end_src
 
