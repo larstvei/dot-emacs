@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(erlang               ; Erlang major mode
-            expand-region        ; Increase selected region by semantic units
+          '(expand-region        ; Increase selected region by semantic units
             focus                ; Dim color of text in surrounding sections
             go-mode              ; Major mode for the Go programming language
             haskell-mode         ; A Haskell editing mode
@@ -1416,6 +1415,18 @@
 
    ;; Integrated environment for *TeX*
    (use-package auctex
+     :defer t)
+
+   #+end_src
+
+** Erlang
+
+   Erlang mode works out of the box.
+
+   #+begin_src emacs-lisp
+
+   ;; Erlang major mode
+   (use-package erlang
      :defer t)
 
    #+end_src
