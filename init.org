@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(go-mode              ; Major mode for the Go programming language
-            haskell-mode         ; A Haskell editing mode
+          '(haskell-mode         ; A Haskell editing mode
             lua-mode             ; a major-mode for editing Lua scripts
             markdown-mode        ; Emacs Major mode for Markdown-formatted files
             maude-mode           ; Emacs mode for the programming language Maude
@@ -1615,8 +1614,11 @@
 
    #+begin_src emacs-lisp
 
-   (add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
-   (add-hook 'go-mode-hook 'eglot-ensure)
+   ;; Major mode for the Go programming language
+   (use-package go-mode
+     :defer t
+     :mode "\\.go\\'"
+     :hook (go-mode . eglot-ensure))
 
    #+end_src
 
