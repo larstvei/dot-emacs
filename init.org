@@ -207,11 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(org                  ; Outline-based notes management and organizer
-            org-bullets          ; Show bullets in org-mode as UTF-8 characters
-            org-msg              ; Org mode to send and reply to email in HTML
-            ox-gfm               ; Export Github Flavored Markdown from Org
-            paredit              ; minor mode for editing parentheses
+          '(paredit              ; minor mode for editing parentheses
             pdf-tools            ; Emacs support library for PDF files
             proof-general        ; A generic Emacs interface for proof assistants
             racket-mode          ; Major mode for Racket language
@@ -813,37 +809,181 @@
 
 * Org
 
-  When editing org-files with source-blocks, we want the source blocks to be
-  themed as they would in their native mode.
+  I use Org mode extensively. Some of these configurations may be unfortunate,
+  but it is a bit impractical to change, as I have years worth of org-files and
+  want to avoid having to reformat a lot of files.
+
+  One example is =org-adapt-indentation=, which changed default value in
+  version 9.5 of Org mode. Another is that I for some unknown reason decided to
+  content within source content not be indented by two spaces (which is the
+  default).
+
+  Note that I disable some safety features, so please don't copy and paste
+  mindlessly (see the documentation for =org-confirm-babel-evaluate= and
+  =org-export-allow-bind-keywords=).
 
   #+begin_src emacs-lisp
 
-  (setq org-src-fontify-natively t
-        org-src-tab-acts-natively t
-        org-confirm-babel-evaluate nil
-        org-edit-src-content-indentation 0)
+  ;; Outline-based notes management and organizer
+  (use-package org
+    :defer t
+    :config
+    (setq org-adapt-indentation t
+          org-src-fontify-natively t
+          org-confirm-babel-evaluate nil
+          org-export-allow-bind-keywords t
+          org-edit-src-content-indentation 0))
 
   #+end_src
 
-  This is quite an ugly fix for allowing code markup for expressions like
-  ="this string"=, because the quotation marks causes problems.
+** LaTeX export
 
-  #+begin_src emacs-lisp
+   For LaTeX export, I default to using XeLaTeX for compilation, and the [[https://www.ctan.org/pkg/minted][minted]]
+   package for syntax highlighting source blocks. I have PDFs open directly in
+   Emacs ([[PDF Tools]]). In addition, I have support for a couple of custom LaTeX
+   classes.
 
-  (with-eval-after-load 'org
-    (require 'org-tempo)
-    (setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
-    (custom-set-variables `(org-emphasis-alist ',org-emphasis-alist)))
+   #+begin_src emacs-lisp
 
-  #+end_src
+   ;; LaTeX Back-End for Org Export Engine
+   (use-package ox-latex
+     :ensure nil
+     :after org
+     :config
+     ;; Use Minted and XeLaTeX
+     (setq org-latex-src-block-backend 'minted
+           org-latex-packages-alist '(("newfloat" "minted"))
+           org-latex-pdf-process
+           '("latexmk -pdflatex='xelatex -shell-escape -interaction nonstopmode' -pdf -f %f"))
 
-  Enable org-bullets when opening org-files.
+     (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))
 
-  #+begin_src emacs-lisp
+     (add-to-list 'org-latex-classes
+                  '("ifimaster"
+                    "\\documentclass{ifimaster}
+   [DEFAULT-PACKAGES]
+   [PACKAGES]
+   [EXTRA]
+   \\usepackage{babel,csquotes,ifimasterforside,url,varioref}"
+                    ("\\chapter{%s}" . "\\chapter*{%s}")
+                    ("\\section{%s}" . "\\section*{%s}")
+                    ("\\subsection{%s}" . "\\subsection*{%s}")
+                    ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                    ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                    ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+     (add-to-list 'org-latex-classes
+                  '("easychair" "\\documentclass{easychair}"
+                    ("\\section{%s}" . "\\section*{%s}")
+                    ("\\subsection{%s}" . "\\subsection*{%s}")
+                    ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                    ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                    ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 
-  #+end_src
+   #+end_src
+
+** Babel
+
+   Add a few languages for org-babel.
+
+   #+begin_src emacs-lisp
+
+   ;; Working with Code Blocks in Org
+   (use-package ob
+     :ensure nil
+     :after org
+     :config
+     (org-babel-do-load-languages
+      'org-babel-load-languages
+      '((emacs-lisp . t)
+        (python . t)
+        (clojure . t)
+        (chatgpt-shell . t))))
+
+   #+end_src
+
+   Default to use whatever interpreter is set by =python-shell-interpreter=.
+
+   #+begin_src emacs-lisp
+
+   ;; Babel Functions for Python
+   (use-package ob-python
+     :ensure nil
+     :after (ob python)
+     :config
+     (setq org-babel-python-command python-shell-interpreter))
+
+   #+end_src
+
+** Tempo
+
+   Since version 9.2 of Org mode, typing =<s= to get a source block (and
+   similar variants) has been tucked away in the Org Tempo library, hoping that
+   users rather use =C-c C-,=. Hopefully I'll stop typing =<s= at some point,
+   and adapt the much saner =C-c C-,=.
+
+   #+begin_src emacs-lisp
+
+   ;; Template expansion for Org structures
+   (use-package org-tempo
+     :ensure nil
+     :after org)
+
+   #+end_src
+
+** Bullets
+
+   Touch up the headings a bit, with some fancy UTF-8 characters.
+
+   #+begin_src emacs-lisp
+
+   ;; Show bullets in org-mode as UTF-8 characters
+   (use-package org-bullets
+     :after org
+     :hook (org-mode . (lambda () (org-bullets-mode 1))))
+
+   #+end_src
+
+** Email with org mode
+
+   The package org-msg allows me to compose emails with Org mode. That means I
+   easily can add headings, tables, source code, etc. It is really neat.
+
+   #+begin_src emacs-lisp
+
+   ;; Org mode to send and reply to email in HTML
+   (use-package org-msg
+     :after (org mu4e)
+     :config
+     (add-to-list 'mu4e-compose-pre-hook 'org-msg-mode)
+     (setq org-msg-enforce-css (concat user-emacs-directory "email-style.css")
+           org-msg-options "html-postamble:nil toc:nil num:nil author:nil email:nil"
+           org-msg-default-alternatives '((new           . (text html))
+                                          (reply-to-html . (text html))
+                                          (reply-to-text . (text)))
+           org-msg-signature "
+
+     ,,#+begin_signature
+     ,,#+begin_export html
+
+     - Lars
+     ,,#+end_export
+     ,,#+end_signature\n"))
+
+   #+end_src
+
+** GitHub flavored markdown
+
+   I guess I have to include my (semi-abandoned) mode [[https://github.com/larstvei/ox-gfm][ox-gfm]] for exporting org
+   mode to GitHub Flavored Markdown.
+
+   #+begin_src emacs-lisp
+
+   ;; Export Github Flavored Markdown from Org
+   (use-package ox-gfm
+     :after (org))
+
+   #+end_src
 
 * Markdown
 
@@ -917,25 +1057,7 @@
        mu4e-trash-folder "/Deleted Items"
        mu4e-trash-folder "/Drafts"
 
-       mu4e-use-fancy-chars t)
-
-      (require 'org)
-      (require 'org-msg)
-
-      (add-to-list 'mu4e-compose-pre-hook 'org-msg-mode)
-      (setq org-msg-enforce-css (concat user-emacs-directory "email-style.css")
-            org-msg-options "html-postamble:nil toc:nil num:nil author:nil email:nil"
-            org-msg-default-alternatives '((new           . (text html))
-                                           (reply-to-html . (text html))
-                                           (reply-to-text . (text)))
-            org-msg-signature "
-
-  ,#+begin_signature
-  ,#+begin_export html
-
-  - Lars
-  ,#+end_export
-  ,#+end_signature\n"))
+       mu4e-use-fancy-chars t))
     (autoload 'mu4e "mu4e" nil t))
 
   #+end_src
@@ -968,7 +1090,7 @@
 
   ;; Org babel functions for ChatGPT evaluation
   (use-package ob-chatgpt-shell
-    :defer t)
+    :after ob)
 
   #+end_src
 
@@ -1478,94 +1600,6 @@
      :hook (nix-mode . eglot-ensure))
 
    #+end_src
-
-* Org-mode LaTeX export
-
-  I like using the [[https://code.google.com/p/minted/][Minted]] package for source blocks in LaTeX. To make org use
-  this we add the following snippet.
-
-  #+begin_src emacs-lisp
-
-  (eval-after-load 'org
-    '(add-to-list 'org-latex-packages-alist '("" "minted")))
-  (setq org-latex-listings 'minted)
-
-  #+end_src
-
-  Because [[https://code.google.com/p/minted/][Minted]] uses [[http://pygments.org][Pygments]] (an external process), we must add the
-  =-shell-escape= option to the =org-latex-pdf-process= commands. The
-  =tex-compile-commands= variable controls the default compile command for Tex-
-  and LaTeX-mode, we can add the flag with a rather dirty statement (if anyone
-  finds a nicer way to do this, please let me know).
-
-  #+begin_src emacs-lisp
-
-  (eval-after-load 'tex-mode
-    '(setcar (cdr (cddaar tex-compile-commands)) " -shell-escape "))
-
-  #+end_src
-
-  When exporting from Org to LaTeX, use ~latexmk~ for compilation.
-
-  #+begin_src emacs-lisp
-
-  (eval-after-load 'ox-latex
-    '(setq org-latex-pdf-process
-           '("latexmk -pdflatex='xelatex -shell-escape -interaction nonstopmode' -pdf -f %f")))
-
-  #+end_src
-
-  For my thesis, I need to use our university's LaTeX class, this snippet makes
-  that class available.
-
-  #+begin_src emacs-lisp
-
-  (eval-after-load "ox-latex"
-    '(progn
-       (add-to-list 'org-latex-classes
-                    '("ifimaster"
-                      "\\documentclass{ifimaster}
-  [DEFAULT-PACKAGES]
-  [PACKAGES]
-  [EXTRA]
-  \\usepackage{babel,csquotes,ifimasterforside,url,varioref}"
-                      ("\\chapter{%s}" . "\\chapter*{%s}")
-                      ("\\section{%s}" . "\\section*{%s}")
-                      ("\\subsection{%s}" . "\\subsection*{%s}")
-                      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                      ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-       (add-to-list 'org-latex-classes
-                    '("easychair" "\\documentclass{easychair}"
-                      ("\\section{%s}" . "\\section*{%s}")
-                      ("\\subsection{%s}" . "\\subsection*{%s}")
-                      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                      ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-       (custom-set-variables '(org-export-allow-bind-keywords t))))
-
-  #+end_src
-
-  Use Emacs for opening the PDF file, when invoking ~C-c C-e l o~.
-
-  #+begin_src emacs-lisp
-
-  (require 'org)
-  (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))
-  (setq org-adapt-indentation t)
-
-  #+end_src
-
-  #+begin_src emacs-lisp
-
-  (setq org-babel-python-command "python3")
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (python . t)
-     (clojure . t)))
-
-  #+end_src
 
 ** Haskell
 
