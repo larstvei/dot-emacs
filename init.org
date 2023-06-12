@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(paredit              ; minor mode for editing parentheses
-            pdf-tools            ; Emacs support library for PDF files
+          '(pdf-tools            ; Emacs support library for PDF files
             proof-general        ; A generic Emacs interface for proof assistants
             racket-mode          ; Major mode for Racket language
             rustic               ; Rust development environment
@@ -1403,32 +1402,27 @@
 
 ** Lisp
 
-   I use =Paredit= when editing lisp code, we enable this for all lisp-modes.
+   I use [[https://paredit.org/][Paredit]] when editing lisp code, we enable this for all lisp-modes.
+   Paredit version 25 [[https://paredit.org/cgit/paredit/plain/NEWS][seems to interfere]] with REPL-modes, and unbinding =RET=
+   is the proposed fix.
 
    #+begin_src emacs-lisp
 
-   (dolist (mode '(cider-repl-mode
-                   clojure-mode
-                   ielm-mode
-                   racket-mode
-                   racket-repl-mode
-                   slime-repl-mode
-                   lisp-mode
-                   emacs-lisp-mode
-                   lisp-interaction-mode
-                   scheme-mode))
-     ;; add paredit-mode to all mode-hooks
-     (add-hook (intern (concat (symbol-name mode) "-hook")) 'paredit-mode))
-
-   #+end_src
-
-   Paredit version 25 seems to interfere with REPL-modes. This is the proposed
-   fix:
-
-   #+begin_src emacs-lisp
-
-   (with-eval-after-load 'paredit
-     (define-key paredit-mode-map (kbd "RET") nil))
+   ;; minor mode for editing parentheses
+   (use-package paredit
+     :defer t
+     :bind (:map paredit-mode-map ("RET" . nil))
+     :hook ((cider-repl-mode
+             clojure-mode
+             ielm-mode
+             racket-mode
+             racket-repl-mode
+             slime-repl-mode
+             lisp-mode
+             emacs-lisp-mode
+             lisp-interaction-mode
+             scheme-mode) 
+            . paredit-mode))
 
    #+end_src
 
