@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(direnv               ; direnv integration
-            editorconfig         ; EditorConfig Emacs Plugin
+          '(editorconfig         ; EditorConfig Emacs Plugin
             erlang               ; Erlang major mode
             expand-region        ; Increase selected region by semantic units
             focus                ; Dim color of text in surrounding sections
@@ -845,8 +844,13 @@
   enter a directory that interacts with direnv.
 
   #+begin_src emacs-lisp
-  (direnv-mode 1)
-  (setq direnv-always-show-summary nil)
+
+  ;; direnv integration
+  (use-package direnv
+    :config
+    (setq direnv-always-show-summary nil)
+    (direnv-mode 1))
+
   #+end_src
 
 * Email
