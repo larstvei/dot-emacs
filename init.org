@@ -207,9 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(nano-modeline        ; N Λ N O modeline
-            nano-theme           ; N Λ N O theme
-            nix-mode             ; Major mode for editing .nix files
+          '(nix-mode             ; Major mode for editing .nix files
             olivetti             ; Minor mode for a nice writing environment
             org                  ; Outline-based notes management and organizer
             org-bullets          ; Show bullets in org-mode as UTF-8 characters
@@ -417,8 +415,11 @@
 
    #+begin_src emacs-lisp
 
-   (setq nano-light-background "#fafafa"
-         nano-light-highlight "#f5f7f8")
+   ;; N Λ N O theme
+   (use-package nano-theme
+     :init
+     (setq nano-light-background "#fafafa"
+           nano-light-highlight "#f5f7f8"))
 
    #+end_src
 
@@ -462,47 +463,34 @@
 
 ** Mode line
 
-   This is the default setup for [[https://github.com/rougier/nano-modeline][N Λ N O Modeline]] after version 1.0.0:
+   This is my setup for [[https://github.com/rougier/nano-modeline][N Λ N O Modeline]] after version 1.0.0:
 
    #+begin_src emacs-lisp
 
-   (require 'nano-modeline)
-   (add-hook 'prog-mode-hook            #'nano-modeline-prog-mode)
-   (add-hook 'text-mode-hook            #'nano-modeline-text-mode)
-   (add-hook 'org-mode-hook             #'nano-modeline-org-mode)
-   (add-hook 'pdf-view-mode-hook        #'nano-modeline-pdf-mode)
-   (add-hook 'mu4e-headers-mode-hook    #'nano-modeline-mu4e-headers-mode)
-   (add-hook 'mu4e-view-mode-hook       #'nano-modeline-mu4e-message-mode)
-   (add-hook 'elfeed-show-mode-hook     #'nano-modeline-elfeed-entry-mode)
-   (add-hook 'elfeed-search-mode-hook   #'nano-modeline-elfeed-search-mode)
-   (add-hook 'term-mode-hook            #'nano-modeline-term-mode)
-   (add-hook 'xwidget-webkit-mode-hook  #'nano-modeline-xwidget-mode)
-   (add-hook 'messages-buffer-mode-hook #'nano-modeline-message-mode)
-   (add-hook 'org-capture-mode-hook     #'nano-modeline-org-capture-mode)
-   (add-hook 'org-agenda-mode-hook      #'nano-modeline-org-agenda-mode)
+   ;; N Λ N O modeline
+   (use-package nano-modeline
+     :hook ((prog-mode . nano-modeline-prog-mode)
+            (text-mode . nano-modeline-text-mode)
+            (org-mode . nano-modeline-org-mode)
+            (pdf-view-mode . nano-modeline-pdf-mode)
+            (mu4e-headers-mode . nano-modeline-mu4e-headers-mode)
+            (mu4e-view-mode . nano-modeline-mu4e-message-mode)
+            (elfeed-show-mode . nano-modeline-elfeed-entry-mode)
+            (elfeed-search-mode . nano-modeline-elfeed-search-mode)
+            (term-mode . nano-modeline-term-mode)
+            (xwidget-webkit-mode . nano-modeline-xwidget-mode)
+            (messages-buffer-mode . nano-modeline-message-mode)
+            (org-capture-mode . nano-modeline-org-capture-mode)
+            (org-agenda-mode . nano-modeline-org-agenda-mode))
 
-   #+end_src
+     ;; Disable the default modeline and add a small margin around the frame
+     :init
+     (setq-default mode-line-format nil)   
+     (add-to-list 'default-frame-alist '(internal-border-width . 24))
+     ;; Set nano-modeline-text-mode as default
+     :config
+     (nano-modeline-text-mode 1))
 
-   We set the ~nano-modeline-text-mode~ as default with:
-
-   #+begin_src emacs-lisp
-
-   (nano-modeline-text-mode 1)
-
-   #+end_src
-
-   And disable the default modeline.
-
-   #+begin_src emacs-lisp
-
-   (setq-default mode-line-format nil)
-
-   #+end_src
-
-   It looks best if we add a small margin around the edges of the frame.
-
-   #+begin_src emacs-lisp
-   (add-to-list 'default-frame-alist '(internal-border-width . 24))
    #+end_src
 
 ** Font
