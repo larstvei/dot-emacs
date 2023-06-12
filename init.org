@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(multiple-cursors     ; Multiple cursors for Emacs
-            nano-modeline        ; N Λ N O modeline
+          '(nano-modeline        ; N Λ N O modeline
             nano-theme           ; N Λ N O theme
             nix-mode             ; Major mode for editing .nix files
             olivetti             ; Minor mode for a nice writing environment
@@ -980,6 +979,21 @@
   ;; Org babel functions for ChatGPT evaluation
   (use-package ob-chatgpt-shell
     :defer t)
+
+  #+end_src
+
+* Multiple cursors
+
+  I use this /all the time/. Perhaps more than I should?
+
+  #+begin_src emacs-lisp
+
+  ;; Multiple cursors for Emacs
+  (use-package multiple-cursors
+    :defer t
+    :bind (("C-c e" . mc/edit-lines)
+           ("C-c a" . mc/mark-all-like-this)
+           ("C-c n" . mc/mark-next-like-this)))
 
   #+end_src
 
