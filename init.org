@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(minizinc-mode        ; Major mode for MiniZinc code
-            multiple-cursors     ; Multiple cursors for Emacs
+          '(multiple-cursors     ; Multiple cursors for Emacs
             nano-modeline        ; N Λ N O modeline
             nano-theme           ; N Λ N O theme
             nix-mode             ; Major mode for editing .nix files
@@ -1587,17 +1586,27 @@
 
 ** Minizinc
 
+   Provide a default =compile-command=.
+
    #+begin_src emacs-lisp
 
-   (add-to-list 'auto-mode-alist '("\\.mzn\\'" . minizinc-mode))
-
-   (defun minizinc-setup ()
+   (defun minizinc-setup-compile-command ()
      (let ((command (concat "minizinc " (buffer-file-name) " "))
            (f (concat (file-name-base (buffer-file-name)) ".dzn")))
        (local-set-key (kbd "C-c C-c") 'recompile)
        (setq-local compile-command (concat command (if (file-exists-p f) f "")))))
 
-   (add-hook 'minizinc-mode-hook 'minizinc-setup)
+   #+end_src
+
+   Use =minizinc-mode=, and hook up the =minizinc-setup-compile-command= above.
+
+   #+begin_src emacs-lisp
+
+   ;; Major mode for MiniZinc code
+   (use-package minizinc-mode
+     :defer t
+     :mode "\\.mzn\\'"
+     :hook (minizinc-mode . minizinc-setup-compile-command))
 
    #+end_src
 
