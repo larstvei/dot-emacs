@@ -1674,14 +1674,6 @@
 
   #+end_src
 
-** Bindings for [[https://github.com/abo-abo/define-word][define-word]]
-
-  #+begin_src emacs-lisp
-
-  (define-key custom-bindings-map (kbd "C-c D") 'define-word-at-point)
-
-  #+end_src
-
 ** Bindings for [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]]
 
   #+begin_src emacs-lisp
@@ -1691,14 +1683,6 @@
   (define-key custom-bindings-map (kbd "C-c n")  'mc/mark-next-like-this)
 
   #+end_src
-
-** Bindings for [[https://github.com/bbatsov/projectile][Projectile]]
-
-   #+begin_src emacs-lisp
-
-
-
-   #+end_src
 
 ** Bindings for [[https://github.com/rnkn/olivetti][Olivetti]]
 
