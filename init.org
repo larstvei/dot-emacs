@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(nix-mode             ; Major mode for editing .nix files
-            olivetti             ; Minor mode for a nice writing environment
+          '(olivetti             ; Minor mode for a nice writing environment
             org                  ; Outline-based notes management and organizer
             org-bullets          ; Show bullets in org-mode as UTF-8 characters
             org-msg              ; Org mode to send and reply to email in HTML
@@ -1463,6 +1462,17 @@
    ;; Erlang major mode
    (use-package erlang
      :defer t)
+
+   #+end_src
+
+** Nix
+
+   #+begin_src emacs-lisp
+
+   ;; Major mode for editing .nix files
+   (use-package nix-mode
+     :defer t
+     :hook (nix-mode . eglot-ensure))
 
    #+end_src
 
