@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(olivetti             ; Minor mode for a nice writing environment
-            org                  ; Outline-based notes management and organizer
+          '(org                  ; Outline-based notes management and organizer
             org-bullets          ; Show bullets in org-mode as UTF-8 characters
             org-msg              ; Org mode to send and reply to email in HTML
             ox-gfm               ; Export Github Flavored Markdown from Org
@@ -528,7 +527,11 @@
 
    #+begin_src emacs-lisp
 
-   (with-eval-after-load 'olivetti
+   ;; Minor mode for a nice writing environment
+   (use-package olivetti
+     :defer t
+     :bind ("C-c o" . olivetti-mode)
+     :config
      (setq-default olivetti-body-width (+ fill-column 3))
      (remove-hook 'olivetti-mode-on-hook 'visual-line-mode))
 
@@ -1725,14 +1728,6 @@
   (define-key custom-bindings-map (kbd "C-c n")  'mc/mark-next-like-this)
 
   #+end_src
-
-** Bindings for [[https://github.com/rnkn/olivetti][Olivetti]]
-
-   #+begin_src emacs-lisp
-
-   (define-key custom-bindings-map (kbd "C-c o") 'olivetti-mode)
-
-   #+end_src
 
 ** Bindings for mu4e
 
