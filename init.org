@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(editorconfig         ; EditorConfig Emacs Plugin
-            erlang               ; Erlang major mode
+          '(erlang               ; Erlang major mode
             expand-region        ; Increase selected region by semantic units
             focus                ; Dim color of text in surrounding sections
             go-mode              ; Major mode for the Go programming language
@@ -410,7 +409,6 @@
              column-number-mode           ; Show column number in mode line
              delete-selection-mode        ; Replace selected text
              dirtrack-mode                ; directory tracking in *shell*
-             editorconfig-mode            ; Use editorconfig
              global-so-long-mode          ; Mitigate performance for long lines
              recentf-mode                 ; Recently opened files
              show-paren-mode              ; Highlight matching parentheses
@@ -597,6 +595,21 @@
                             (recents  . 15)
                             (bookmarks . 5)))
     (dashboard-setup-startup-hook))
+
+  #+end_src
+
+* EditorConfig
+
+  Using [[https://editorconfig.org/][EditorConfig]] is a must when collaborating with others. It is also a way
+  of having multiple tools that want to format your buffer to agree (e.g. both
+  the language's Emacs mode and some external formatter/prettifier).
+
+  #+begin_src emacs-lisp
+
+  ;; EditorConfig Emacs Plugin
+  (use-package editorconfig
+    :config
+    (editorconfig-mode 1))
 
   #+end_src
 
