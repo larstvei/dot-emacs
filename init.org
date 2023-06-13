@@ -200,64 +200,6 @@
 
   #+end_src
 
-* Mac OS X
-
-  I run this configuration mostly on macOS, so we need a couple of settings to
-  make things work smoothly. I use the =Command=-key as the =Meta=-key, Freeing
-  up the =Option=-key, which I need for typing Norwegian characters on a US
-  keyboard. In addition, it is more comfortable.
-
-  I try to minimize the use of frames. The native compilation gives a lot of
-  warnings, but they seem safe to ignore.
-
-  #+begin_src emacs-lisp
-
-  (when (memq window-system '(mac ns))
-    (setq mac-option-modifier nil
-          mac-command-modifier 'meta
-          ns-pop-up-frames nil
-          native-comp-async-report-warnings-errors nil))
-
-  #+end_src
-
-  The package [[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]] synchronizes environment variables from the
-  shell to Emacs. This makes it a lot easier to deal with external programs on
-  macOS.
-
-  #+begin_src emacs-lisp
-
-  (use-package exec-path-from-shell
-    :if (memq window-system '(mac ns))
-    :config
-    (exec-path-from-shell-initialize))
-
-  #+end_src
-
-  I had some problems with Dired, and this seems to have solved it. I /think/
-  the solutions was from [[https://stackoverflow.com/questions/4076360/error-in-dired-sorting-on-os-x][here]], and my problems were related, but not the same.
-
-  #+begin_src emacs-lisp
-
-  (use-package ls-lisp
-    :ensure nil
-    :if (memq window-system '(mac ns))
-    :config
-    (setq ls-lisp-use-insert-directory-program nil))
-  
-  #+end_src
-
-  It is useful to be able to occasionally open the file associated with a
-  buffer in macOS Finder.
-
-  #+begin_src emacs-lisp
-
-  (use-package reveal-in-osx-finder
-    :if (memq window-system '(mac ns)))
-
-  #+end_src
-
-  #+RESULTS:
-
 * Sane defaults
 
   These are what /I/ consider to be saner defaults.
@@ -368,39 +310,6 @@
   #+begin_src emacs-lisp
 
   (add-hook 'doc-view-mode-hook 'auto-revert-mode)
-
-  #+end_src
-
-* Modes
-
-  There are some modes that are enabled by default that I don't find
-  particularly useful. We create a list of these modes, and disable all of
-  these.
-
-  #+begin_src emacs-lisp
-
-  (dolist (mode
-           '(tool-bar-mode                ; No toolbars, more room for text
-             scroll-bar-mode              ; No scroll bars either
-             blink-cursor-mode))          ; The blinking cursor gets old
-    (funcall mode 0))
-
-  #+end_src
-
-  Let's apply the same technique for enabling modes that are disabled by
-  default.
-
-  #+begin_src emacs-lisp
-
-  (dolist (mode
-           '(abbrev-mode                  ; E.g. sopl -> System.out.println
-             column-number-mode           ; Show column number in mode line
-             delete-selection-mode        ; Replace selected text
-             dirtrack-mode                ; directory tracking in *shell*
-             global-so-long-mode          ; Mitigate performance for long lines
-             recentf-mode                 ; Recently opened files
-             show-paren-mode))            ; Highlight matching parentheses
-    (funcall mode 1))
 
   #+end_src
 
@@ -556,6 +465,115 @@
 
    #+end_src
 
+** Dashboard
+
+   Dashboard provides a nice welcome.
+
+   #+begin_src emacs-lisp
+
+   ;; A startup screen extracted from Spacemacs
+   (use-package dashboard
+     :config
+     (setq dashboard-banner-logo-title nil
+           dashboard-center-content t
+           dashboard-set-footer nil
+           dashboard-page-separator "\n\n\n"
+           dashboard-items '((projects . 15)
+                             (recents  . 15)
+                             (bookmarks . 5)))
+     (dashboard-setup-startup-hook))
+
+   #+end_src
+
+* Mac OS X
+
+  I run this configuration mostly on macOS, so we need a couple of settings to
+  make things work smoothly. I use the =Command=-key as the =Meta=-key, Freeing
+  up the =Option=-key, which I need for typing Norwegian characters on a US
+  keyboard. In addition, it is more comfortable.
+
+  I try to minimize the use of frames. The native compilation gives a lot of
+  warnings, but they seem safe to ignore.
+
+  #+begin_src emacs-lisp
+
+  (when (memq window-system '(mac ns))
+    (setq mac-option-modifier nil
+          mac-command-modifier 'meta
+          ns-pop-up-frames nil
+          native-comp-async-report-warnings-errors nil))
+
+  #+end_src
+
+  The package [[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]] synchronizes environment variables from the
+  shell to Emacs. This makes it a lot easier to deal with external programs on
+  macOS.
+
+  #+begin_src emacs-lisp
+
+  (use-package exec-path-from-shell
+    :if (memq window-system '(mac ns))
+    :config
+    (exec-path-from-shell-initialize))
+
+  #+end_src
+
+  I had some problems with Dired, and this seems to have solved it. I /think/
+  the solutions was from [[https://stackoverflow.com/questions/4076360/error-in-dired-sorting-on-os-x][here]], and my problems were related, but not the same.
+
+  #+begin_src emacs-lisp
+
+  (use-package ls-lisp
+    :ensure nil
+    :if (memq window-system '(mac ns))
+    :config
+    (setq ls-lisp-use-insert-directory-program nil))
+  
+  #+end_src
+
+  It is useful to be able to occasionally open the file associated with a
+  buffer in macOS Finder.
+
+  #+begin_src emacs-lisp
+
+  (use-package reveal-in-osx-finder
+    :if (memq window-system '(mac ns)))
+
+  #+end_src
+
+* Modes
+
+  There are some modes that are enabled by default that I don't find
+  particularly useful. We create a list of these modes, and disable all of
+  these.
+
+  #+begin_src emacs-lisp
+
+  (dolist (mode
+           '(tool-bar-mode                ; No toolbars, more room for text
+             scroll-bar-mode              ; No scroll bars either
+             blink-cursor-mode))          ; The blinking cursor gets old
+    (funcall mode 0))
+
+  #+end_src
+
+  Let's apply the same technique for enabling modes that are disabled by
+  default.
+
+  #+begin_src emacs-lisp
+
+  (dolist (mode
+           '(abbrev-mode                  ; E.g. sopl -> System.out.println
+             column-number-mode           ; Show column number in mode line
+             delete-selection-mode        ; Replace selected text
+             dirtrack-mode                ; directory tracking in *shell*
+             global-so-long-mode          ; Mitigate performance for long lines
+             recentf-mode                 ; Recently opened files
+             show-paren-mode))            ; Highlight matching parentheses
+    (funcall mode 1))
+
+  #+end_src
+
 * Version control
 
   Magit is the best.
@@ -576,24 +594,6 @@
   (use-package diff-hl
     :config
     (global-diff-hl-mode 1))
-
-  #+end_src
-
-* Dashboard
-
-  #+begin_src emacs-lisp
-
-  ;; A startup screen extracted from Spacemacs
-  (use-package dashboard
-    :config
-    (setq dashboard-banner-logo-title nil
-          dashboard-center-content t
-          dashboard-set-footer nil
-          dashboard-page-separator "\n\n\n"
-          dashboard-items '((projects . 15)
-                            (recents  . 15)
-                            (bookmarks . 5)))
-    (dashboard-setup-startup-hook))
 
   #+end_src
 
