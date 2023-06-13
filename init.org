@@ -1040,34 +1040,38 @@
   I use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] (which is a part of [[http://www.djcbsoftware.nl/code/mu/][mu]]) along with [[https://isync.sourceforge.io/][mbsync]].
 
   #+begin_src emacs-lisp
+  (use-package mu4e
+    :ensure nil
+    :defer t
+    :if (and (file-exists-p "~/Maildir")
+             (executable-find "mbsync")
+             (executable-find "msmtp")
+             (executable-find "mu"))
+    :bind ("C-x m" . mu4e)
+    :config
+    (setq
+     mail-user-agent 'mu4e-user-agent
+     user-full-name "Lars Tveito"            ; Your full name
+     user-mail-address "larstvei@ifi.uio.no" ; And email-address
 
-  (when load-mail-setup
-    (with-eval-after-load 'mu4e
-      (setq
-       mail-user-agent 'mu4e-user-agent
-       user-full-name "Lars Tveito"            ; Your full name
-       user-mail-address "larstvei@ifi.uio.no" ; And email-address
+     sendmail-program (executable-find "msmtp")
+     send-mail-function 'smtpmail-send-it
 
-       sendmail-program (executable-find "msmtp")
-       send-mail-function 'smtpmail-send-it
+     message-sendmail-f-is-evil t
+     message-sendmail-extra-arguments '("--read-envelope-from")
+     message-send-mail-function 'message-send-mail-with-sendmail
+     message-kill-buffer-on-exit t
 
-       message-sendmail-f-is-evil t
-       message-sendmail-extra-arguments '("--read-envelope-from")
-       message-send-mail-function 'message-send-mail-with-sendmail
-       message-kill-buffer-on-exit t
+     mu4e-get-mail-command (concat (executable-find "mbsync") " -a")
+     mu4e-change-filenames-when-moving t
+     mu4e-user-mail-address-list '("larstvei@ifi.uio.no")
+     mu4e-maildir-shortcuts '(("/Inbox" . ?i) ("/Sent Items" . ?s))
 
-       mu4e-get-mail-command (concat (executable-find "mbsync") " -a")
-       mu4e-change-filenames-when-moving t
-       mu4e-user-mail-address-list '("larstvei@ifi.uio.no")
-       mu4e-maildir-shortcuts '(("/Inbox" . ?i) ("/Sent Items" . ?s))
+     mu4e-sent-folder "/Sent Items"
+     mu4e-trash-folder "/Deleted Items"
+     mu4e-trash-folder "/Drafts"
 
-       mu4e-sent-folder "/Sent Items"
-       mu4e-trash-folder "/Deleted Items"
-       mu4e-trash-folder "/Drafts"
-
-       mu4e-use-fancy-chars t))
-    (autoload 'mu4e "mu4e" nil t))
-
+     mu4e-use-fancy-chars t))
   #+end_src
 
 * ChatGPT
@@ -1838,14 +1842,6 @@
   (define-key custom-bindings-map (kbd "C-c n")  'mc/mark-next-like-this)
 
   #+end_src
-
-** Bindings for mu4e
-
-   #+begin_src emacs-lisp
-
-   (define-key custom-bindings-map (kbd "C-x m") 'mu4e)
-
-   #+end_src
 
 ** Bindings for built-ins
 
