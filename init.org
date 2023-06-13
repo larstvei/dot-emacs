@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(which-key            ; Display available keybindings in popup
-            z3-mode)))           ; z3/SMTLIBv2 interactive development
+          '(z3-mode)))           ; z3/SMTLIBv2 interactive development
     (when (memq window-system '(mac ns))
       (push 'exec-path-from-shell packages)
       (push 'reveal-in-osx-finder packages))
@@ -385,8 +384,7 @@
              dirtrack-mode                ; directory tracking in *shell*
              global-so-long-mode          ; Mitigate performance for long lines
              recentf-mode                 ; Recently opened files
-             show-paren-mode              ; Highlight matching parentheses
-             which-key-mode))             ; Available keybindings in popup
+             show-paren-mode))            ; Highlight matching parentheses
     (funcall mode 1))
 
   #+end_src
@@ -1789,6 +1787,19 @@
     "A keymap for custom bindings.")
 
   #+end_src
+
+** Which key
+
+   [[https://github.com/justbur/emacs-which-key][Which key]] is nice for discoverability.
+
+   #+begin_src emacs-lisp
+
+   ;; Display available keybindings in popup
+   (use-package which-key
+     :config
+     (which-key-mode 1))
+
+   #+end_src
 
 ** Bindings for [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]]
 
