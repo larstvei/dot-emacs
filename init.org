@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(pdf-tools            ; Emacs support library for PDF files
-            proof-general        ; A generic Emacs interface for proof assistants
+          '(proof-general        ; A generic Emacs interface for proof assistants
             racket-mode          ; Major mode for Racket language
             rustic               ; Rust development environment
             slime                ; Superior Lisp Interaction Mode for Emacs
@@ -698,22 +697,25 @@
 
 * PDF Tools
 
-  [[https://github.com/politza/pdf-tools][PDF Tools]] makes a huge improvement on the built-in [[http://www.gnu.org/software/emacs/manual/html_node/emacs/Document-View.html][doc-view-mode]]; the only
-  drawback is the =pdf-tools-install= (which has to be executed before the
-  package can be used) takes a couple of /seconds/ to execute. Instead of
-  running it at init-time, we'll run it whenever a PDF is opened. Note that
-  it's only slow on the first run!
+  [[https://github.com/vedang/pdf-tools][PDF Tools]] makes a huge improvement on the built-in [[http://www.gnu.org/software/emacs/manual/html_node/emacs/Document-View.html][doc-view-mode]]! Removing
+  the =header-line-format= gives a very clean PDF-viewer; let's add that to a
+  key.
 
   #+begin_src emacs-lisp
 
-  (pdf-loader-install)
-
-  #+end_src
-
-  #+begin_src emacs-lisp
-
-  (add-hook 'pdf-view-mode-hook
-            (lambda () (setq header-line-format nil)))
+  ;; Emacs support library for PDF files
+  (use-package pdf-tools
+    :defer t
+    :mode "\\.pdf\\'"
+    :init (pdf-loader-install)
+    :bind (:map pdf-view-mode-map
+                ("c" . (lambda ()
+                         (interactive)
+                         (if header-line-format
+                             (setq header-line-format nil)
+                           (nano-modeline-pdf-mode))))
+                ("j" . pdf-view-next-line-or-next-page)
+                ("k" . pdf-view-previous-line-or-previous-page)))
 
   #+end_src
 
