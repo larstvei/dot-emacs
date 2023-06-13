@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(vterm                ; A terminal via libvterm
-            which-key            ; Display available keybindings in popup
+          '(which-key            ; Display available keybindings in popup
             z3-mode)))           ; z3/SMTLIBv2 interactive development
     (when (memq window-system '(mac ns))
       (push 'exec-path-from-shell packages)
@@ -1370,43 +1369,52 @@
 
    Inspired by [[https://github.com/torenord/.emacs.d][torenord]], I maintain quick access to shell buffers with bindings
    ~M-1~ to ~M-9~. In addition, the ~M-z~ toggles between the last visited
-   shell, and the last visited non-shell buffer. The following functions
-   facilitate this, and are bound in the [[Key bindings]] section.
+   shell, and the last visited non-shell buffer.
 
    #+begin_src emacs-lisp
 
-   (let ((last-vterm ""))
-     (defun toggle-vterm ()
-       (interactive)
-       (cond ((string-match-p "^\\vterm<[1-9][0-9]*>$" (buffer-name))
-              (goto-non-vterm-buffer))
-             ((get-buffer last-vterm) (switch-to-buffer last-vterm))
-             (t (vterm (setq last-vterm "vterm<1>")))))
+   ;; A terminal via libvterm
+   (use-package vterm
+     :defer t
+     :preface
+     (let ((last-vterm ""))
+       (defun toggle-vterm ()
+         (interactive)
+         (cond ((string-match-p "^\\vterm<[1-9][0-9]*>$" (buffer-name))
+                (goto-non-vterm-buffer))
+               ((get-buffer last-vterm) (switch-to-buffer last-vterm))
+               (t (vterm (setq last-vterm "vterm<1>")))))
 
-     (defun goto-non-vterm-buffer ()
-       (let* ((r "^\\vterm<[1-9][0-9]*>$")
-              (vterm-buffer-p (lambda (b) (string-match-p r (buffer-name b))))
-              (non-vterms (cl-remove-if vterm-buffer-p (buffer-list))))
-         (when non-vterms
-           (switch-to-buffer (car non-vterms)))))
+       (defun goto-non-vterm-buffer ()
+         (let* ((r "^\\vterm<[1-9][0-9]*>$")
+                (vterm-buffer-p (lambda (b) (string-match-p r (buffer-name b))))
+                (non-vterms (cl-remove-if vterm-buffer-p (buffer-list))))
+           (when non-vterms
+             (switch-to-buffer (car non-vterms)))))
 
-     (defun switch-vterm (n)
-       (let ((buffer-name (format "vterm<%d>" n)))
-         (setq last-vterm buffer-name)
-         (cond ((get-buffer buffer-name)
-                (switch-to-buffer buffer-name))
-               (t (vterm buffer-name)
-                  (rename-buffer buffer-name))))))
+       (defun switch-vterm (n)
+         (let ((buffer-name (format "vterm<%d>" n)))
+           (setq last-vterm buffer-name)
+           (cond ((get-buffer buffer-name)
+                  (switch-to-buffer buffer-name))
+                 (t (vterm buffer-name)
+                    (rename-buffer buffer-name))))))
 
-   #+end_src
+     :bind (("C-z" . toggle-vterm)
+            ("M-1" . (lambda () (interactive) (switch-vterm 1)))
+            ("M-2" . (lambda () (interactive) (switch-vterm 2)))
+            ("M-3" . (lambda () (interactive) (switch-vterm 3)))
+            ("M-4" . (lambda () (interactive) (switch-vterm 4)))
+            ("M-5" . (lambda () (interactive) (switch-vterm 5)))
+            ("M-6" . (lambda () (interactive) (switch-vterm 6)))
+            ("M-7" . (lambda () (interactive) (switch-vterm 7)))
+            ("M-8" . (lambda () (interactive) (switch-vterm 8)))
+            ("M-9" . (lambda () (interactive) (switch-vterm 9))))
 
-   Don't query whether or not the ~shell~-buffer should be killed, just kill
-   it.
-
-   #+begin_src emacs-lisp
-
-   (defadvice vterm (after kill-with-no-query nil activate)
-     (set-process-query-on-exit-flag (get-buffer-process ad-return-value) nil))
+     :config
+     ;; Don't query about killing vterm buffers, just kill it
+     (defadvice vterm (after kill-with-no-query nil activate)
+       (set-process-query-on-exit-flag (get-buffer-process ad-return-value) nil)))
 
    #+end_src
 
@@ -1831,14 +1839,6 @@
   (define-key custom-bindings-map (kbd "C-c j")   'cycle-spacing-delete-newlines)
   (define-key custom-bindings-map (kbd "C-c d")   'duplicate-thing)
   (define-key custom-bindings-map (kbd "<C-tab>") 'tidy)
-  (define-key custom-bindings-map (kbd "C-z")     'toggle-vterm)
-
-  (dolist (n (number-sequence 1 9))
-    (let ((key (concat "M-" (int-to-string n))))
-      (with-eval-after-load 'vterm
-        (define-key vterm-mode-map (kbd key) nil))
-      (define-key custom-bindings-map (kbd  key)
-                  (lambda () (interactive) (switch-vterm n)))))
 
   (with-eval-after-load 'org
     (define-key org-mode-map (kbd "C-'") 'org-sync-pdf))
