@@ -1525,6 +1525,7 @@
 
     ;; Superior Lisp Interaction Mode for Emacs
     (use-package slime
+      :disabled
       :defer t
       :bind (:map slime-repl-mode-map ("C-l" . slime-repl-clear-buffer))
       :hook (common-lisp-mode . activate-slime-helper)
@@ -1689,6 +1690,7 @@
 
    ;; Major mode for MiniZinc code
    (use-package minizinc-mode
+     :disabled
      :defer t
      :mode "\\.mzn\\'"
      :hook (minizinc-mode . minizinc-setup-compile-command))
@@ -1704,6 +1706,7 @@
 
    ;; A generic Emacs interface for proof assistants
    (use-package proof-general
+     :disabled
      :defer t)
 
    #+end_src
@@ -1714,6 +1717,7 @@
 
    ;; A collection of extensions PG's Coq mode
    (use-package company-coq
+     :disabled
      :defer t
      :hook (coq-mode . company-coq-mode))
 
@@ -1801,6 +1805,7 @@
 
    ;; z3/SMTLIBv2 interactive development
    (use-package z3-mode
+     :disabled
      :defer t)
 
    #+end_src
