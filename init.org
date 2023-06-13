@@ -200,48 +200,63 @@
 
   #+end_src
 
-  The configuration assumes that the packages listed below are installed. To
-  ensure we install missing packages if they are missing.
-
-  #+begin_src emacs-lisp
-
-  (let* ((package--builtins nil)
-         (packages
-          '()))
-    (when (memq window-system '(mac ns))
-      (push 'exec-path-from-shell packages)
-      (push 'reveal-in-osx-finder packages))
-    (let ((packages (seq-remove 'package-installed-p packages)))
-      (when packages
-        ;; Install uninstalled packages
-        (package-refresh-contents)
-        (mapc 'package-install packages))))
-
-  #+end_src
-
 * Mac OS X
 
-  I run this configuration mostly on Mac OS X, so we need a couple of settings
-  to make things work smoothly. In the package section =exec-path-from-shell=
-  is included (only if you're running OS X), this is to include
-  environment-variables from the shell. It makes using Emacs along with
-  external processes a lot simpler. I also prefer using the =Command=-key as
-  the =Meta=-key.
+  I run this configuration mostly on macOS, so we need a couple of settings to
+  make things work smoothly. I use the =Command=-key as the =Meta=-key, Freeing
+  up the =Option=-key, which I need for typing Norwegian characters on a US
+  keyboard. In addition, it is more comfortable.
+
+  I try to minimize the use of frames. The native compilation gives a lot of
+  warnings, but they seem safe to ignore.
 
   #+begin_src emacs-lisp
 
   (when (memq window-system '(mac ns))
-    (setq ns-pop-up-frames nil
-          mac-option-modifier nil
+    (setq mac-option-modifier nil
           mac-command-modifier 'meta
-          native-comp-async-report-warnings-errors nil)
-    (exec-path-from-shell-initialize)
-    (when (fboundp 'mac-auto-operator-composition-mode)
-      (mac-auto-operator-composition-mode 1))
-    (require 'ls-lisp)
-    (setq ls-lisp-use-insert-directory-program nil))
+          ns-pop-up-frames nil
+          native-comp-async-report-warnings-errors nil))
 
   #+end_src
+
+  The package [[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]] synchronizes environment variables from the
+  shell to Emacs. This makes it a lot easier to deal with external programs on
+  macOS.
+
+  #+begin_src emacs-lisp
+
+  (use-package exec-path-from-shell
+    :if (memq window-system '(mac ns))
+    :config
+    (exec-path-from-shell-initialize))
+
+  #+end_src
+
+  I had some problems with Dired, and this seems to have solved it. I /think/
+  the solutions was from [[https://stackoverflow.com/questions/4076360/error-in-dired-sorting-on-os-x][here]], and my problems were related, but not the same.
+
+  #+begin_src emacs-lisp
+
+  (use-package ls-lisp
+    :ensure nil
+    :if (memq window-system '(mac ns))
+    :config
+    (setq ls-lisp-use-insert-directory-program nil))
+  
+  #+end_src
+
+  It is useful to be able to occasionally open the file associated with a
+  buffer in macOS Finder.
+
+  #+begin_src emacs-lisp
+
+  (use-package reveal-in-osx-finder
+    :if (memq window-system '(mac ns)))
+
+  #+end_src
+
+  #+RESULTS:
 
 * Sane defaults
 
