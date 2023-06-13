@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(proof-general        ; A generic Emacs interface for proof assistants
-            racket-mode          ; Major mode for Racket language
+          '(racket-mode          ; Major mode for Racket language
             rustic               ; Rust development environment
             slime                ; Superior Lisp Interaction Mode for Emacs
             try                  ; Try out Emacs packages
@@ -1657,10 +1656,24 @@
 
 ** Coq
 
+   [[https://proofgeneral.github.io/][Proof General]] is really great for working with proof assistants. I have only
+   tried it with Coq.
+
+   #+begin_src emacs-lisp
+
+   ;; A generic Emacs interface for proof assistants
+   (use-package proof-general
+     :defer t)
+
+   #+end_src
+
+   For completions, I use [[https://github.com/cpitclaudel/company-coq][company-coq]].
+
    #+begin_src emacs-lisp
 
    ;; A collection of extensions PG's Coq mode
    (use-package company-coq
+     :defer t
      :hook (coq-mode . company-coq-mode))
 
    #+end_src
