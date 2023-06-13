@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(racket-mode          ; Major mode for Racket language
-            rustic               ; Rust development environment
+          '(rustic               ; Rust development environment
             slime                ; Superior Lisp Interaction Mode for Emacs
             try                  ; Try out Emacs packages
             vterm                ; A terminal via libvterm
@@ -1456,6 +1455,18 @@
 
     ;; Commands for refactoring Clojure code
     (use-package clj-refactor
+      :defer t)
+
+    #+end_src
+
+*** Racket
+
+    A minimal setup for Racket.
+
+    #+begin_src emacs-lisp
+
+    ;; Major mode for Racket language
+    (use-package racket-mode
       :defer t)
 
     #+end_src
