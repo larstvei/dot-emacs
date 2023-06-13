@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(rustic               ; Rust development environment
-            slime                ; Superior Lisp Interaction Mode for Emacs
+          '(slime                ; Superior Lisp Interaction Mode for Emacs
             try                  ; Try out Emacs packages
             vterm                ; A terminal via libvterm
             which-key            ; Display available keybindings in popup
@@ -1693,7 +1692,11 @@
 
    #+begin_src emacs-lisp
 
-   (setq rustic-lsp-client 'eglot)
+   ;; Rust development environment
+   (use-package rustic
+     :defer t
+     :config
+     (setq rustic-lsp-client 'eglot))
 
    #+end_src
 
