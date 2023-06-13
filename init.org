@@ -207,8 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(try                  ; Try out Emacs packages
-            vterm                ; A terminal via libvterm
+          '(vterm                ; A terminal via libvterm
             which-key            ; Display available keybindings in popup
             z3-mode)))           ; z3/SMTLIBv2 interactive development
     (when (memq window-system '(mac ns))
@@ -1116,6 +1115,19 @@
   (use-package expand-region
     :defer t
     :bind ("C-=" . er/expand-region))
+
+  #+end_src
+
+* Try
+
+  [[https://github.com/larstvei/Try][Try]] is my own package for trying out packages without installing them. It is
+  the most useful of my packages (IMO).
+
+  #+begin_src emacs-lisp
+
+  ;; Try out Emacs packages
+  (use-package try
+    :defer t)
 
   #+end_src
 
