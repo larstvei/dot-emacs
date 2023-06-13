@@ -838,18 +838,26 @@
     :config
     (setq org-adapt-indentation t
           org-src-fontify-natively t
-          org-confirm-babel-evaluate nil
-          org-export-allow-bind-keywords t
           org-edit-src-content-indentation 0))
 
   #+end_src
 
 ** LaTeX export
 
-   For LaTeX export, I default to using XeLaTeX for compilation, and the [[https://www.ctan.org/pkg/minted][minted]]
-   package for syntax highlighting source blocks. I have PDFs open directly in
-   Emacs ([[PDF Tools]]). In addition, I have support for a couple of custom LaTeX
-   classes.
+   For LaTeX export, I default to using XeLaTeX for compilation, and the
+   [[https://github.com/tecosaur/engrave-faces][engrave-faces]] package for syntax highlighting source blocks after the Emacs
+   color theme.
+
+   #+begin_src emacs-lisp
+
+   ;; Convert font-lock faces to other formats
+   (use-package engrave-faces
+     :defer t)
+
+   #+end_src
+
+   I have PDFs open directly in Emacs ([[PDF Tools]]). In addition, I have support
+   for a couple of custom LaTeX classes.
 
    #+begin_src emacs-lisp
 
@@ -858,9 +866,8 @@
      :ensure nil
      :after org
      :config
-     ;; Use Minted and XeLaTeX
-     (setq org-latex-src-block-backend 'minted
-           org-latex-packages-alist '(("newfloat" "minted"))
+     (setq org-export-allow-bind-keywords t
+           org-latex-src-block-backend 'engraved
            org-latex-pdf-process
            '("latexmk -pdflatex='xelatex -shell-escape -interaction nonstopmode' -pdf -f %f"))
 
@@ -892,7 +899,8 @@
 
 ** Babel
 
-   Add a few languages for org-babel.
+   Add a few languages for Org babel. In addition, don't evaluate code on
+   export by default.
 
    #+begin_src emacs-lisp
 
@@ -901,6 +909,8 @@
      :ensure nil
      :after org
      :config
+     (setq org-export-use-babel nil
+           org-confirm-babel-evaluate nil)
      (org-babel-do-load-languages
       'org-babel-load-languages
       '((emacs-lisp . t)
