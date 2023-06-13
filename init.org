@@ -207,7 +207,7 @@
 
   (let* ((package--builtins nil)
          (packages
-          '(z3-mode)))           ; z3/SMTLIBv2 interactive development
+          '()))
     (when (memq window-system '(mac ns))
       (push 'exec-path-from-shell packages)
       (push 'reveal-in-osx-finder packages))
@@ -1770,6 +1770,19 @@
    (with-eval-after-load "eglot"
      (add-to-list 'eglot-server-programs
                   '(web-mode . ("svelteserver" "--stdio"))))
+
+   #+end_src
+
+** Z3
+
+   I mostly use [[https://github.com/Z3Prover/z3][Z3]] as a Python library, but occasionally I'll run some SMT-LIB
+   code directly.
+
+   #+begin_src emacs-lisp
+
+   ;; z3/SMTLIBv2 interactive development
+   (use-package z3-mode
+     :defer t)
 
    #+end_src
 
