@@ -321,6 +321,8 @@
   (use-package meow
     :config
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+    (add-to-list 'meow-mode-state-list '(vterm-mode . insert))
+    (add-to-list 'meow-mode-state-list '(comint-mode . insert))
     (meow-motion-overwrite-define-key
      '("j" . meow-next)
      '("k" . meow-prev)
