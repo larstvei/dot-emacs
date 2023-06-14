@@ -1497,6 +1497,14 @@
 
    #+end_src
 
+   #+begin_src emacs-lisp
+
+   (use-package comint
+     :ensure nil
+     :hook (comint-mode . (lambda () (auto-fill-mode -1))))
+
+   #+end_src
+
 ** vterm
 
    Inspired by [[https://github.com/torenord/.emacs.d][torenord]], I maintain quick access to shell buffers with bindings
