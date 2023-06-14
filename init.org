@@ -162,12 +162,9 @@
   initialization. Here, we set the ~gc-cons-threshold~ to a ridiculously large
   number, and restore the default value after initialization.
 
-  #+begin_src emacs-lisp
+  #+begin_src emacs-lisp :tangle early-init.el
 
-  (let ((old-gc-treshold gc-cons-threshold))
-    (setq gc-cons-threshold most-positive-fixnum)
-    (add-hook 'after-init-hook
-              (lambda () (setq gc-cons-threshold old-gc-treshold))))
+  (setq gc-cons-threshold (* 100 1024 1024))
 
   #+end_src
 
