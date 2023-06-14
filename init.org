@@ -315,6 +315,28 @@
 
 * Visual
 
+  First off, let's declutter. Remove clickies to give a nice and clean look.
+  Also, the cursor can relax. We add this to the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Early-Init-File.html][early-init]], as it might be
+  marginally faster, and look less wonky.
+
+  #+begin_src emacs-lisp :tangle early-init.el
+
+  (dolist (mode
+           '(tool-bar-mode                ; No toolbars, more room for text
+             scroll-bar-mode              ; No scroll bars either
+             blink-cursor-mode))          ; The blinking cursor gets old
+    (funcall mode 0))
+
+  #+end_src
+
+  Add a small border on the frame. This also goes in the early-init.
+
+  #+begin_src emacs-lisp
+
+  (add-to-list 'default-frame-alist '(internal-border-width . 24))
+
+  #+end_src
+
   I am using a lot from [[https://github.com/rougier/nano-emacs][rougier's N Λ N O Emacs]], starting with the theme.
 
 ** Theme
@@ -543,22 +565,7 @@
 
 * Modes
 
-  There are some modes that are enabled by default that I don't find
-  particularly useful. We create a list of these modes, and disable all of
-  these.
-
-  #+begin_src emacs-lisp
-
-  (dolist (mode
-           '(tool-bar-mode                ; No toolbars, more room for text
-             scroll-bar-mode              ; No scroll bars either
-             blink-cursor-mode))          ; The blinking cursor gets old
-    (funcall mode 0))
-
-  #+end_src
-
-  Let's apply the same technique for enabling modes that are disabled by
-  default.
+  Here are a list of modes that I prefer enable by default.
 
   #+begin_src emacs-lisp
 
