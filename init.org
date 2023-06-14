@@ -818,7 +818,6 @@
   (use-package pdf-tools
     :defer t
     :mode "\\.pdf\\'"
-    :init (pdf-loader-install)
     :bind (:map pdf-view-mode-map
                 ("c" . (lambda ()
                          (interactive)
@@ -826,7 +825,9 @@
                              (setq header-line-format nil)
                            (nano-modeline-pdf-mode))))
                 ("j" . pdf-view-next-line-or-next-page)
-                ("k" . pdf-view-previous-line-or-previous-page)))
+                ("k" . pdf-view-previous-line-or-previous-page))
+    :init (pdf-loader-install)
+    :config (add-to-list 'revert-without-query ".pdf"))
 
   #+end_src
 
