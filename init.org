@@ -201,6 +201,15 @@
 
   These are what /I/ consider to be saner defaults.
 
+  Set =utf-8= as preferred coding system.
+
+  #+begin_src emacs-lisp
+
+  (set-language-environment "UTF-8")
+  (prefer-coding-system 'utf-8)
+
+  #+end_src
+
   We can set variables to whatever value we'd like using =setq=.
 
   #+begin_src emacs-lisp
@@ -281,14 +290,6 @@
         `((".*" . ,emacs-autosave-directory))
         auto-save-file-name-transforms
         `((".*" ,emacs-autosave-directory t)))
-
-  #+end_src
-
-  Set =utf-8= as preferred coding system.
-
-  #+begin_src emacs-lisp
-
-  (set-language-environment "UTF-8")
 
   #+end_src
 
