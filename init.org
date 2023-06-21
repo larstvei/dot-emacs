@@ -310,6 +310,20 @@
 
   #+end_src
 
+* Key bindings
+
+  Inspired by [[http://stackoverflow.com/questions/683425/globally-override-key-binding-in-emacs][this StackOverflow post]] I keep a =custom-bindings-map= that holds
+  all my custom bindings. This map can be activated by toggling a simple
+  =minor-mode= that does nothing more than activating the map. This inhibits
+  other =major-modes= to override these bindings.
+
+  #+begin_src emacs-lisp
+
+  (defvar custom-bindings-map (make-keymap)
+    "A keymap for custom bindings.")
+
+  #+end_src
+
 * Modal meow
 
   I have been wanting to try out modal editing. [[https://github.com/meow-edit/meow][meow]] seems like a nice package,
@@ -563,7 +577,7 @@
    ;; Minor mode for a nice writing environment
    (use-package olivetti
      :defer t
-     :bind ("C-c o" . olivetti-mode)
+     :bind (:map custom-bindings-map ("C-c o" . olivetti-mode))
      :config
      (setq-default olivetti-body-width (+ fill-column 3))
      (remove-hook 'olivetti-mode-on-hook 'visual-line-mode))
@@ -580,7 +594,7 @@
    ;; Dim color of text in surrounding sections
    (use-package focus
      :defer t
-     :bind ("C-c f" . focus-mode))
+     :bind (:map custom-bindings-map ("C-c f" . focus-mode)))
 
    #+end_src
 
@@ -686,7 +700,7 @@
 
   ;; A Git porcelain inside Emacs.
   (use-package magit
-    :bind ("C-c m" . magit-status))
+    :bind (:map custom-bindings-map ("C-c m" . magit-status)))
 
   #+end_src
 
@@ -722,7 +736,7 @@
 
   ;; Manage and navigate projects in Emacs easily
   (use-package projectile
-    :bind ("C-c p" . projectile-command-map))
+    :bind (:map custom-bindings-map ("C-c p" . projectile-command-map)))
 
   #+end_src
 
@@ -738,7 +752,7 @@
 
   ;; Incremental Vertical completion
   (use-package ivy
-    :bind ("C-x b" . ivy-switch-buffer)
+    :bind (:map custom-bindings-map ("C-x b" . ivy-switch-buffer))
     :config
     (setq ivy-wrap t                          ; Easier access to the last candidate
           ivy-height 25                       ; Give me more candidates to look at
@@ -766,14 +780,13 @@
   Use counsel for =M-x=, yanking and finding files.
 
   #+begin_src emacs-lisp
-
   ;; Various completion functions using Ivy
   (use-package counsel
     :bind
-    (("M-x" . counsel-M-x)
-     ("M-y" . counsel-yank-pop)
-     ("C-x C-f" . counsel-find-file)))
-
+    (:map custom-bindings-map
+          ("M-x" . counsel-M-x)
+          ("M-y" . counsel-yank-pop)
+          ("C-x C-f" . counsel-find-file)))
   #+end_src
 
   Use swiper for fancy search.
@@ -782,7 +795,7 @@
 
   ;; Isearch with an overview.  Oh, man!
   (use-package swiper
-    :bind ("C-c i" . swiper-isearch))
+    :bind (:map custom-bindings-map ("C-c i" . swiper-isearch)))
 
   #+end_src
 
@@ -916,7 +929,7 @@
    ;; display the definition of word at point
    (use-package define-word
      :defer t
-     :bind ("C-c D" . define-word-at-point))
+     :bind (:map custom-bindings-map ("C-c D" . define-word-at-point)))
 
    #+end_src
 
@@ -1162,7 +1175,7 @@
              (executable-find "mbsync")
              (executable-find "msmtp")
              (executable-find "mu"))
-    :bind ("C-x m" . mu4e)
+    :bind (:map custom-bindings-map ("C-x m" . mu4e))
     :config
     (setq
      mail-user-agent 'mu4e-user-agent
@@ -1230,9 +1243,10 @@
   ;; Multiple cursors for Emacs
   (use-package multiple-cursors
     :defer t
-    :bind (("C-c e" . mc/edit-lines)
-           ("C-c a" . mc/mark-all-like-this)
-           ("C-c n" . mc/mark-next-like-this)))
+    :bind (:map custom-bindings-map
+                ("C-c e" . mc/edit-lines)
+                ("C-c a" . mc/mark-all-like-this)
+                ("C-c n" . mc/mark-next-like-this)))
 
   #+end_src
 
@@ -1245,7 +1259,7 @@
   ;; Increase selected region by semantic units
   (use-package expand-region
     :defer t
-    :bind ("C-=" . er/expand-region))
+    :bind (:map custom-bindings-map ("C-=" . er/expand-region)))
 
   #+end_src
 
@@ -1546,16 +1560,17 @@
                  (t (vterm buffer-name)
                     (rename-buffer buffer-name))))))
 
-     :bind (("C-z" . toggle-vterm)
-            ("M-1" . (lambda () (interactive) (switch-vterm 1)))
-            ("M-2" . (lambda () (interactive) (switch-vterm 2)))
-            ("M-3" . (lambda () (interactive) (switch-vterm 3)))
-            ("M-4" . (lambda () (interactive) (switch-vterm 4)))
-            ("M-5" . (lambda () (interactive) (switch-vterm 5)))
-            ("M-6" . (lambda () (interactive) (switch-vterm 6)))
-            ("M-7" . (lambda () (interactive) (switch-vterm 7)))
-            ("M-8" . (lambda () (interactive) (switch-vterm 8)))
-            ("M-9" . (lambda () (interactive) (switch-vterm 9))))
+     :bind (:map custom-bindings-map
+                 ("C-z" . toggle-vterm)
+                 ("M-1" . (lambda () (interactive) (switch-vterm 1)))
+                 ("M-2" . (lambda () (interactive) (switch-vterm 2)))
+                 ("M-3" . (lambda () (interactive) (switch-vterm 3)))
+                 ("M-4" . (lambda () (interactive) (switch-vterm 4)))
+                 ("M-5" . (lambda () (interactive) (switch-vterm 5)))
+                 ("M-6" . (lambda () (interactive) (switch-vterm 6)))
+                 ("M-7" . (lambda () (interactive) (switch-vterm 7)))
+                 ("M-8" . (lambda () (interactive) (switch-vterm 8)))
+                 ("M-9" . (lambda () (interactive) (switch-vterm 9))))
 
      :config
      ;; Don't query about killing vterm buffers, just kill it
@@ -1943,81 +1958,66 @@
 
    #+end_src
 
-* Key bindings
+* Which key
 
-  Inspired by [[http://stackoverflow.com/questions/683425/globally-override-key-binding-in-emacs][this StackOverflow post]] I keep a =custom-bindings-map= that holds
-  all my custom bindings. This map can be activated by toggling a simple
-  =minor-mode= that does nothing more than activating the map. This inhibits
-  other =major-modes= to override these bindings. I keep this at the end of the
-  init-file to make sure that all functions are actually defined.
+  [[https://github.com/justbur/emacs-which-key][Which key]] is nice for discoverability.
 
   #+begin_src emacs-lisp
 
-  (defvar custom-bindings-map (make-keymap)
-    "A keymap for custom bindings.")
+  ;; Display available keybindings in popup
+  (use-package which-key
+    :config
+    (which-key-mode 1))
 
   #+end_src
 
-** Which key
+* Bindings for built-ins
 
-   [[https://github.com/justbur/emacs-which-key][Which key]] is nice for discoverability.
+ #+begin_src emacs-lisp
 
-   #+begin_src emacs-lisp
+ (define-key custom-bindings-map (kbd "M-u")         'upcase-dwim)
+ (define-key custom-bindings-map (kbd "M-c")         'capitalize-dwim)
+ (define-key custom-bindings-map (kbd "M-l")         'downcase-dwim)
+ (define-key custom-bindings-map (kbd "M-]")         'other-frame)
+ (define-key custom-bindings-map (kbd "C-j")         'newline-and-indent)
+ (define-key custom-bindings-map (kbd "C-c s")       'ispell-word)
+ (define-key comint-mode-map     (kbd "C-l")         'comint-clear-buffer)
 
-   ;; Display available keybindings in popup
-   (use-package which-key
-     :config
-     (which-key-mode 1))
+ #+end_src
 
-   #+end_src
+* Bindings for functions defined [[sec:defuns][above]].
 
-** Bindings for built-ins
+ #+begin_src emacs-lisp
 
-  #+begin_src emacs-lisp
+ (define-key global-map          (kbd "M-p")     'jump-to-previous-like-this)
+ (define-key global-map          (kbd "M-n")     'jump-to-next-like-this)
+ (define-key custom-bindings-map (kbd "M-,")     'jump-to-previous-like-this)
+ (define-key custom-bindings-map (kbd "M-.")     'jump-to-next-like-this)
+ (define-key custom-bindings-map (kbd "C-c .")   (cycle-themes))
+ (define-key custom-bindings-map (kbd "C-x k")   'kill-this-buffer-unless-scratch)
+ (define-key custom-bindings-map (kbd "C-c C-0") 'global-scale-default)
+ (define-key custom-bindings-map (kbd "C-c C-=") 'global-scale-up)
+ (define-key custom-bindings-map (kbd "C-c C-+") 'global-scale-up)
+ (define-key custom-bindings-map (kbd "C-c C--") 'global-scale-down)
+ (define-key custom-bindings-map (kbd "C-c j")   'cycle-spacing-delete-newlines)
+ (define-key custom-bindings-map (kbd "C-c d")   'duplicate-thing)
+ (define-key custom-bindings-map (kbd "<C-tab>") 'tidy)
 
-  (define-key custom-bindings-map (kbd "M-u")         'upcase-dwim)
-  (define-key custom-bindings-map (kbd "M-c")         'capitalize-dwim)
-  (define-key custom-bindings-map (kbd "M-l")         'downcase-dwim)
-  (define-key custom-bindings-map (kbd "M-]")         'other-frame)
-  (define-key custom-bindings-map (kbd "C-j")         'newline-and-indent)
-  (define-key custom-bindings-map (kbd "C-c s")       'ispell-word)
-  (define-key comint-mode-map     (kbd "C-l")         'comint-clear-buffer)
+ (with-eval-after-load 'org
+   (define-key org-mode-map (kbd "C-'") 'org-sync-pdf))
 
-  #+end_src
+ #+end_src
 
-** Bindings for functions defined [[sec:defuns][above]].
+ Lastly we need to activate the map by creating and activating the
+ =minor-mode=.
 
-  #+begin_src emacs-lisp
+ #+begin_src emacs-lisp
 
-  (define-key global-map          (kbd "M-p")     'jump-to-previous-like-this)
-  (define-key global-map          (kbd "M-n")     'jump-to-next-like-this)
-  (define-key custom-bindings-map (kbd "M-,")     'jump-to-previous-like-this)
-  (define-key custom-bindings-map (kbd "M-.")     'jump-to-next-like-this)
-  (define-key custom-bindings-map (kbd "C-c .")   (cycle-themes))
-  (define-key custom-bindings-map (kbd "C-x k")   'kill-this-buffer-unless-scratch)
-  (define-key custom-bindings-map (kbd "C-c C-0") 'global-scale-default)
-  (define-key custom-bindings-map (kbd "C-c C-=") 'global-scale-up)
-  (define-key custom-bindings-map (kbd "C-c C-+") 'global-scale-up)
-  (define-key custom-bindings-map (kbd "C-c C--") 'global-scale-down)
-  (define-key custom-bindings-map (kbd "C-c j")   'cycle-spacing-delete-newlines)
-  (define-key custom-bindings-map (kbd "C-c d")   'duplicate-thing)
-  (define-key custom-bindings-map (kbd "<C-tab>") 'tidy)
+ (define-minor-mode custom-bindings-mode
+   "A mode that activates custom-bindings."
+   t nil custom-bindings-map)
 
-  (with-eval-after-load 'org
-    (define-key org-mode-map (kbd "C-'") 'org-sync-pdf))
-
-  #+end_src
-
-  Lastly we need to activate the map by creating and activating the
-  =minor-mode=.
-
-  #+begin_src emacs-lisp
-
-  (define-minor-mode custom-bindings-mode
-    "A mode that activates custom-bindings."
-    t nil custom-bindings-map)
-
-  #+end_src
+ #+end_src
 
 * License
 
