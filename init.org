@@ -1514,15 +1514,11 @@
 
    #+begin_src emacs-lisp
 
-   (add-hook 'compilation-filter-hook 'comint-truncate-buffer)
-
-   #+end_src
-
-   #+begin_src emacs-lisp
-
    (use-package comint
      :ensure nil
-     :hook (comint-mode . (lambda () (auto-fill-mode -1))))
+     :bind (:map comint-mode-map ("C-l" . comint-clear-buffer))
+     :hook (comint-mode . (lambda () (auto-fill-mode -1)))
+     :config (add-hook 'compilation-filter-hook 'comint-truncate-buffer))
 
    #+end_src
 
@@ -1976,13 +1972,12 @@
 
  #+begin_src emacs-lisp
 
- (define-key custom-bindings-map (kbd "M-u")         'upcase-dwim)
- (define-key custom-bindings-map (kbd "M-c")         'capitalize-dwim)
- (define-key custom-bindings-map (kbd "M-l")         'downcase-dwim)
- (define-key custom-bindings-map (kbd "M-]")         'other-frame)
- (define-key custom-bindings-map (kbd "C-j")         'newline-and-indent)
- (define-key custom-bindings-map (kbd "C-c s")       'ispell-word)
- (define-key comint-mode-map     (kbd "C-l")         'comint-clear-buffer)
+ (define-key custom-bindings-map (kbd "M-u")   'upcase-dwim)
+ (define-key custom-bindings-map (kbd "M-c")   'capitalize-dwim)
+ (define-key custom-bindings-map (kbd "M-l")   'downcase-dwim)
+ (define-key custom-bindings-map (kbd "M-]")   'other-frame)
+ (define-key custom-bindings-map (kbd "C-j")   'newline-and-indent)
+ (define-key custom-bindings-map (kbd "C-c s") 'ispell-word)
 
  #+end_src
 
