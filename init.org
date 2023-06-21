@@ -496,27 +496,31 @@
 
    ;; N Λ N O modeline
    (use-package nano-modeline
-     :hook ((prog-mode . nano-modeline-prog-mode)
-            (text-mode . nano-modeline-text-mode)
-            (org-mode . nano-modeline-org-mode)
-            (pdf-view-mode . nano-modeline-pdf-mode)
-            (mu4e-headers-mode . nano-modeline-mu4e-headers-mode)
-            (mu4e-view-mode . nano-modeline-mu4e-message-mode)
-            (elfeed-show-mode . nano-modeline-elfeed-entry-mode)
-            (elfeed-search-mode . nano-modeline-elfeed-search-mode)
-            (term-mode . nano-modeline-term-mode)
-            (xwidget-webkit-mode . nano-modeline-xwidget-mode)
-            (messages-buffer-mode . nano-modeline-message-mode)
-            (org-capture-mode . nano-modeline-org-capture-mode)
-            (org-agenda-mode . nano-modeline-org-agenda-mode))
-
-     ;; Disable the default modeline and add a small margin around the frame
+     :after meow
      :init
-     (setq-default mode-line-format nil)   
-     (add-to-list 'default-frame-alist '(internal-border-width . 24))
-     ;; Set nano-modeline-text-mode as default
+     ;; Disable the default modeline
+     (setq-default mode-line-format nil)
      :config
-     (nano-modeline-text-mode 1))
+     (defun meow-nano-modeline-indicator ()
+       "Create the status indicator for the modeline."
+       (pcase (meow--current-state)
+         ('normal (propertize " N " 'face (nano-modeline-face 'status-RO)))
+         ('motion (propertize " M " 'face (nano-modeline-face 'status-RO)))
+         ('insert (propertize " I " 'face (nano-modeline-face 'status-RW)))
+         ('keypad (propertize " K " 'face (nano-modeline-face 'status-**)))
+         ('beacon (propertize " B " 'face (nano-modeline-face 'status-**)))))
+
+     (defun my-default-nano-modeline (&optional default)
+       "My nano modeline configuration."
+       (funcall nano-modeline-position
+                `((nano-modeline-buffer-status)
+                  (meow-nano-modeline-indicator) " "
+                  (nano-modeline-buffer-name) " "
+                  (nano-modeline-git-info))
+                `((nano-modeline-cursor-position)
+                  (nano-modeline-window-dedicated))
+                default))
+     (my-default-nano-modeline 1))
 
    #+end_src
 
