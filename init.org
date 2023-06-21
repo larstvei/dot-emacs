@@ -1156,16 +1156,6 @@
   I've used Emacs for email in the past, where I've always had the need for a
   more standard email client in addition. I'm going to give it another go.
 
-  #+begin_src emacs-lisp
-
-  (defvar load-mail-setup
-    (and (file-exists-p "~/Maildir")
-         (executable-find "mbsync")
-         (executable-find "msmtp")
-         (executable-find "mu")))
-
-  #+end_src
-
   I use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] (which is a part of [[http://www.djcbsoftware.nl/code/mu/][mu]]) along with [[https://isync.sourceforge.io/][mbsync]].
 
   #+begin_src emacs-lisp
@@ -1193,7 +1183,6 @@
 
      mu4e-get-mail-command (concat (executable-find "mbsync") " -a")
      mu4e-change-filenames-when-moving t
-     mu4e-user-mail-address-list '("larstvei@ifi.uio.no")
      mu4e-maildir-shortcuts '(("/Inbox" . ?i) ("/Sent Items" . ?s))
 
      mu4e-sent-folder "/Sent Items"
