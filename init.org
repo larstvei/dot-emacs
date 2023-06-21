@@ -1971,16 +1971,6 @@
 
    #+end_src
 
-** Bindings for [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]]
-
-  #+begin_src emacs-lisp
-
-  (define-key custom-bindings-map (kbd "C-c e")  'mc/edit-lines)
-  (define-key custom-bindings-map (kbd "C-c a")  'mc/mark-all-like-this)
-  (define-key custom-bindings-map (kbd "C-c n")  'mc/mark-next-like-this)
-
-  #+end_src
-
 ** Bindings for built-ins
 
   #+begin_src emacs-lisp
