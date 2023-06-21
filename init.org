@@ -580,11 +580,7 @@
    ;; Dim color of text in surrounding sections
    (use-package focus
      :defer t
-     :bind ("C-c q" .
-            (lambda ()
-              (interactive)
-              (focus-mode 1)
-              (focus-read-only-mode 1))))
+     :bind ("C-c f" . focus-mode))
 
    #+end_src
 
