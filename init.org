@@ -963,6 +963,8 @@
     :defer t
     :config
     (setq org-adapt-indentation t
+          org-hide-leading-stars t
+          org-hide-emphasis-markers t
           org-src-fontify-natively t
           org-edit-src-content-indentation 0))
 
@@ -1966,6 +1968,7 @@
  (define-key custom-bindings-map (kbd "M-]")   'other-frame)
  (define-key custom-bindings-map (kbd "C-j")   'newline-and-indent)
  (define-key custom-bindings-map (kbd "C-c s") 'ispell-word)
+ (define-key custom-bindings-map (kbd "C-c v") 'visible-mode)
 
  #+end_src
 
