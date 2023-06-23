@@ -217,6 +217,7 @@
   (setq auto-revert-interval 1            ; Refresh buffers fast
         default-input-method "TeX"        ; Use TeX when toggling input method
         echo-keystrokes 0.1               ; Show keystrokes asap
+        enable-recursive-minibuffers t    ; Allow recursive minibuffers
         frame-inhibit-implied-resize 1    ; Don't resize frame implicitly
         inhibit-startup-screen t          ; No splash screen please
         initial-scratch-message nil       ; Clean scratch buffer
@@ -752,29 +753,21 @@
 
   #+end_src
 
-* Ivy/Counsel
+* Completion UI
 
-  [[http://oremacs.com/swiper/][Ivy]] is a completion system, giving you completions and fuzzy search whenever
-  you interact with the minibuffer. I transitioned to Ivy from [[https://emacs-helm.github.io/helm/][Helm]], mainly due
-  to it being aesthetically noisy, and that I didn't fully take advantage of
-  all its features (which are numerous). Here are some customization's that
-  made the transition a bit easier.
+  I have transitioned from [[https://emacs-helm.github.io/helm/][Helm]] to [[http://oremacs.com/swiper/][Ivy]], and now, on to [[https://github.com/minad/vertico][Vertico]]. It improves the
+  interface calling commands (i.e. ~M-x~), finding files, switching buffers,
+  searching files and so on. Using the ~vertico-buffer-mode~ gives a more
+  Helm-like experience, where completions are given a full fledged buffer.
 
   #+begin_src emacs-lisp
 
-  ;; Incremental Vertical completion
-  (use-package ivy
-    :bind (:map custom-bindings-map ("C-x b" . ivy-switch-buffer))
+  ;; VERTical Interactive COmpletion
+  (use-package vertico
+    :init
+    (vertico-mode 1)
     :config
-    (setq ivy-wrap t                          ; Easier access to the last candidate
-          ivy-height 25                       ; Give me more candidates to look at
-          ivy-use-virtual-buffers t           ; C-x b displays recents and bookmarks
-          ivy-count-format "(%d/%d) "         ; Display both the index and the count
-          ivy-on-del-error-function 'ignore   ; Lets me hold in backspace
-          ivy-posframe-min-width 100          ; Keep ivy reasonably narrow
-          ivy-posframe-height ivy-height      ; Maintain the height given by ivy
-          ivy-virtual-abbreviate 'abbreviate) ; Disambiguate same file in different dirs
-    (ivy-mode 1))
+    (setq vertico-count 25))
 
   #+end_src
 
@@ -782,54 +775,86 @@
 
   #+begin_src emacs-lisp
 
-  ;; Using posframe to show Ivy
-  (use-package ivy-posframe
+  ;; Using posframe to show Vertico
+  (use-package vertico-posframe
     :config
-    (ivy-posframe-mode 1))
+    (vertico-posframe-mode 1)
+    (setq vertico-posframe-width 100
+          vertico-posframe-height vertico-count))
 
   #+end_src
 
-  Use counsel for =M-x=, yanking and finding files.
-
-  #+begin_src emacs-lisp
-  ;; Various completion functions using Ivy
-  (use-package counsel
-    :bind
-    (:map custom-bindings-map
-          ("M-x" . counsel-M-x)
-          ("M-y" . counsel-yank-pop)
-          ("C-x C-f" . counsel-find-file)))
-  #+end_src
-
-  Use swiper for fancy search.
+  Use the built in ~savehist-mode~ to prioritize recently used commands.
 
   #+begin_src emacs-lisp
 
-  ;; Isearch with an overview.  Oh, man!
-  (use-package swiper
-    :bind (:map custom-bindings-map ("C-c i" . swiper-isearch)))
+  ;; Save minibuffer history
+  (use-package savehist
+    :init
+    (savehist-mode 1))
 
   #+end_src
 
-  Have Ivy play with nice with Projectile.
+  With [[https://github.com/minad/marginalia/][Marginalia]], we get better descriptions for commands inline.
 
   #+begin_src emacs-lisp
 
-  ;; Ivy integration for Projectile
-  (use-package counsel-projectile
+  ;; Enrich existing commands with completion annotations
+  (use-package marginalia
+    :init 
+    (marginalia-mode 1))
+
+  #+end_src
+
+** Completion
+
+   I used [[https://github.com/auto-complete/auto-complete][Auto-Complete]] for years, then I used [[http://company-mode.github.io/][company-mode]] for even more years,
+   and now I am giving [[https://github.com/minad/corfu][corfu]] a shot. I want a pretty aggressive completion
+   system, hence the no delay settings and a short prefix length.
+
+   #+begin_src emacs-lisp
+
+   ;; Modular text completion framework
+   (use-package corfu
+     :init
+     (global-corfu-mode 1)
+     (corfu-popupinfo-mode 1)
+     :config
+     (setq corfu-cycle t
+           corfu-auto t
+           corfu-auto-delay 0
+           corfu-auto-prefix 2
+           corfu-popupinfo-delay 0.5))
+
+   #+end_src
+
+   I use corfu in concert with [[https://github.com/oantolin/orderless][orderless]].
+
+  #+begin_src emacs-lisp
+
+  ;; Emacs completion style that matches multiple regexps in any order
+  (use-package orderless
+    :ensure t
     :config
-    (counsel-projectile-mode 1))
+    (setq completion-styles '(orderless basic partial-completion)
+          completion-category-overrides '((file (styles basic partial-completion)))
+          orderless-component-separator "[ |]"))
 
   #+end_src
 
-  Use smex to prioritize frequently used commands.
+** Navigation and searching
+
+   The package [[https://github.com/minad/consult][Consult]] improves navigation and searching.
 
   #+begin_src emacs-lisp
 
-  ;; M-x interface with Ido-style fuzzy matching
-  (use-package smex)
+   ;; Consulting completing-read
+   (use-package consult
+     :bind (:map custom-bindings-map
+                 ("C-x b" . consult-buffer)
+                 ("C-c r" . consult-ripgrep)))
 
-  #+end_src
+   #+end_src
 
 * PDF Tools
 
@@ -853,35 +878,6 @@
                 ("k" . pdf-view-previous-line-or-previous-page))
     :init (pdf-loader-install)
     :config (add-to-list 'revert-without-query ".pdf"))
-
-  #+end_src
-
-* Completion
-
-  [[https://github.com/auto-complete/auto-complete][Auto-Complete]] has been a part of my config for years, but I want to try out
-  [[http://company-mode.github.io/][company-mode]]. If I code in an environment with good completion, I've made an
-  habit of trying to /guess/ function-names, and looking at the completions for
-  the right one. So I want a pretty aggressive completion system, hence the no
-  delay settings and short prefix length.
-
-  #+begin_src emacs-lisp
-
-  ;; Modular text completion framework
-  (use-package company
-    :bind (;; Note that a bug (probably) makes the quotes necessary here
-           :map company-active-map
-           ("C-d" . 'company-show-doc-buffer)
-           ("C-n" . 'company-select-next)
-           ("C-p" . 'company-select-previous))
-    :config
-    (setq company-idle-delay 0
-          company-echo-delay 0
-          company-dabbrev-downcase nil
-          company-minimum-prefix-length 2
-          company-selection-wrap-around t
-          company-transformers '(company-sort-by-occurrence
-                                 company-sort-by-backend-importance))
-    (global-company-mode 1))
 
   #+end_src
 
