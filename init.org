@@ -541,18 +541,29 @@
 
 ** Font
 
-   Pick the first of the following fonts that is installed on the system.
+   I primarily use [[https://github.com/adobe-fonts][Adobe Fonts]]. 
+
+   My default monospace font is [[https://github.com/adobe-fonts/source-code-pro][Source Code Pro]]:
 
    #+begin_src emacs-lisp
 
-   (cond ((member "Source Code Pro" (font-family-list))
-          (set-face-attribute 'default nil :font "Source Code Pro-15"))
-         ((member "Roboto Mono" (font-family-list))
-          (set-face-attribute 'default nil :font "Roboto Mono-14"))
-         ((member "Fira Code" (font-family-list))
-          (set-face-attribute 'default nil :font "Fira Code-15"))
-         ((member "Inconsolata" (font-family-list))
-          (set-face-attribute 'default nil :font "Inconsolata-14")))
+   (when (member "Source Code Pro" (font-family-list))
+     (set-face-attribute 'default nil :font "Source Code Pro-15"))
+
+   #+end_src
+
+   My preferred proportional font is [[https://github.com/adobe-fonts/source-serif][Source Serif]]. In order to get
+   variable-pitch fonts where it makes sense, I use [[https://gitlab.com/jabranham/mixed-pitch][mixed-pitch]].
+
+   #+begin_src emacs-lisp
+
+   ;; Use a variable pitch, keeping fixed pitch where it's sensible
+   (use-package mixed-pitch
+     :defer t
+     :hook (text-mode . mixed-pitch-mode)
+     :config
+     (when (member "Source Serif Pro" (font-family-list))
+       (set-face-attribute 'variable-pitch nil :family "Source Serif Pro")))
 
    #+end_src
 
