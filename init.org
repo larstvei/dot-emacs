@@ -1034,8 +1034,7 @@
       'org-babel-load-languages
       '((emacs-lisp . t)
         (python . t)
-        (clojure . t)
-        (chatgpt-shell . t))))
+        (clojure . t))))
 
    #+end_src
 
@@ -1194,7 +1193,8 @@
 
 * ChatGPT
 
-  I have a line like this:
+  The ChatGPT client [[https://github.com/karthink/gptel][gptel]] needs an API key from the OpenAI API. This key can
+  be stored in your ~.authinfo~ file by adding a line like this:
 
   #+begin_example
 
@@ -1202,25 +1202,17 @@
 
   #+end_example
 
-  in my ~.authinfo~ file. Then the ~chatgpt-shell-openai-key~ can by set by:
+  Then the ~gptel-api-key~ can be set using auth source.
 
   #+begin_src emacs-lisp
 
   ;; Interaction mode for ChatGPT
-  (use-package chatgpt-shell
+  (use-package gptel
     :defer t
     :config
-    (setq chatgpt-shell-openai-key
-          (auth-source-pick-first-password
-           :host "api.openai.com")))
-
-  #+end_src
-
-  #+begin_src emacs-lisp
-
-  ;; Org babel functions for ChatGPT evaluation
-  (use-package ob-chatgpt-shell
-    :after ob)
+    (setq gptel-default-mode 'org-mode
+          gptel-api-key (auth-source-pick-first-password
+                         :host "api.openai.com")))
 
   #+end_src
 
