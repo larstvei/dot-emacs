@@ -965,6 +965,7 @@
     (setq org-adapt-indentation t
           org-hide-leading-stars t
           org-hide-emphasis-markers t
+          org-pretty-entities t
           org-src-fontify-natively t
           org-edit-src-content-indentation 0))
 
@@ -1076,16 +1077,16 @@
 
    #+end_src
 
-** Bullets
+** Org Modern
 
-   Touch up the headings a bit, with some fancy UTF-8 characters.
+   Touch up the appearance of org mode files with some fancy UTF-8 characters.
 
    #+begin_src emacs-lisp
 
-   ;; Show bullets in org-mode as UTF-8 characters
-   (use-package org-bullets
+   ;; Modern looks for Org
+   (use-package org-modern
      :after org
-     :hook (org-mode . (lambda () (org-bullets-mode 1))))
+     :hook (org-mode . org-modern-mode))
 
    #+end_src
 
