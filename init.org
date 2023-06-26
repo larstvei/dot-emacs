@@ -592,9 +592,19 @@
      :defer t
      :bind (:map custom-bindings-map ("C-c o" . olivetti-mode))
      :config
-     (setq-default olivetti-body-width (+ fill-column 3))
-     (remove-hook 'olivetti-mode-on-hook 'visual-line-mode))
+     (setq-default olivetti-body-width (+ fill-column 3)))
 
+   #+end_src
+
+** Adaptive wrapping
+
+   I usually have  auto-fill-mode enabled, and most of my files
+
+   #+begin_src emacs-lisp
+
+   (use-package adaptive-wrap
+     :defer t
+     :hook (visual-line-mode . adaptive-wrap-prefix-mode))
    #+end_src
 
 ** Focusing with focus
