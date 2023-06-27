@@ -1753,8 +1753,8 @@
    #+begin_src emacs-lisp
 
    ;; Integrated environment for *TeX*
-   (use-package auctex
-     :defer t)
+   (use-package tex
+     :ensure auctex)
 
    #+end_src
 
