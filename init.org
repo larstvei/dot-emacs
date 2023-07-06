@@ -1119,12 +1119,12 @@
                                           (reply-to-text . (text)))
            org-msg-signature "
 
-     ,,#+begin_signature
-     ,,#+begin_export html
+   ,#+begin_signature
+   ,#+begin_export html
 
-     - Lars
-     ,,#+end_export
-     ,,#+end_signature\n"))
+   - Lars
+   ,#+end_export
+   ,#+end_signature\n"))
 
    #+end_src
 
