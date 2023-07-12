@@ -1229,8 +1229,10 @@
   ;; Interaction mode for ChatGPT
   (use-package gptel
     :defer t
-    :config
+    :hook (gptel-mode . visual-line-mode)
+    :init
     (setq gptel-default-mode 'org-mode
+          gptel-model "gpt-4"
           gptel-api-key (auth-source-pick-first-password
                          :host "api.openai.com")))
 
