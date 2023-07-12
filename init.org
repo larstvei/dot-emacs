@@ -1111,13 +1111,17 @@
 ** Org Modern
 
    Touch up the appearance of org mode files with some fancy UTF-8 characters.
+   I disable ~org-modern-block-fringe~ due to [[https://github.com/minad/org-modern/issues/144][org-modern conflicting with]]
+   ~org-adapt-indentation~.
 
    #+begin_src emacs-lisp
 
    ;; Modern looks for Org
    (use-package org-modern
      :after org
-     :hook (org-mode . org-modern-mode))
+     :hook (org-mode . org-modern-mode)
+     :config
+     (setq org-modern-block-fringe nil))
 
    #+end_src
 
