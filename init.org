@@ -753,16 +753,6 @@
 
   #+end_src
 
-* Projectile
-
-  #+begin_src emacs-lisp
-
-  ;; Manage and navigate projects in Emacs easily
-  (use-package projectile
-    :bind (:map custom-bindings-map ("C-c p" . projectile-command-map)))
-
-  #+end_src
-
 * Completion UI
 
   I have transitioned from [[https://emacs-helm.github.io/helm/][Helm]] to [[http://oremacs.com/swiper/][Ivy]], and now, on to [[https://github.com/minad/vertico][Vertico]]. It improves the
