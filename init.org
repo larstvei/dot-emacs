@@ -1255,7 +1255,8 @@
   ;; Interaction mode for ChatGPT
   (use-package gptel
     :defer t
-    :hook (gptel-mode . visual-line-mode)
+    :hook ((gptel-mode . (lambda () (visual-line-mode 1)))
+           (gptel-mode . (lambda () (auto-fill-mode 0))))
     :init
     (setq gptel-default-mode 'org-mode
           gptel-model "gpt-4"
