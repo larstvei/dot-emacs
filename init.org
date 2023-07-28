@@ -630,7 +630,8 @@
    ;; A startup screen extracted from Spacemacs
    (use-package dashboard
      :config
-     (setq dashboard-banner-logo-title nil
+     (setq dashboard-projects-backend 'project-el
+           dashboard-banner-logo-title nil
            dashboard-center-content t
            dashboard-set-footer nil
            dashboard-page-separator "\n\n\n"
