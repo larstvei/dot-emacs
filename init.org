@@ -738,6 +738,16 @@
 
   #+end_src
 
+* Project
+
+  #+begin_src emacs-lisp
+
+  (use-package project
+    :config
+    (add-to-list 'project-switch-commands '(magit-project-status "Magit" ?m)))
+
+  #+end_src
+
 * EditorConfig
 
   Using [[https://editorconfig.org/][EditorConfig]] is a must when collaborating with others. It is also a way
