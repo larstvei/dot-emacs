@@ -1937,7 +1937,7 @@
    #+begin_src emacs-lisp
 
    ;; Major mode for editing JavaScript
-   (use-package js-ts-mode
+   (use-package js
      :ensure nil
      :defer t
      :mode "\\.jsx?\\'"
@@ -1950,7 +1950,7 @@
    #+begin_src emacs-lisp
 
    ;; tree sitter support for TypeScript
-   (use-package tsx-ts-mode
+   (use-package typescript-ts-mode
      :ensure nil
      :defer t
      :mode "\\.tsx?\\'"
