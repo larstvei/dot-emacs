@@ -1565,40 +1565,28 @@
    (use-package vterm
      :defer t
      :preface
-     (let ((last-vterm ""))
-       (defun toggle-vterm ()
-         (interactive)
-         (cond ((string-match-p "^\\vterm<[1-9][0-9]*>$" (buffer-name))
-                (goto-non-vterm-buffer))
-               ((get-buffer last-vterm) (switch-to-buffer last-vterm))
-               (t (vterm (setq last-vterm "vterm<1>")))))
+     (defvar vterms nil)
 
-       (defun goto-non-vterm-buffer ()
-         (let* ((r "^\\vterm<[1-9][0-9]*>$")
-                (vterm-buffer-p (lambda (b) (string-match-p r (buffer-name b))))
-                (non-vterms (cl-remove-if vterm-buffer-p (buffer-list))))
-           (when non-vterms
-             (switch-to-buffer (car non-vterms)))))
-
-       (defun switch-vterm (n)
-         (let ((buffer-name (format "vterm<%d>" n)))
-           (setq last-vterm buffer-name)
-           (cond ((get-buffer buffer-name)
-                  (switch-to-buffer buffer-name))
-                 (t (vterm buffer-name)
-                    (rename-buffer buffer-name))))))
+     (defun toggle-vterm (&optional n)
+       (interactive)
+       (setq vterms (seq-filter 'buffer-live-p vterms))
+       (cond ((numberp n) (push (vterm n) vterms))
+             ((null vterms) (push (vterm 1) vterms))
+             ((seq-contains-p vterms (current-buffer))
+              (switch-to-buffer (car (seq-difference (buffer-list) vterms))))
+             (t (switch-to-buffer (car (seq-intersection (buffer-list) vterms))))))
 
      :bind (:map custom-bindings-map
                  ("C-z" . toggle-vterm)
-                 ("M-1" . (lambda () (interactive) (switch-vterm 1)))
-                 ("M-2" . (lambda () (interactive) (switch-vterm 2)))
-                 ("M-3" . (lambda () (interactive) (switch-vterm 3)))
-                 ("M-4" . (lambda () (interactive) (switch-vterm 4)))
-                 ("M-5" . (lambda () (interactive) (switch-vterm 5)))
-                 ("M-6" . (lambda () (interactive) (switch-vterm 6)))
-                 ("M-7" . (lambda () (interactive) (switch-vterm 7)))
-                 ("M-8" . (lambda () (interactive) (switch-vterm 8)))
-                 ("M-9" . (lambda () (interactive) (switch-vterm 9))))
+                 ("M-1" . (lambda () (interactive) (toggle-vterm 1)))
+                 ("M-2" . (lambda () (interactive) (toggle-vterm 2)))
+                 ("M-3" . (lambda () (interactive) (toggle-vterm 3)))
+                 ("M-4" . (lambda () (interactive) (toggle-vterm 4)))
+                 ("M-5" . (lambda () (interactive) (toggle-vterm 5)))
+                 ("M-6" . (lambda () (interactive) (toggle-vterm 6)))
+                 ("M-7" . (lambda () (interactive) (toggle-vterm 7)))
+                 ("M-8" . (lambda () (interactive) (toggle-vterm 8)))
+                 ("M-9" . (lambda () (interactive) (toggle-vterm 9))))
 
      :config
      ;; Don't query about killing vterm buffers, just kill it
