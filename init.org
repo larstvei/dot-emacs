@@ -1555,9 +1555,14 @@
 
 ** vterm
 
-   Inspired by [[https://github.com/torenord/.emacs.d][torenord]], I maintain quick access to shell buffers with bindings
-   ~M-1~ to ~M-9~. In addition, the ~M-z~ toggles between the last visited
-   shell, and the last visited non-shell buffer.
+   vterm is a fully capable terminal emulator, and I use it exclusively.
+
+   Inspired by [[https://github.com/torenord/.emacs.d][torenord]], I maintain quick access to vterm buffers with bindings
+   ~M-1~ to ~M-9~. In addition, the ~C-z~ toggles between the last visited vterm, and
+   the last visited non-vterm buffer.
+
+   Fresh vterm buffers spawns with the directory given by ~vc-root-dir~ if it
+   exists and ~default-directory~ otherwise.
 
    #+begin_src emacs-lisp
 
@@ -1570,11 +1575,12 @@
      (defun toggle-vterm (&optional n)
        (interactive)
        (setq vterms (seq-filter 'buffer-live-p vterms))
-       (cond ((numberp n) (push (vterm n) vterms))
-             ((null vterms) (push (vterm 1) vterms))
-             ((seq-contains-p vterms (current-buffer))
-              (switch-to-buffer (car (seq-difference (buffer-list) vterms))))
-             (t (switch-to-buffer (car (seq-intersection (buffer-list) vterms))))))
+       (let ((default-directory (or (vc-root-dir) default-directory)))
+        (cond ((numberp n) (push (vterm n) vterms))
+              ((null vterms) (push (vterm 1) vterms))
+              ((seq-contains-p vterms (current-buffer))
+               (switch-to-buffer (car (seq-difference (buffer-list) vterms))))
+              (t (switch-to-buffer (car (seq-intersection (buffer-list) vterms)))))))
 
      :bind (:map custom-bindings-map
                  ("C-z" . toggle-vterm)
