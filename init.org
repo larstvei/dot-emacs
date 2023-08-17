@@ -724,6 +724,8 @@
 
   ;; A Git porcelain inside Emacs.
   (use-package magit
+    :hook ((magit-pre-refresh . diff-hl-magit-pre-refresh)
+           (magit-post-refresh . diff-hl-magit-post-refresh))
     :bind (:map custom-bindings-map ("C-c m" . magit-status)))
 
   #+end_src
