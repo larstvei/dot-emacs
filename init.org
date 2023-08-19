@@ -889,6 +889,10 @@
                            (nano-modeline-pdf-mode))))
                 ("j" . pdf-view-next-line-or-next-page)
                 ("k" . pdf-view-previous-line-or-previous-page))
+    :hook (pdf-view-mode
+           . (lambda ()
+               (nano-modeline-pdf-mode)
+               (set (make-local-variable 'meow-cursor-type-default) nil)))
     :init (pdf-loader-install)
     :config (add-to-list 'revert-without-query ".pdf"))
 
