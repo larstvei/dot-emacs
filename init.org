@@ -1723,7 +1723,7 @@
 
    #+begin_src emacs-lisp
 
-   (setq python-shell-interpreter "python3.10")
+   (setq python-shell-interpreter "python3.11")
    (add-hook 'python-mode-hook
              (lambda () (setq forward-sexp-function nil)))
 
