@@ -1761,6 +1761,15 @@
 
    #+end_src
 
+** Kotlin
+
+   #+begin_src emacs-lisp
+
+   (use-package kotlin-mode
+     :hook (kotlin-mode . eglot-ensure))
+
+   #+end_src
+
 ** Assembler
 
    When writing assembler code I use =#= for comments. By defining
