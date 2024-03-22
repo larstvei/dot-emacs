@@ -1523,7 +1523,9 @@
 
    (use-package eglot
      :defer t
-     :hook (eglot-managed-mode . (lambda () (eglot-inlay-hints-mode -1)))
+     :hook (eglot-managed-mode . (lambda ()
+                                   (eglot-inlay-hints-mode -1)
+                                   (add-hook 'before-save-hook 'eglot-format nil t)))
      :config
      (setq eglot-events-buffer-size 0)
      (add-to-list 'eglot-server-programs
