@@ -1972,6 +1972,14 @@
 
    #+end_src
 
+** BQN
+
+   #+begin_src emacs-lisp
+   (use-package bqn-mode
+     :bind (:map bqn-mode-map ("C-c C-c" . bqn-comint-send-dwim))
+     :hook (bqn-mode . (lambda () (set-input-method "BQN-Z"))))
+   #+end_src
+
 ** Z3
 
    I mostly use [[https://github.com/Z3Prover/z3][Z3]] as a Python library, but occasionally I'll run some SMT-LIB
