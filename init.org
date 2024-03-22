@@ -784,19 +784,6 @@
 
   #+end_src
 
-  The completions are centered in a posframe (a frame at point).
-
-  #+begin_src emacs-lisp
-
-  ;; Using posframe to show Vertico
-  (use-package vertico-posframe
-    :config
-    (vertico-posframe-mode 1)
-    (setq vertico-posframe-width 100
-          vertico-posframe-height vertico-count))
-
-  #+end_src
-
   Use the built in ~savehist-mode~ to prioritize recently used commands.
 
   #+begin_src emacs-lisp
@@ -861,11 +848,13 @@
 
   #+begin_src emacs-lisp
 
-   ;; Consulting completing-read
-   (use-package consult
-     :bind (:map custom-bindings-map
-                 ("C-x b" . consult-buffer)
-                 ("C-c r" . consult-ripgrep)))
+  ;; Consulting completing-read
+  (use-package consult
+    :bind (:map custom-bindings-map
+                ("C-x b" . consult-buffer)
+                ("C-c r" . consult-ripgrep))
+    :config
+    (setq consult-preview-key (list :debounce 0.1 'any)))
 
    #+end_src
 
