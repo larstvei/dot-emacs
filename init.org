@@ -994,6 +994,7 @@
           org-hide-emphasis-markers t
           org-pretty-entities t
           org-src-fontify-natively t
+          org-startup-folded t
           org-edit-src-content-indentation 0))
 
   #+end_src
