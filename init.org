@@ -1994,6 +1994,15 @@
 
    #+end_src
 
+** Swift
+
+   #+begin_src emacs-lisp
+
+   (use-package swift-mode
+     :hook (swift . auto-revert-mode))
+
+   #+end_src
+
 * Which key
 
   [[https://github.com/justbur/emacs-which-key][Which key]] is nice for discoverability.
