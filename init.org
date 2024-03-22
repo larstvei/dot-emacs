@@ -1664,6 +1664,7 @@
 
     ;; Commands for refactoring Clojure code
     (use-package clj-refactor
+      :hook (cider-mode . clj-refactor-mode)
       :defer t)
 
     #+end_src
