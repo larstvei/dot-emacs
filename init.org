@@ -158,15 +158,18 @@
 
   #+end_src
 
-  A common optimization is to temporarily disable garbage collection during
-  initialization. Here, we set the ~gc-cons-threshold~ to a ridiculously large
-  number, and restore the default value after initialization.
+** Faster startup
 
-  #+begin_src emacs-lisp :tangle early-init.el
+   A common optimization is to temporarily disable garbage collection during
+   initialization. Here, we set the ~gc-cons-threshold~ to a ridiculously large
+   number, and restore the default value after initialization.
 
-  (setq gc-cons-threshold (* 100 1024 1024))
-
-  #+end_src
+   #+begin_src emacs-lisp :tangle early-init.el
+   (setq gc-cons-threshold most-positive-fixnum)
+   (add-hook 'after-init-hook
+             (lambda ()
+               (setq gc-cons-threshold (* 1024 1024 20))))
+   #+end_src
 
 * Packages
   
