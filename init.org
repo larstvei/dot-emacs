@@ -447,8 +447,9 @@
 
   Add a small border on the frame. This also goes in the early-init.
 
-  #+begin_src emacs-lisp
+  #+begin_src emacs-lisp :tangle early-init.el
 
+  (add-to-list 'default-frame-alist '(undecorated . t))
   (add-to-list 'default-frame-alist '(internal-border-width . 24))
 
   #+end_src
