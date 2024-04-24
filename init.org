@@ -1166,20 +1166,21 @@
 
 * Direnv
 
-  I use [[https://direnv.net][direnv]] in combination with [[https://nixos.org][nix]] to allow for programs to only be
-  available in certain directories. The [[https://github.com/wbolster/emacs-direnv][emacs-direnv]] makes Emacs play nice with
-  direnv, so that it for instance can detect a language server that is only
-  available within some project. The =direnv-always-show-summary= is set to
-  =nil= to avoid having long messages pop up in the messages buffer whenever I
-  enter a directory that interacts with direnv.
+  I use [[https://nixos.org][nix]] in most of my projects, to specify the programs needed in order
+  work on that project. In combination with [[https://direnv.net][direnv]], these programs are only
+  available within those projects; that is: when I =cd= into a Javascript
+  project, then I can call =npm=, but in my system globally, there is no trace of
+  it. The package [[https://github.com/purcell/envrc][envrc]] helps Emacs and direnv play nice.
 
   #+begin_src emacs-lisp
 
   ;; direnv integration
-  (use-package direnv
-    :config
-    (setq direnv-always-show-summary nil)
-    (direnv-mode 1))
+  (use-package envrc
+    :if (executable-find "direnv")
+    :init
+    (setq envrc-debug t)
+    (add-hook 'after-init-hook (lambda () (envrc-global-mode 1))))
+
 
   #+end_src
 
