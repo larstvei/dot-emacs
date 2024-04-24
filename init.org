@@ -572,18 +572,6 @@
 
    #+end_src
 
-   New in Emacs 24.4 is the =prettify-symbols-mode=! It's neat.
-
-   #+begin_src emacs-lisp
-
-   (setq-default prettify-symbols-alist '(("lambda" . ?λ)
-                                          ("delta" . ?Δ)
-                                          ("gamma" . ?Γ)
-                                          ("phi" . ?φ)
-                                          ("psi" . ?ψ)))
-
-   #+end_src
-
 ** Centering with Olivetti
 
    [[https://github.com/rnkn/olivetti][Olivetti]] is a package that simply centers the text of a buffer. It is very
