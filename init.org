@@ -743,6 +743,28 @@
 
   #+end_src
 
+* Window management
+
+  Some keybindings (involving the option, resulting in funny symbols) for
+  window management.
+
+  #+begin_src emacs-lisp
+
+  (use-package windmove
+    :ensure nil
+    :bind (:map custom-bindings-map
+                ("M-˙" . windmove-left)
+                ("M-∆" . windmove-down)
+                ("M-˚" . windmove-up)
+                ("M-¬" . windmove-right)
+
+                ("M-ó" . windmove-swap-states-left)
+                ("M-ô" . windmove-swap-states-down)
+                ("M-" . windmove-swap-states-up)
+                ("M-ò" . windmove-swap-states-right)))
+
+  #+end_src
+
 * EditorConfig
 
   Using [[https://editorconfig.org/][EditorConfig]] is a must when collaborating with others. It is also a way
