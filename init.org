@@ -826,7 +826,6 @@
 
   ;; Emacs completion style that matches multiple regexps in any order
   (use-package orderless
-    :ensure t
     :config
     (setq completion-styles '(orderless basic partial-completion)
           completion-category-overrides '((file (styles basic partial-completion)))
@@ -1193,7 +1192,6 @@
 
   #+begin_src emacs-lisp
   (use-package mu4e
-    :ensure nil
     :defer t
     :if (and (file-exists-p "~/Maildir")
              (executable-find "mbsync")
