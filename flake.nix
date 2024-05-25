@@ -12,17 +12,18 @@
       let
         pkgs = import nixpkgs {
           inherit system;
-          overlays = [
-            emacs-overlay.overlays.emacs
-            emacs-overlay.overlays.package
-          ];
+          overlays =
+            [ emacs-overlay.overlays.emacs emacs-overlay.overlays.package ];
         };
+
       in {
         defaultPackage = pkgs.emacsWithPackagesFromUsePackage {
           config = ./init.org;
           defaultInitFile = true;
           alwaysEnsure = true;
           alwaysTangle = true;
+          extraEmacsPackages = epkgs:
+            [ epkgs.treesit-grammars.with-all-grammars ];
         };
       });
 }
