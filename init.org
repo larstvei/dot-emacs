@@ -1669,7 +1669,10 @@
     ;; Clojure Interactive Development Environment
     (use-package cider
       :defer t
-      :bind (:map cider-repl-mode-map ("C-l" . cider-repl-clear-buffer)))
+      :bind (:map cider-repl-mode-map ("C-l" . cider-repl-clear-buffer))
+      :config
+      (setq cider-save-file-on-load t
+            cider-repl-pop-to-buffer-on-connect nil))
 
     #+end_src
 
