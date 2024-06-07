@@ -1248,7 +1248,7 @@
      mu4e-use-fancy-chars t))
   #+end_src
 
-* ChatGPT
+* LLM
 
   The ChatGPT client [[https://github.com/karthink/gptel][gptel]] needs an API key from the OpenAI API. This key can
   be stored in your ~.authinfo~ file by adding a line like this:
@@ -1261,16 +1261,20 @@
 
   Then the ~gptel-api-key~ can be set using auth source.
 
+  Default to using llama3, a local LLM.
+
   #+begin_src emacs-lisp
 
-  ;; Interaction mode for ChatGPT
   (use-package gptel
     :defer t
     :hook ((gptel-mode . (lambda () (visual-line-mode 1)))
            (gptel-mode . (lambda () (auto-fill-mode 0))))
-    :init
-    (setq gptel-default-mode 'org-mode
-          gptel-model "gpt-4"
+    :config
+    (setq gptel-backend (gptel-make-ollama "Ollama"
+                          :host "localhost:11434"
+                          :stream t
+                          :models '("llama3"))
+          gptel-model "llama3"
           gptel-api-key (auth-source-pick-first-password
                          :host "api.openai.com")))
 
