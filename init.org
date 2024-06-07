@@ -1816,8 +1816,7 @@
    #+begin_src emacs-lisp
 
    ;; Integrated environment for *TeX*
-   (use-package tex
-     :ensure auctex)
+   (use-package auctex)
 
    #+end_src
 
