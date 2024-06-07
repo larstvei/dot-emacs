@@ -590,13 +590,15 @@
 
 ** Adaptive wrapping
 
-   I usually have  auto-fill-mode enabled, and most of my files
+   I usually have =auto-fill-mode= enabled. When =visual-fill-mode= is enabled, try
+   to mimic how it looks when having used =fill-paragraph= with =adaptive-wrap=.
 
    #+begin_src emacs-lisp
 
    (use-package adaptive-wrap
      :defer t
      :hook (visual-line-mode . adaptive-wrap-prefix-mode))
+
    #+end_src
 
 ** Focusing with focus
