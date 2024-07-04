@@ -1192,11 +1192,16 @@
 
 * Markdown
 
+  Markdown is pretty nice, especially when collaborating with others (as most
+  people don't use org), and nicer still when combined with [[https://pandoc.org/][Pandoc]]! I set
+  =fill-column= to 72 as it's
+
   #+begin_src emacs-lisp
 
   ;; Emacs Major mode for Markdown-formatted files
   (use-package markdown-mode
-    :defer t)
+    :defer t
+    :hook (markdown-mode . (lambda () (setq fill-column 72))))
 
   #+end_src
 
