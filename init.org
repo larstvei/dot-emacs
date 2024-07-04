@@ -636,18 +636,6 @@
 
    #+end_src
 
-** Pulsar
-
-   Try using pulsar to immediately find the cursor.
-
-   #+begin_src emacs-lisp
-
-   (use-package pulsar
-     :bind (:map custom-bindings-map ("C-;" . pulsar-pulse-line))
-     :config (pulsar-global-mode 1))
-
-   #+end_src
-
 * Mac OS X
 
   I run this configuration mostly on macOS, so we need a couple of settings to
