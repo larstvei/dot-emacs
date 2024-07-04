@@ -1220,7 +1220,8 @@
     :if (executable-find "direnv")
     :init
     (setq envrc-debug t)
-    (add-hook 'after-init-hook (lambda () (envrc-global-mode 1))))
+    (add-hook 'after-init-hook (lambda () (envrc-global-mode 1)))
+    (advice-add 'cider-jack-in :around #'envrc-propagate-environment))
 
 
   #+end_src
