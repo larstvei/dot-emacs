@@ -2088,7 +2088,8 @@
           ("C-c C--" . global-scale-down)
           ("C-c j"   . cycle-spacing-delete-newlines)
           ("C-c d"   . duplicate-thing)
-          ("<C-tab>" . tidy))
+          ("<C-tab>" . tidy)
+          ("C-c q"   . unfill-paragraph))
    :config
    (define-key custom-bindings-map (kbd "C-c .") (cycle-themes)))
 
