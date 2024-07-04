@@ -1473,6 +1473,14 @@
       (fill-paragraph nil (region-active-p))))
   #+end_src
 
+  I don't enjoy writing out today's date, so let's tuck that into a function.
+
+  #+begin_src emacs-lisp
+  (defun insert-todays-date ()
+    (interactive)
+    (insert (format-time-string "%Y-%m-%d")))
+  #+end_src
+
 * Advice
 
   An advice can be given to a function to make it behave differently. This
@@ -2089,6 +2097,7 @@
           ("C-c j"   . cycle-spacing-delete-newlines)
           ("C-c d"   . duplicate-thing)
           ("<C-tab>" . tidy)
+          ("C-c t"   . insert-todays-date)
           ("C-c q"   . unfill-paragraph))
    :config
    (define-key custom-bindings-map (kbd "C-c .") (cycle-themes)))
