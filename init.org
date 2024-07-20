@@ -463,7 +463,7 @@
 
   #+begin_src emacs-lisp :tangle early-init.el
 
-  (add-to-list 'default-frame-alist '(undecorated . t))
+  (add-to-list 'default-frame-alist '(undecorated-round . t))
   (add-to-list 'default-frame-alist '(internal-border-width . 24))
 
   #+end_src
