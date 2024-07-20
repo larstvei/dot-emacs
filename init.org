@@ -806,6 +806,7 @@
 
   ;; Save minibuffer history
   (use-package savehist
+    :ensure nil
     :init
     (savehist-mode 1))
 
@@ -936,6 +937,7 @@
    #+begin_src emacs-lisp
 
    (use-package flyspell
+     :ensure nil
      :defer t
      :if (executable-find "aspell")
      :hook ((text-mode . flyspell-mode)
