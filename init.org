@@ -15,41 +15,54 @@
 
   If you really do want to try this config out, this is how I'd go about it:
 
-  Clone the repo.
+** Manual installation
 
-  #+begin_src sh :tangle no
+   Clone the repo.
 
-  git clone https://github.com/larstvei/dot-emacs
+   #+begin_src sh :tangle no
 
-  #+end_src
+   git clone https://github.com/larstvei/dot-emacs
 
-  Backup your old =~/.emacs.d= (if necessary).
+   #+end_src
 
-  #+begin_src sh :tangle no
+   Backup your old =~/.emacs.d= (if necessary).
 
-  mv ~/.emacs.d ~/.emacs.d-bak
+   #+begin_src sh :tangle no
 
-  #+end_src
+   mv ~/.emacs.d ~/.emacs.d-bak
 
-  Backup your old =~/.emacs=-file (if necessary).
+   #+end_src
 
-  #+begin_src sh :tangle no
+   Backup your old =~/.emacs=-file (if necessary).
 
-  mv ~/.emacs ~/.emacs-bak
+   #+begin_src sh :tangle no
 
-  #+end_src
+   mv ~/.emacs ~/.emacs-bak
 
-  And finally
+   #+end_src
 
-  #+begin_src sh :tangle no
+   And finally
 
-  mv dot-emacs ~/.emacs.d
+   #+begin_src sh :tangle no
 
-  #+end_src
+   mv dot-emacs ~/.emacs.d
 
-  On first run it should install a bunch of packages (this might take a while),
-  and you might have to restart your Emacs the first time. If you experience
-  bugs, please let me know!
+   #+end_src
+
+   On first run it should install a bunch of packages (this might take a while),
+   and you might have to restart your Emacs the first time. If you experience
+   bugs, please let me know!
+
+** With Nix
+
+   I keep an updated [[https://github.com/larstvei/emacs-flake][nix flake for my Emacs config]]. If that tells you anything,
+   you can try it out running:
+
+   #+begin_src sh :tangle no
+
+   nix run github:larstvei/emacs-flake
+
+   #+end_src
 
 * Meta
 
@@ -331,7 +344,8 @@
 
 ** Modal meow
 
-   I have been wanting to try out modal editing. [[https://github.com/meow-edit/meow][meow]] seems like a nice package,
+   # TODO: This is so much more than what i need. Find something 1% as complicated.
+   I have been wanting to try out modal editing. [[https://github.com/meow-edit/meow][meow] seems like a nice package,
    where I can still use a lot of the ten years of Emacs that are already in my
    fingers. These are the default settings for qwerty.
 
@@ -1281,7 +1295,7 @@
     (setq gptel-backend (gptel-make-ollama "Ollama"
                           :host "localhost:11434"
                           :stream t
-                          :models '("llama3"))
+                          :models '("llama3:8b-instruct-q8_0"))
           gptel-model "llama3"
           gptel-api-key (auth-source-pick-first-password
                          :host "api.openai.com")))
