@@ -918,50 +918,17 @@
   #+end_src
 
 * Spelling
-** Flyspell
+** Jinx
 
-   Flyspell offers on-the-fly spell checking.
-
-   When working with several languages, we should be able to cycle through the
-   languages we most frequently use. Every buffer should have a separate cycle
-   of languages, so that cycling in one buffer does not change the state in a
-   different buffer (this problem occurs if you only have one global cycle). We
-   can implement this by using a [[http://www.gnu.org/software/emacs/manual/html_node/elisp/Closures.html][closure]].
+   Trying out [[https://github.com/minad/jinx][jinx]] in favor of the builtin flyspell.
 
    #+begin_src emacs-lisp
 
-   (defun cycle-languages ()
-     "Changes the ispell dictionary to the first element in
-   ISPELL-LANGUAGES, and returns an interactive function that cycles
-   the languages in ISPELL-LANGUAGES when invoked."
-     (let ((ispell-languages (list "american" "norsk")))
-       (lambda ()
-         (interactive)
-         ;; Rotates the languages cycle and changes the ispell dictionary.
-         (let ((rotated (nconc (cdr ispell-languages) (list (car ispell-languages)))))
-           (ispell-change-dictionary (car (setq ispell-languages rotated)))))))
-
-   #+end_src
-
-   We enable =flyspell-mode= for all text-modes, and use =flyspell-prog-mode=
-   for spell checking comments and strings in all programming modes. We bind
-   =C-c l= to a function returned from =cycle-languages=, giving a language
-   switcher for every buffer where flyspell is enabled.
-
-   #+begin_src emacs-lisp
-
-   (use-package flyspell
-     :ensure nil
-     :defer t
-     :if (executable-find "aspell")
-     :hook ((text-mode . flyspell-mode)
-            (prog-mode . flyspell-prog-mode)
-            (flyspell-mode . (lambda ()
-                               (local-set-key
-                                (kbd "C-c l")
-                                (cycle-languages)))))
+   (use-package jinx
+     :hook (emacs-startup . global-jinx-mode)
+     :bind ("C-." . jinx-correct)
      :config
-     (ispell-change-dictionary "american" t))
+     (setq jinx-languages "en_US nb"))
 
    #+end_src
 
