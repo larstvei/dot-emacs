@@ -320,7 +320,7 @@
 
   #+end_src
 
-  Automaticly revert =doc-view=-buffers when the file changes on disk.
+  Automatically revert =doc-view=-buffers when the file changes on disk.
 
   #+begin_src emacs-lisp
 
@@ -928,7 +928,7 @@
      :hook (emacs-startup . global-jinx-mode)
      :bind ("C-." . jinx-correct)
      :config
-     (setq jinx-languages "en_US nb"))
+     (setq jinx-languages "en_US nb-no"))
 
    #+end_src
 
