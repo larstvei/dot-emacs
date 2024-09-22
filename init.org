@@ -1097,8 +1097,8 @@
   ;; Multiple cursors for Emacs
   (use-package multiple-cursors
     :defer t
-    :hook ((multiple-cursors-mode-enabled-hook . (lambda () (corfu-mode -1)))
-           (multiple-cursors-mode-disabled-hook . (lambda () (corfu-mode 1))))
+    :hook ((multiple-cursors-mode-enabled . (lambda () (corfu-mode -1)))
+           (multiple-cursors-mode-disabled . (lambda () (corfu-mode 1))))
     :bind (:map custom-bindings-map
                 ("C-c e" . mc/edit-lines)
                 ("C-c a" . mc/mark-all-like-this)
