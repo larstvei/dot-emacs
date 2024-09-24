@@ -278,7 +278,8 @@
       (setq load-path
             (append
              (let ((load-path (copy-sequence load-path)))
-               (normal-top-level-add-subdirs-to-load-path)) load-path))))
+               (normal-top-level-add-subdirs-to-load-path))
+             load-path))))
 
   #+end_src
 
@@ -535,6 +536,15 @@
                              (recents  . 15)
                              (bookmarks . 5)))
      (dashboard-setup-startup-hook))
+
+   #+end_src
+
+** Center content mode
+
+   #+begin_src emacs-lisp
+
+   (use-package center-content-mode
+     :ensure nil)
 
    #+end_src
 
