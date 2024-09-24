@@ -541,7 +541,7 @@
 
 ** Center content mode
 
-   [[https://git.larstvei.no/larstvei/center-content-mode][=center-content-mode=]] is a small, homegrown, minor mode for centering the
+   [[https://git.larstvei.no/larstvei/center-content-mode][center-content-mode]] is a small, homegrown, minor mode for centering the
    buffer content both horizontally and vertically.
 
    #+begin_src emacs-lisp
@@ -1035,7 +1035,7 @@
 
 ** Org present
 
-   [[https://github.com/rlister/org-present][=org-present-mode=]] provides a minimalistic slide view of an org-mode buffer.
+   [[https://github.com/rlister/org-present][org-present-mode]] provides a minimalistic slide view of an org-mode buffer.
    Together with =org-modern=, =center-content-mode=, =focus-mode= and a few other
    customizations, we get pretty decent looking slides!
 
