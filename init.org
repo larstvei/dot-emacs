@@ -541,6 +541,9 @@
 
 ** Center content mode
 
+   [[https://git.larstvei.no/larstvei/center-content-mode][=center-content-mode=]] is a small, homegrown, minor mode for centering the
+   buffer content both horizontally and vertically.
+
    #+begin_src emacs-lisp
 
    (use-package center-content-mode
@@ -1027,6 +1030,55 @@
    ;; Export Github Flavored Markdown from Org
    (use-package ox-gfm
      :after (org))
+
+   #+end_src
+
+** Org present
+
+   [[https://github.com/rlister/org-present][=org-present-mode=]] provides a minimalistic slide view of an org-mode buffer.
+   Together with =org-modern=, =center-content-mode=, =focus-mode= and a few other
+   customizations, we get pretty decent looking slides!
+
+   #+begin_src emacs-lisp
+
+   (use-package org-present
+     :after center-content-mode
+     :hook ((org-present-mode
+             . (lambda ()
+                 (jinx-mode -1)
+                 (org-modern-mode -1)
+                 (set (make-local-variable 'org-modern-hide-stars) t)
+                 (setq cursor-type nil)
+                 (org-modern-mode 1)
+                 (org-present-big)
+                 (org-display-inline-images)
+                 (focus-mode 1)
+                 (center-content-mode 1)))
+            (org-present-mode-quit
+             . (lambda ()
+                 (jinx-mode 1)
+                 (org-modern-mode -1)
+                 (setq org-modern-hide-stars (default-value 'org-modern-hide-stars))
+                 (setq cursor-type (default-value 'cursor-type))
+                 (org-modern-mode 1)
+                 (focus-mode -1)
+                 (center-content-mode -1))))
+     :config
+     (defun org-present-next-item ()
+       (interactive)
+       (unless (re-search-forward "^+" nil t)
+         (org-present-next)))
+
+     (defun org-present-prev-item ()
+       (interactive)
+       (unless (re-search-backward "^+" nil t)
+         (org-present-prev)))
+
+     :bind (:map org-present-mode-keymap
+                 ("<next>" . org-present-next-item)
+                 ("C-<right>" . org-present-next-item)
+                 ("<prior>" . org-present-prev-item)
+                 ("C-<left>" . org-present-prev-item)))
 
    #+end_src
 
