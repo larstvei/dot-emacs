@@ -1034,6 +1034,25 @@
 
    #+end_src
 
+** Org appear
+
+   Setting ~org-hide-emphasis-markers~ to ~t~ often makes it harder to edit markup
+   (i have found myself sometimes reverting to ~fundamental-mode~ because of
+   this). The package [[https://github.com/awth13/org-appear][org-appear]] automatically shows the hidden markup when the
+   cursor is on it.
+
+   #+begin_src emacs-lisp
+
+   (use-package org-appear
+     :hook (org-mode . org-appear-mode)
+     :config
+     (setq org-appear-autosubmarkers t
+           org-appear-autoentities t
+           org-appear-autolinks t
+           org-appear-inside-latex t))
+
+   #+end_src
+
 ** GitHub flavored markdown
 
    I guess I have to include my (semi-abandoned) mode [[https://github.com/larstvei/ox-gfm][ox-gfm]] for exporting org
