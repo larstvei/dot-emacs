@@ -845,6 +845,20 @@
 
    #+end_src
 
+* Move Text
+
+  For moving lines up and down, there is the appropriately named [Move
+  Text](https://github.com/emacsfodder/move-text) package.
+
+  #+begin_src emacs-lisp
+
+  (use-package move-text
+    :bind (:map custom-bindings-map
+                ("C-M-<down>" . move-text-down)
+                ("C-M-<up>" . move-text-up)))
+
+  #+end_src
+
 * Lorem ipsum
 
   Do you ever want to insert some [[https://en.wikipedia.org/wiki/Lorem_ipsum][Lorem ipsum]]?
