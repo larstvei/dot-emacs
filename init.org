@@ -1,7 +1,7 @@
 #+TITLE: Emacs configuration file
 #+AUTHOR: Lars Tveito
 #+PROPERTY: header-args :tangle yes
-#+STARTUP: overview
+#+STARTUP: content
 
 * About
 
@@ -902,12 +902,20 @@
     :defer t
     :config
     (setq org-adapt-indentation t
-          org-hide-leading-stars t
+          org-hide-leading-stars nil
           org-hide-emphasis-markers t
           org-pretty-entities t
           org-src-fontify-natively t
           org-startup-folded t
-          org-edit-src-content-indentation 0))
+          org-edit-src-content-indentation 0)
+
+    (custom-set-faces
+     '(org-document-title ((t (:inherit outline-1 :height 1.75))))
+     '(org-level-1 ((t (:inherit outline-1 :height 1.5))))
+     '(org-level-2 ((t (:inherit outline-2 :height 1.25))))
+     '(org-level-3 ((t (:inherit outline-3 :height 1.125))))
+     '(org-level-4 ((t (:inherit outline-4 :height 1.0625))))
+     '(org-level-5 ((t (:inherit outline-5 :height 1.03125))))))
 
   #+end_src
 
@@ -1030,7 +1038,8 @@
      :after org
      :hook (org-mode . org-modern-mode)
      :config
-     (setq org-modern-block-fringe nil))
+     (setq org-modern-block-fringe nil
+           org-modern-star 'replace))
 
    #+end_src
 
