@@ -393,7 +393,7 @@
      (let ((theme (intern (concat "nano-" (symbol-name variant)))))
        (load-theme theme t)))
 
-   (load-nano-theme (if (boundp 'ns-system-appearance) ns-system-appearance 'light))
+   (load-nano-theme (or (bound-and-true-p ns-system-appearance) 'light))
 
    #+end_src
 
