@@ -547,7 +547,9 @@
    #+begin_src emacs-lisp
 
    (use-package center-content-mode
-     :ensure nil)
+     :vc (center-content-mode
+          :url "https://git.larstvei.no/larstvei/center-content-mode.git"
+          :branch "main"))
 
    #+end_src
 
