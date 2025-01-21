@@ -754,11 +754,7 @@
      (global-corfu-mode 1)
      (corfu-popupinfo-mode 1)
      :config
-     (setq corfu-cycle t
-           corfu-auto t
-           corfu-auto-delay 1
-           corfu-auto-prefix 2
-           corfu-popupinfo-delay 0.5))
+     (setq corfu-cycle t))
 
    #+end_src
 
