@@ -231,6 +231,7 @@
   #+begin_src emacs-lisp
 
   (setq auto-revert-interval 1            ; Refresh buffers fast
+        create-lockfiles nil              ; Disable lockfiles
         default-input-method "TeX"        ; Use TeX when toggling input method
         echo-keystrokes 0.1               ; Show keystrokes asap
         enable-recursive-minibuffers t    ; Allow recursive minibuffers
@@ -620,6 +621,7 @@
              column-number-mode           ; Show column number in mode line
              delete-selection-mode        ; Replace selected text
              dirtrack-mode                ; directory tracking in *shell*
+             global-auto-revert-mode      ; Revert files when changed on disk
              global-so-long-mode          ; Mitigate performance for long lines
              recentf-mode                 ; Recently opened files
              show-paren-mode))            ; Highlight matching parentheses
