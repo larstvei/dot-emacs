@@ -1956,6 +1956,21 @@
 
    #+end_src
 
+** Processing
+
+   Processing is essentially Java, so using ~java-ts-mode~ seems like a good fit.
+
+   #+begin_src emacs-lisp
+
+   (define-derived-mode processing-mode
+     java-ts-mode "Processing"
+     "Major mode for Processing"
+     (setq-local java-ts-mode-indent-offset 2))
+
+   (add-to-list 'auto-mode-alist '("\\.pde\\'" . processing-mode))
+
+   #+end_src
+
 * Which key
 
   [[https://github.com/justbur/emacs-which-key][Which key]] is nice for discoverability.
