@@ -1189,8 +1189,8 @@
     (setq gptel-backend (gptel-make-ollama "Ollama"
                           :host "localhost:11434"
                           :stream t
-                          :models '("llama3.1:8b-instruct-q8_0"))
-          gptel-model "llama3"
+                          :models '("deepseek-r1"))
+          gptel-model "deepseek-r1"
           gptel-api-key (auth-source-pick-first-password
                          :host "api.openai.com")))
 
