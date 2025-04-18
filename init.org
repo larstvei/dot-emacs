@@ -165,7 +165,7 @@
      (let ((private-file (concat user-emacs-directory "private.el")))
        (when (file-exists-p private-file)
          (load-file private-file))
-       (when custom-file
+       (when (file-exists-p custom-file)
          (load-file custom-file))
        (server-start))))
 
