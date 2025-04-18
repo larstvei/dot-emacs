@@ -194,6 +194,7 @@
 
   (require 'use-package)
   (setq use-package-always-ensure t)
+  (setq use-package-compute-statistics t)
 
   #+end_src
 
@@ -606,6 +607,7 @@
   #+begin_src emacs-lisp
 
   (use-package reveal-in-osx-finder
+    :defer t
     :if (memq window-system '(mac ns)))
 
   #+end_src
@@ -649,6 +651,7 @@
 
   ;; Highlight uncommitted changes using VC
   (use-package diff-hl
+    :defer t
     :config
     (global-diff-hl-mode 1))
 
@@ -941,6 +944,7 @@
    ;; LaTeX Back-End for Org Export Engine
    (use-package ox-latex
      :ensure nil
+     :defer t
      :after org
      :config
      (setq org-export-allow-bind-keywords t
@@ -1583,6 +1587,7 @@
     #+begin_src emacs-lisp
 
     (use-package clojure-mode
+      :defer t
       :config
       (setq clojure-toplevel-inside-comment-form t)
       (define-clojure-indent
