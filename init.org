@@ -1976,6 +1976,14 @@
 
    #+end_src
 
+** Zig
+
+   #+begin_src emacs-lisp
+
+   (use-package zig-mode)
+
+   #+end_src
+
 * Which key
 
   [[https://github.com/justbur/emacs-which-key][Which key]] is nice for discoverability.
