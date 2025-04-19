@@ -639,25 +639,27 @@
 
 * Version control
 
-  Magit is the best.
+  [[https://magit.vc/][Magit]] is the best.
 
   #+begin_src emacs-lisp
 
   ;; A Git porcelain inside Emacs.
   (use-package magit
-    :hook ((magit-pre-refresh . diff-hl-magit-pre-refresh)
-           (magit-post-refresh . diff-hl-magit-post-refresh))
     :bind (:map custom-bindings-map ("C-c m" . magit-status)))
 
   #+end_src
 
-  Have some visual indication where there are uncommitted changes.
+  Have some visual indication where there are uncommitted changes using
+  [[https://github.com/dgutov/diff-hl][~diff-hl~]]. In addition, ~diff-hl~ can be automatically updated when interacting
+  with Magit.
 
   #+begin_src emacs-lisp
 
   ;; Highlight uncommitted changes using VC
   (use-package diff-hl
     :defer t
+    :hook ((magit-pre-refresh . diff-hl-magit-pre-refresh)
+           (magit-post-refresh . diff-hl-magit-post-refresh))
     :config
     (global-diff-hl-mode 1))
 
