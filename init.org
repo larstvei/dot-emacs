@@ -120,10 +120,16 @@
 
   #+end_src
 
-  I want lexical scoping for the init-file, which can be specified in the
-  header. The first line of the configuration is as follows:
+  I want lexical scoping for the init and early-init files, which can be
+  specified in the header. The first line of the configuration is as follows:
 
   #+begin_src emacs-lisp
+
+  ;;; -*- lexical-binding: t -*-
+
+  #+end_src
+
+  #+begin_src emacs-lisp :tangle early-init.el
 
   ;;; -*- lexical-binding: t -*-
 
