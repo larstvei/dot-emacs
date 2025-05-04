@@ -533,27 +533,6 @@
 
    #+end_src
 
-** Dashboard
-
-   Dashboard provides a nice welcome.
-
-   #+begin_src emacs-lisp
-
-   ;; A startup screen extracted from Spacemacs
-   (use-package dashboard
-     :config
-     (setq dashboard-projects-backend 'project-el
-           dashboard-banner-logo-title nil
-           dashboard-center-content t
-           dashboard-set-footer nil
-           dashboard-page-separator "\n\n\n"
-           dashboard-items '((projects . 15)
-                             (recents  . 15)
-                             (bookmarks . 5)))
-     (dashboard-setup-startup-hook))
-
-   #+end_src
-
 ** Center content mode
 
    [[https://git.larstvei.no/larstvei/center-content-mode][center-content-mode]] is a small, homegrown, minor mode for centering the
