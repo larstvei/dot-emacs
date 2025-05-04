@@ -184,10 +184,17 @@
    number, and restore the default value after initialization.
 
    #+begin_src emacs-lisp :tangle early-init.el
-   (setq gc-cons-threshold most-positive-fixnum)
-   (add-hook 'after-init-hook
-             (lambda ()
-               (setq gc-cons-threshold (* 1024 1024 20))))
+
+   (let ((file-name-handler-alist-old file-name-handler-alist))
+     (add-hook 'emacs-startup-hook
+               (lambda ()
+                 (setq gc-cons-threshold (* 1024 1024 20))
+                 (setq file-name-handler-alist file-name-handler-alist-old)))
+     (setq gc-cons-threshold most-positive-fixnum)
+     (setq file-name-handler-alist nil))
+
+   (setq inhibit-default-init t)
+
    #+end_src
 
 * Packages
