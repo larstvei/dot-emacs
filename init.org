@@ -1291,19 +1291,19 @@
   I sometimes regret killing the =*scratch*=-buffer, and have realized I never
   want to actually kill it. I just want to get it out of the way, and clean it
   up. The function below does just this for the =*scratch*=-buffer, and works
-  like =kill-this-buffer= for any other buffer. It removes all buffer content
+  like =kill-current-buffer= for any other buffer. It removes all buffer content
   and buries the buffer (this means making it the least likely candidate for
   =other-buffer=).
 
   #+begin_src emacs-lisp
 
-  (defun kill-this-buffer-unless-scratch ()
+  (defun kill-current-buffer-unless-scratch ()
     "Works like `kill-this-buffer' unless the current buffer is the
   ,*scratch* buffer. In witch case the buffer content is deleted and
   the buffer is buried."
     (interactive)
     (if (not (string= (buffer-name) "*scratch*"))
-        (kill-this-buffer)
+        (kill-current-buffer)
       (delete-region (point-min) (point-max))
       (switch-to-buffer (other-buffer))
       (bury-buffer "*scratch*")))
@@ -2017,7 +2017,7 @@
           :map custom-bindings-map
           ("M-,"     . jump-to-previous-like-this)
           ("M-."     . jump-to-next-like-this)
-          ("C-x k"   . kill-this-buffer-unless-scratch)
+          ("C-x k"   . kill-current-buffer-unless-scratch)
           ("C-c C-0" . global-scale-default)
           ("C-c C-=" . global-scale-up)
           ("C-c C-+" . global-scale-up)
