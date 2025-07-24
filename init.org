@@ -1597,6 +1597,8 @@
       :bind (:map cider-repl-mode-map ("C-l" . cider-repl-clear-buffer))
       :config
       (setq cider-save-file-on-load t
+            cider-font-lock-dynamically '(macro)
+            cider-repl-display-help-banner nil
             cider-repl-pop-to-buffer-on-connect nil))
 
     #+end_src
