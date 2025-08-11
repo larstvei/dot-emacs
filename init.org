@@ -1624,6 +1624,34 @@
 
     #+end_src
 
+*** Scheme
+
+    #+begin_src emacs-lisp
+
+    (use-package geiser-gambit
+      :config
+
+      (defun geiser-r5rs--enter (_remote)
+        "Clear the debugger on entry.
+    The REPL starts in a debug mode.  Exit it on entry."
+        ",d")
+
+      (defun geiser-r5rs--parameters ()
+        "Return a list with all parameters needed to start Gambit scheme-r5rs."
+        (list "-:d-,r5rs"
+              (expand-file-name "geiser/gambit.scm" geiser-gambit-scheme-dir)
+              "-"))
+
+      (define-geiser-implementation (r5rs gambit)
+                                    (arglist geiser-r5rs--parameters)
+                                    (enter-command geiser-r5rs--enter))
+
+      (geiser-activate-implementation 'r5rs)
+
+      (provide 'geiser-r5rs))
+
+    #+end_src
+
 *** Common lisp
 
     #+begin_quote
