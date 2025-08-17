@@ -1550,14 +1550,15 @@
      :bind (:map paredit-mode-map ("RET" . nil))
      :hook ((cider-repl-mode
              clojure-mode
+             emacs-lisp-mode
+             geiser-repl-mode
              ielm-mode
+             lisp-interaction-mode
+             lisp-mode
              racket-mode
              racket-repl-mode
-             slime-repl-mode
-             lisp-mode
-             emacs-lisp-mode
-             lisp-interaction-mode
-             scheme-mode) 
+             scheme-mode
+             slime-repl-mode)
             . paredit-mode))
 
    #+end_src
