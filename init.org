@@ -488,8 +488,8 @@
      :defer t
      :hook (text-mode . mixed-pitch-mode)
      :config
-     (when (member "Source Serif Pro" (font-family-list))
-       (set-face-attribute 'variable-pitch nil :family "Source Serif Pro")))
+     (when (member "Source Serif 4" (font-family-list))
+       (set-face-attribute 'variable-pitch nil :family "Source Serif 4")))
 
    #+end_src
 
