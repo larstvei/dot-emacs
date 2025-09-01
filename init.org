@@ -474,7 +474,7 @@
    #+begin_src emacs-lisp
 
    (when (member "Source Code Pro" (font-family-list))
-     (set-face-attribute 'default nil :font "Source Code Pro-15"))
+     (set-face-attribute 'default nil :font "Source Code Pro-13"))
 
    #+end_src
 
