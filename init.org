@@ -1630,6 +1630,28 @@
 
 *** Scheme
 
+    [[https://github.com/emacsmirror/geiser][Geiser]] is a great mode for interacting with Scheme. It works pretty much
+    perfectly out of the box. For live-coding, I want a key binding for adding
+    the result of an evaluation as a line comment for .
+
+    #+begin_src emacs-lisp
+
+    (defun insert-geiser-eval-as-comment ()
+      (interactive)
+      (let ((result (geiser-eval-last-sexp nil)))
+        (paredit-insert-comment)
+        (insert " " result "\n")))
+
+    (use-package geiser
+      :bind (:map scheme-mode-map
+                  ("M-RET" . insert-geiser-eval-as-comment)))
+
+    #+end_src
+
+    I am using the [[http://gambitscheme.org/][Gambit]] scheme implementation, where I want to ensure we are
+    running the R5RS Scheme mode. In the following, we use [[https://gitlab.com/emacs-geiser/gambit][geiser-gambit]] as a
+    basis for creating a R5RS implementation for Geiser.
+
     #+begin_src emacs-lisp
 
     (use-package geiser-gambit
