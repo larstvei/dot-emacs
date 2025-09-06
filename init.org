@@ -402,43 +402,59 @@
 
    #+end_src
 
-   The theme is set according to the system appearance (on macOS) if that is
-   available, defaulting to a light theme.
+   The theme is available in both light and dark variants. I want the theme to
+   be set according to the system setting whenever that is available.
 
-   #+begin_src emacs-lisp
-
-   (defun load-nano-theme (variant)
-     (let ((theme (intern (concat "nano-" (symbol-name variant)))))
-       (load-theme theme t)))
-
-   (load-nano-theme (or (bound-and-true-p ns-system-appearance) 'light))
-
-   #+end_src
-
-   Let's have Emacs change theme when the system appearance changes as well.
+   On macOS, this can be done through =ns-system-appearance=, which is available
+   via a patch in [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]]. If it is available, we add a hook to change the
+   theme whenever the system theme changes, and set the theme to the current
+   system theme.
 
    #+begin_src emacs-lisp
 
    (when (boundp 'ns-system-appearance-change-functions)
-     (add-hook 'ns-system-appearance-change-functions 'load-nano-theme))
+     (let ((ns-load-nano-theme
+            (lambda (variant)
+              (let ((theme (intern (concat "nano-" (symbol-name variant)))))
+                (load-theme theme t)))))
+       (add-hook 'ns-system-appearance-change-functions ns-load-nano-theme)
+       (funcall ns-load-nano-theme ns-system-appearance)))
 
-   #+end_src    
+   #+end_src
 
-   I want to be able to quickly switch between a light and a dark theme.
+   We want similar behavior on Linux, by listening to D-bus messages. The setup
+   below is in large part taken from [[https://freerangebits.com/posts/2025/02/emacs-light-dark/][this blogpost]].
 
    #+begin_src emacs-lisp
 
-   (defun cycle-themes ()
-     "Returns a function that lets you cycle your themes."
-     (let ((themes '(nano-light nano-dark)))
-       (lambda ()
-         (interactive)
-         ;; Rotates the thme cycle and changes the current theme.
-         (let ((rotated (nconc (cdr themes) (list (car themes)))))
-           (load-theme (car (setq themes rotated)) t))
-         (message (concat "Switched to " (symbol-name (car themes)))))))
+   (when-let* ((service "org.freedesktop.portal.Desktop")
+               (_ (require 'dbus nil t))
+               (_ (member service (dbus-list-activatable-names :session)))
+               (path "/org/freedesktop/portal/desktop")
+               (interface "org.freedesktop.portal.Settings")
+               (dbus-load-nano-theme
+                (lambda (variant)
+                  (if (= (car (flatten-list variant)) 1)
+                      (load-theme 'nano-dark t)
+                    (load-theme 'nano-light t)))))
+
+     (dbus-register-signal
+      :session service path interface "SettingChanged"
+      (lambda (path var value)
+        (when (and (string= path "org.freedesktop.appearance")
+                   (string= var "color-scheme"))
+          (funcall dbus-load-nano-theme value))))
+
+     (funcall dbus-load-nano-theme
+              (dbus-call-method
+               :session service path interface "Read"
+               "org.freedesktop.appearance" "color-scheme")))
 
    #+end_src
+
+   Note that a similar solution for both macOS and Linux can be achieved using
+   [[https://github.com/LionyxML/auto-dark-emacs][auto-dark]]. It was a bit too buggy in my testing, and recreating it seemed
+   easier than working around its quirks.
 
 ** Mode line
 
@@ -2082,9 +2098,7 @@
           ("C-c d"   . duplicate-thing)
           ("<C-tab>" . tidy)
           ("C-c t"   . insert-todays-date)
-          ("C-c q"   . unfill-paragraph))
-   :config
-   (define-key custom-bindings-map (kbd "C-c .") (cycle-themes)))
+          ("C-c q"   . unfill-paragraph)))
 
  #+end_src
 
