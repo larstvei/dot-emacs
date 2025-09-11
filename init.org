@@ -1656,7 +1656,8 @@
       (interactive)
       (let ((result (geiser-eval-last-sexp nil)))
         (paredit-insert-comment)
-        (insert " " result "\n")))
+        (insert " " result)
+        (forward-line)))
 
     (use-package geiser
       :bind (:map scheme-mode-map
