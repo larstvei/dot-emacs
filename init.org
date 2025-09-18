@@ -1677,8 +1677,12 @@
         (forward-line)))
 
     (use-package geiser
-      :bind (:map scheme-mode-map
-                  ("M-RET" . insert-geiser-eval-as-comment)))
+      :bind (:map scheme-mode-map ("M-RET" . insert-geiser-eval-as-comment))
+      :config
+      (require 'xdg)
+      (let ((dir (concat (xdg-cache-home) "/geiser")))
+        (make-directory dir t)
+        (setq geiser-repl-history-filename (concat dir "/history"))))
 
     #+end_src
 
