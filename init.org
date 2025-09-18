@@ -386,6 +386,23 @@
 
   #+end_src
 
+  During startup, the frame will typically appear shortly before the color
+  theme is applied. If a dark theme is being applied, the frame will often
+  flash white before the theme has had time to load. We can prevent this by
+  setting the frame parameter [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Font-and-Color-Parameters.html#index-opacity_002c-frame-1][~alpha-background~]] to make the background
+  transparent in early-init, and add a hook to [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Init-File.html#index-after_002dinit_002dhook][~after-init-hook~]] revert it.
+
+  #+begin_src emacs-lisp :tangle early-init.el
+
+  (add-to-list 'default-frame-alist '(alpha-background . 0))
+  (add-hook
+   'after-init-hook
+   (lambda ()
+     (add-to-list 'default-frame-alist '(alpha-background . nil))
+     (set-frame-parameter nil 'alpha-background nil)))
+
+  #+end_src
+
   I am using a lot from [[https://github.com/rougier/nano-emacs][rougier's N Λ N O Emacs]], starting with the theme.
 
 ** Theme
