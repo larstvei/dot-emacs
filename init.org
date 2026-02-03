@@ -1191,6 +1191,75 @@
 
   #+end_src
 
+* Email
+
+  I've used Emacs for email in the past, where I've always had the need for a
+  more standard email client in addition. I'm going to give it another go.
+
+  I use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] (which is a part of [[http://www.djcbsoftware.nl/code/mu/][mu]]) along with [[https://isync.sourceforge.io/][mbsync]].
+
+  #+begin_src emacs-lisp
+  (use-package mu4e
+    :ensure nil
+    :if (and (file-exists-p "~/Maildir")
+             (executable-find "mbsync")
+             (executable-find "msmtp")
+             (executable-find "mu"))
+    :bind (:map custom-bindings-map ("C-x m" . mu4e))
+    :config
+
+    (setq mail-user-agent 'mu4e-user-agent)
+    (setq user-mail-address "larstvei@ifi.uio.no")
+    (setq user-full-name "Lars Tveito")
+
+    (setq mu4e-change-filenames-when-moving t)
+    (setq mu4e-get-mail-command (concat (executable-find "mbsync") " -a"))
+    (setq mu4e-maildir "~/Maildir")
+    (setq mu4e-use-fancy-chars t)
+    (setq mu4e-drafts-folder "/uio/Drafts")
+    (setq mu4e-sent-folder "/uio/Sent Items")
+    (setq mu4e-refile-folder "/uio/Archive")
+    (setq mu4e-trash-folder "/uio/Deleted Items")
+    (setq mu4e-maildir-shortcuts
+          '(("/uio/Inbox" . ?i)
+            ("/uio/Sent Items" . ?s)))
+
+    (setq sendmail-program (executable-find "msmtp"))
+    (setq send-mail-function 'smtpmail-send-it)
+    (setq message-sendmail-f-is-evil t)
+    (setq message-sendmail-extra-arguments '("--read-envelope-from"))
+    (setq message-send-mail-function 'message-send-mail-with-sendmail)
+    (setq message-kill-buffer-on-exit t))
+  #+end_src
+
+** Email with org mode
+
+   The package org-msg allows me to compose emails with Org mode. That means I
+   easily can add headings, tables, source code, etc. It is really neat.
+
+   #+begin_src emacs-lisp
+
+   ;; Org mode to send and reply to email in HTML
+   (use-package org-msg
+     :after (org mu4e)
+     :config
+     (add-to-list 'mu4e-compose-pre-hook 'org-msg-mode)
+     (setq org-msg-enforce-css (concat user-emacs-directory "email-style.css")
+           org-msg-options "html-postamble:nil toc:nil num:nil author:nil email:nil"
+           org-msg-default-alternatives '((new           . (text html))
+                                          (reply-to-html . (text html))
+                                          (reply-to-text . (text)))
+           org-msg-signature "
+
+   ,#+begin_signature
+   ,#+begin_export html
+
+   - Lars
+   ,#+end_export
+   ,#+end_signature\n"))
+
+   #+end_src
+
 * LLM
 
   The ChatGPT client [[https://github.com/karthink/gptel][gptel]] needs an API key from the OpenAI API. This key can
