@@ -1707,6 +1707,7 @@
        (arglist geiser-r5rs--arglist))
 
       (geiser-activate-implementation 'r5rs)
+      (setq geiser-active-implementations '(r5rs))
       (setq geiser-repl-add-project-paths nil)
 
       (provide 'geiser-r5rs))
