@@ -1036,9 +1036,7 @@
    ;; Babel Functions for Python
    (use-package ob-python
      :ensure nil
-     :after (ob python)
-     :config
-     (setq org-babel-python-command python-shell-interpreter))
+     :after (ob python))
 
    #+end_src
 
@@ -1754,7 +1752,6 @@
 
    #+begin_src emacs-lisp
 
-   (setq python-shell-interpreter "python3.12")
    (add-hook 'python-mode-hook
              (lambda () (setq forward-sexp-function nil)))
 
