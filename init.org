@@ -1497,9 +1497,7 @@
                                    (eglot-inlay-hints-mode -1)
                                    (add-hook 'before-save-hook 'eglot-format nil t)))
      :config
-     (setq eglot-events-buffer-size 0)
-     (add-to-list 'eglot-server-programs
-                  '(web-mode . ("svelteserver" "--stdio"))))
+     (setq eglot-events-buffer-size 0))
 
 
    #+end_src
@@ -2011,7 +2009,8 @@
      :mode "\\.svelte\\'"
      :hook (web-mode . eglot-ensure)
      :config
-     (add-to-list 'web-mode-engines-alist '("svelte" . "\\.svelte\\'")))
+     (add-to-list 'web-mode-engines-alist '("svelte" . "\\.svelte\\'"))
+     (add-to-list 'eglot-server-programs '(web-mode . ("svelteserver" "--stdio"))))
 
    #+end_src
 
