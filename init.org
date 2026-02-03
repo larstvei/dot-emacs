@@ -2068,6 +2068,17 @@
 
    #+end_src
 
+** Gleam
+
+   #+begin_src emacs-lisp
+   (use-package gleam-ts-mode
+     :mode "\\.gleam\\'"
+     :after eglot
+     :hook (gleam-ts-mode . eglot-ensure)
+     :config
+     (add-to-list 'eglot-server-programs '(gleam-ts-mode . ("gleam" "lsp"))))
+   #+end_src
+
 * Which key
 
   [[https://github.com/justbur/emacs-which-key][Which key]] is nice for discoverability.
