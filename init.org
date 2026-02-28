@@ -1920,6 +1920,14 @@
 
    #+end_src
 
+** Elm
+
+   #+begin_src emacs-lisp
+
+   (use-package elm-mode)
+
+   #+end_src
+
 ** Maude
 
    Use =---= for comments in Maude.
