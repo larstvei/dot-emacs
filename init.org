@@ -1209,9 +1209,7 @@
   (use-package mu4e
     :ensure nil
     :if (and (file-exists-p "~/Maildir")
-             (executable-find "mbsync")
-             (executable-find "msmtp")
-             (executable-find "mu"))
+             (seq-every-p 'executable-find '("mbsync" "msmtp" "mu")))
     :bind (:map custom-bindings-map ("C-x m" . mu4e))
     :config
 
@@ -1221,7 +1219,6 @@
 
     (setq mu4e-change-filenames-when-moving t)
     (setq mu4e-get-mail-command (concat (executable-find "mbsync") " -a"))
-    (setq mu4e-maildir "~/Maildir")
     (setq mu4e-use-fancy-chars t)
     (setq mu4e-drafts-folder "/uio/Drafts")
     (setq mu4e-sent-folder "/uio/Sent Items")
@@ -1230,6 +1227,19 @@
     (setq mu4e-maildir-shortcuts
           '(("/uio/Inbox" . ?i)
             ("/uio/Sent Items" . ?s)))
+
+    (let* ((inspera-noise " AND NOT maildir:\"/uio/Inspera varsling\"")
+           (devilry-noise " AND NOT maildir:/uio/Devilry")
+           (general-noise " AND NOT maildir:\"/uio/Junk Email\"")
+           (noise-filter (concat inspera-noise devilry-noise general-noise)))
+
+      (setq mu4e-bookmarks
+            `(( :name "Unread messages" :key ?u
+                :query ,(concat "flag:unread" noise-filter))
+              ( :name "Today's messages" :key ?t
+                :query ,(concat "date:today..now" noise-filter) )
+              ( :name "Last 7 days" :key ?w
+                :query ,(concat "date:7d..now" noise-filter)))))
 
     (setq sendmail-program (executable-find "msmtp"))
     (setq send-mail-function 'smtpmail-send-it)
