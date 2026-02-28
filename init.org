@@ -1782,26 +1782,20 @@
     developer. You can install the Common Lisp slime counterpart using
     [[http://www.quicklisp.org/beta/][Quicklisp]], creating a helper that can be loaded.
 
-    We can specify what Common Lisp program Slime should use (I use SBCL). More
-    sensible =loop= indentation is borrowed from [[https://github.com/simenheg][simenheg]].
+    We can specify what Common Lisp program Slime should use (I use SBCL).
 
     #+begin_src emacs-lisp
 
     ;; Superior Lisp Interaction Mode for Emacs
     (use-package slime
-      :disabled
       :defer t
-      :bind (:map slime-repl-mode-map ("C-l" . slime-repl-clear-buffer))
-      :hook (common-lisp-mode . activate-slime-helper)
       :config
-      (when (file-exists-p "~/.quicklisp/slime-helper.el")
-        (load (expand-file-name "~/.quicklisp/slime-helper.el")))
-
       (setq inferior-lisp-program "sbcl")
-
-      (setq lisp-loop-forms-indentation   6
-            lisp-simple-loop-indentation  2
-            lisp-loop-keyword-indentation 6))
+      (setq slime-contribs '(slime-fancy slime-repl))
+      (setq slime-repl-history-size 1000)
+      (add-hook 'slime-repl-mode-hook
+                (lambda ()
+                  (local-set-key (kbd "C-l") 'slime-repl-clear-buffer))))
 
     #+end_src
 
