@@ -639,6 +639,13 @@
 
   #+end_src
 
+* Linux
+
+  #+begin_src emacs-lisp
+  (setq x-meta-keysym 'super)
+  (setq x-super-keysym 'meta)
+  #+end_src
+
 * Modes
 
   Here are a list of modes that I prefer enable by default.
