@@ -506,8 +506,10 @@
 
    #+begin_src emacs-lisp
 
-   (when (member "Source Code Pro" (font-family-list))
-     (set-face-attribute 'default nil :font "Source Code Pro-13"))
+   (cond ((member "SauceCodePro Nerd Font" (font-family-list))
+          (set-face-attribute 'default nil :font "SauceCodePro Nerd Font-13"))
+         ((member "Source Code Pro" (font-family-list))
+          (set-face-attribute 'default nil :font "Source Code Pro-13")))
 
    #+end_src
 
