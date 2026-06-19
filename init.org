@@ -1580,51 +1580,46 @@
 
    #+end_src
 
-** vterm
+** Terminal emulator
 
-   vterm is a fully capable terminal emulator, and I use it exclusively.
+   [[https://github.com/dakra/ghostel][Ghostel]] is a terminal emulator for Emacs building on [[https://mitchellh.com/writing/libghostty-is-coming][libghostty]], which is
+   the embeddable library core of [[https://ghostty.org/][Ghostty]].
 
-   Inspired by [[https://github.com/torenord/.emacs.d][torenord]], I maintain quick access to vterm buffers with bindings
-   ~M-1~ to ~M-9~. In addition, the ~C-z~ toggles between the last visited vterm, and
-   the last visited non-vterm buffer.
+   Inspired by [[https://github.com/torenord/.emacs.d][torenord]], I maintain quick access to ghostel buffers with
+   bindings ~M-1~ to ~M-9~. In addition, the ~C-z~ toggles between the last visited
+   terminal, and the last visited non-terminal buffer.
 
-   Fresh vterm buffers spawns with the directory given by ~vc-root-dir~ if it
+   Fresh terminal buffers spawn with the directory given by ~vc-root-dir~ if it
    exists and ~default-directory~ otherwise.
 
    #+begin_src emacs-lisp
 
-   ;; A terminal via libvterm
-   (use-package vterm
+   (use-package ghostel
      :defer t
      :preface
-     (defvar vterms nil)
+     (defvar ghostels nil)
 
-     (defun toggle-vterm (&optional n)
+     (defun toggle-ghostel (&optional n)
        (interactive)
-       (setq vterms (seq-filter 'buffer-live-p vterms))
+       (setq ghostels (seq-filter 'buffer-live-p ghostels))
        (let ((default-directory (or (vc-root-dir) default-directory)))
-        (cond ((numberp n) (push (vterm n) vterms))
-              ((null vterms) (push (vterm 1) vterms))
-              ((seq-contains-p vterms (current-buffer))
-               (switch-to-buffer (car (seq-difference (buffer-list) vterms))))
-              (t (switch-to-buffer (car (seq-intersection (buffer-list) vterms)))))))
+        (cond ((numberp n) (push (ghostel n) ghostels))
+              ((null ghostels) (push (ghostel 1) ghostels))
+              ((seq-contains-p ghostels (current-buffer))
+               (switch-to-buffer (car (seq-difference (buffer-list) ghostels))))
+              (t (switch-to-buffer (car (seq-intersection (buffer-list) ghostels)))))))
 
      :bind (:map custom-bindings-map
-                 ("C-z" . toggle-vterm)
-                 ("M-1" . (lambda () (interactive) (toggle-vterm 1)))
-                 ("M-2" . (lambda () (interactive) (toggle-vterm 2)))
-                 ("M-3" . (lambda () (interactive) (toggle-vterm 3)))
-                 ("M-4" . (lambda () (interactive) (toggle-vterm 4)))
-                 ("M-5" . (lambda () (interactive) (toggle-vterm 5)))
-                 ("M-6" . (lambda () (interactive) (toggle-vterm 6)))
-                 ("M-7" . (lambda () (interactive) (toggle-vterm 7)))
-                 ("M-8" . (lambda () (interactive) (toggle-vterm 8)))
-                 ("M-9" . (lambda () (interactive) (toggle-vterm 9))))
-
-     :config
-     ;; Don't query about killing vterm buffers, just kill it
-     (defadvice vterm (after kill-with-no-query nil activate)
-       (set-process-query-on-exit-flag (get-buffer-process ad-return-value) nil)))
+                 ("C-z" . toggle-ghostel)
+                 ("M-1" . (lambda () (interactive) (toggle-ghostel 1)))
+                 ("M-2" . (lambda () (interactive) (toggle-ghostel 2)))
+                 ("M-3" . (lambda () (interactive) (toggle-ghostel 3)))
+                 ("M-4" . (lambda () (interactive) (toggle-ghostel 4)))
+                 ("M-5" . (lambda () (interactive) (toggle-ghostel 5)))
+                 ("M-6" . (lambda () (interactive) (toggle-ghostel 6)))
+                 ("M-7" . (lambda () (interactive) (toggle-ghostel 7)))
+                 ("M-8" . (lambda () (interactive) (toggle-ghostel 8)))
+                 ("M-9" . (lambda () (interactive) (toggle-ghostel 9)))))
 
    #+end_src
 
