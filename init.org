@@ -1219,6 +1219,7 @@
     (setq user-mail-address "larstvei@ifi.uio.no")
     (setq user-full-name "Lars Tveito")
 
+    (setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
     (setq mu4e-change-filenames-when-moving t)
     (setq mu4e-get-mail-command (concat (executable-find "mbsync") " -a"))
     (setq mu4e-use-fancy-chars t)
